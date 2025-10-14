@@ -1076,6 +1076,20 @@ export const AdminSettingsPage: React.FC<AdminSettingsPageProps> = ({ settings, 
                             </div>
                             <ToggleSwitch checked={localSettings.advanced.developerMode} onChange={(checked) => handleAdvancedToggleChange('developerMode', checked)} />
                         </div>
+                        <div className="border-t pt-6">
+                          <h3 className="text-lg font-semibold text-slate-800 mb-4">Maintenance Mode</h3>
+                          <div className="flex items-center justify-between p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                              <div>
+                                  <label className="font-semibold text-yellow-800">Enable Maintenance Mode</label>
+                                  <p className="text-sm text-yellow-600 mt-1">Take your store offline for visitors. The admin panel will remain accessible.</p>
+                              </div>
+                              <ToggleSwitch checked={localSettings.advanced.maintenanceMode} onChange={(checked) => handleAdvancedToggleChange('maintenanceMode', checked)} />
+                          </div>
+                          <div className="mt-6 space-y-4">
+                              <MultilingualInputField baseId="maintenance-title" label="Maintenance Page Title" name="maintenancePage.title" values={localSettings.maintenancePage.title} onChange={handleInputChange} />
+                              <MultilingualInputField baseId="maintenance-subtitle" label="Maintenance Page Message" name="maintenancePage.subtitle" values={localSettings.maintenancePage.subtitle} onChange={handleInputChange} />
+                          </div>
+                        </div>
                         <TextareaField
                             label="Custom CSS"
                             id="customCss"

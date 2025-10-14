@@ -40,11 +40,13 @@ import { AdminComposeCampaignPage } from './components/AdminComposeCampaignPage'
 import { UserPanelPage } from './components/UserPanelPage';
 import { ContactUsPage } from './components/ContactUsPage';
 import { Toast } from './components/Toast';
+import { MaintenancePage } from './components/MaintenancePage';
 import { useI18n } from './hooks/useI18n';
 import type { Language } from './contexts/I18nContext';
 import { SettingsContext } from './contexts/I18nContext';
 import { Logo } from './components/Logo';
 import { useSettings } from './hooks/useI18n';
+import { AliExpressPromoBanner } from './components/AliExpressPromoBanner';
 
 type ActiveServiceTab = 'mobile-recharge' | 'aliexpress';
 
@@ -622,33 +624,6 @@ const Header: React.FC<{
     );
 };
 
-const AliExpressPromoBanner: React.FC<{ onLearnMore: () => void }> = ({ onLearnMore }) => {
-    const { language } = useI18n();
-    const { settings } = useSettings();
-    return (
-        <div className="bg-white">
-            <div className="container mx-auto px-6 py-6">
-                <div className="bg-gradient-to-r from-red-50 to-orange-50 rounded-xl p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6">
-                    <div className="flex items-center gap-4">
-                        <img src="https://i.imgur.com/24H2s2t.png" alt="AliExpress Logo" className="w-12 h-12" />
-                        <div>
-                            <h3 className="font-bold text-lg text-brand-text-primary">{settings.homePage.aliexpressPromo.title[language]}</h3>
-                            <p className="text-sm text-brand-text-secondary">{settings.homePage.aliexpressPromo.subtitle[language]}</p>
-                        </div>
-                    </div>
-                    <button 
-                        onClick={onLearnMore}
-                        className="bg-brand-red text-white font-semibold px-5 py-2.5 rounded-lg hover:bg-brand-red-light transition-all duration-300 transform hover:scale-105 whitespace-nowrap"
-                    >
-                        {settings.homePage.aliexpressPromo.cta[language]}
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
-};
-
-
 const StoreFront: React.FC<{ products: Product[]; onSelectProduct: (product: Product) => void; }> = ({ products, onSelectProduct }) => {
     return (
       <main className="container mx-auto px-6 py-10">
@@ -889,6 +864,18 @@ function App() {
         'whyUs'
       ]
     },
+    maintenancePage: {
+      title: {
+        en: 'We’ll be back soon!',
+        fr: 'Nous revenons bientôt !',
+        ar: 'سنعود قريباً!'
+      },
+      subtitle: {
+        en: 'Sorry for the inconvenience. We’re performing some maintenance at the moment. We’ll be back online shortly!',
+        fr: 'Désolé pour le dérangement. Nous effectuons une maintenance en ce moment. Nous serons de retour en ligne sous peu !',
+        ar: 'نأسف للإزعاج. نقوم حاليًا ببعض أعمال الصيانة. سنعود للاتصال بالإنترنت قريبًا!'
+      }
+    },
     contactPage: {
       title: {
         en: 'Get In Touch',
@@ -1075,6 +1062,7 @@ function App() {
     },
     advanced: {
       developerMode: false,
+      maintenanceMode: false,
       customCss: '',
       customJs: '',
     }
@@ -1554,6 +1542,10 @@ function App() {
   }
 
   const MainContent = () => {
+    if (settings.advanced.maintenanceMode && view !== 'admin') {
+      return <MaintenancePage onNavigateToAdmin={() => setView('admin')} />;
+    }
+      
     if (view === 'admin') {
       return (
           <AdminLayout onSwitchToStore={() => navigateTo('store')} activeView={adminView} onNavigate={handleAdminNavigate} searchQuery={adminSearchQuery} onSearchChange={setAdminSearchQuery}>

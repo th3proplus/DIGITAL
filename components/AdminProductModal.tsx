@@ -18,7 +18,6 @@ const defaultProductData: Product = {
     imageUrl: '',
     color: '#F85757',
     category: '',
-    // FIX: Added missing status property
     status: 'available',
     specialTagKey: '',
     featuresKeys: [],

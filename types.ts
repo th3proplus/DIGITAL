@@ -313,6 +313,10 @@ export interface Settings {
     copyrightText: MultilingualText;
     subfooterLinks: FooterStaticLink[];
   };
+  maintenancePage: {
+    title: MultilingualText;
+    subtitle: MultilingualText;
+  };
   services: {
     aliexpress: {
       checkoutTitle: MultilingualText;
@@ -360,6 +364,7 @@ export interface Settings {
   };
   advanced: {
       developerMode: boolean;
+      maintenanceMode: boolean;
       customCss: string;
       customJs: string;
   }

@@ -30,9 +30,9 @@ export const I18nProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       try {
         // Paths are relative to the index.html file
         const [en, ar, fr] = await Promise.all([
-          fetch('./i18n/locales/en.json').then(res => res.json()),
-          fetch('./i18n/locales/ar.json').then(res => res.json()),
-          fetch('./i18n/locales/fr.json').then(res => res.json())
+          fetch('/i18n/locales/en.json').then(res => res.json()),
+          fetch('/i18n/locales/ar.json').then(res => res.json()),
+          fetch('/i18n/locales/fr.json').then(res => res.json())
         ]);
         setTranslations({ en, ar, fr });
       } catch (error) {

@@ -21,7 +21,7 @@ const StarRating: React.FC<{ rating: number, reviewsCount: number }> = ({ rating
     return (
         <div className="flex items-center gap-2 text-sm text-brand-text-secondary">
             <div className="flex items-center">
-                {[...Array(fullStars)].map((_, i) => <Icon key={`full-${i}`} name="star" className="text-xl text-yellow-400" />)}
+                {[...Array(fullStars)].map((_, i) => <Icon key={`full-${i}`} name="star" variant="filled" className="text-xl text-yellow-400" />)}
                 {/* Note: Half star icon is not available, so we'll just show full/empty for now */}
                 {[...Array(emptyStars)].map((_, i) => <Icon key={`empty-${i}`} name="star" className="text-xl text-gray-300" />)}
             </div>
