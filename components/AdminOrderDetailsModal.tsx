@@ -190,23 +190,24 @@ export const AdminOrderDetailsModal: React.FC<AdminOrderDetailsModalProps> = ({ 
                 </button>
             </div>
         </div>
+        </div>
+        <style>{`
+          @media print {
+              body * {
+                  visibility: hidden;
+              }
+              #invoice-content, #invoice-content * {
+                  visibility: visible;
+              }
+              #invoice-content {
+                  position: absolute;
+                  left: 0;
+                  top: 0;
+                  width: 100%;
+              }
+          }
+        `}</style>
       </div>
-      <style>{`
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            #invoice-content, #invoice-content * {
-                visibility: visible;
-            }
-            #invoice-content {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-            }
-        }
-      `}</style>
     </div>
   );
 };
