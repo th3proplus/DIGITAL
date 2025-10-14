@@ -101,4 +101,46 @@ export const AdminOrdersPage: React.FC<AdminOrdersPageProps> = ({ orders, onUpda
             </thead>
             <tbody>
               {orders.map((order) => (
-                <tr key={order.id} className="bg-white border-b hover
+                <tr key={order.id} className="bg-white border-b hover:bg-gray-50">
+                  <td className="p-4">
+                    <div className="flex items-center">
+                      <input 
+                        id={`checkbox-order-${order.id}`}
+                        type="checkbox" 
+                        className="w-4 h-4 text-brand-red bg-gray-100 border-gray-300 rounded focus:ring-brand-red"
+                        checked={selectedOrders.includes(order.id)}
+                        onChange={() => handleSelectOne(order.id)}
+                      />
+                      <label htmlFor={`checkbox-order-${order.id}`} className="sr-only">checkbox</label>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{order.id}</td>
+                  <td className="px-6 py-4">{order.customerName}</td>
+                  <td className="px-6 py-4">{order.date}</td>
+                  <td className="px-6 py-4">{formatCurrency(order.total)}</td>
+                  <td className="px-6 py-4"><OrderStatusBadge status={order.status} /></td>
+                  <td className="px-6 py-4 text-right">
+                    <button 
+                      onClick={() => setViewingOrder(order)} 
+                      className="text-sm font-semibold text-brand-red hover:underline"
+                    >
+                      View Details
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {viewingOrder && (
+        <AdminOrderDetailsModal 
+          isOpen={!!viewingOrder} 
+          onClose={() => setViewingOrder(null)} 
+          order={viewingOrder} 
+          onUpdateOrder={handleUpdateAndCloseModal} 
+        />
+      )}
+    </>
+  );
+};
