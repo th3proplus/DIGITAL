@@ -4,6 +4,17 @@ This file provides example configurations for popular web servers to correctly h
 
 ---
 
+## Netlify
+
+Create a file named `_redirects` in your publish directory (the root of your site) with the following content:
+
+```
+/*    /index.html   200
+```
+This rule tells Netlify to serve `index.html` for any path that doesn't match a deployed file.
+
+---
+
 ## Nginx Configuration
 
 Add the following `location` block to your server block configuration (e.g., in `/etc/nginx/sites-available/your-site`).
