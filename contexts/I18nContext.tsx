@@ -28,7 +28,7 @@ export const I18nProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   useEffect(() => {
     const fetchTranslations = async () => {
       try {
-        // Paths are relative to the index.html file
+        // Use absolute paths from the root to ensure they work on any route.
         const [en, ar, fr] = await Promise.all([
           fetch('/i18n/locales/en.json').then(res => res.json()),
           fetch('/i18n/locales/ar.json').then(res => res.json()),
