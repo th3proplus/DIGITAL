@@ -28,11 +28,11 @@ export const I18nProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   useEffect(() => {
     const fetchTranslations = async () => {
       try {
-        // Use root-relative paths for robust routing in an SPA
+        // Use relative paths for robust routing in an SPA
         const [en, ar, fr] = await Promise.all([
-          fetch('/i18n/locales/en.json').then(res => res.json()),
-          fetch('/i18n/locales/ar.json').then(res => res.json()),
-          fetch('/i18n/locales/fr.json').then(res => res.json())
+          fetch('./i18n/locales/en.json').then(res => res.json()),
+          fetch('./i18n/locales/ar.json').then(res => res.json()),
+          fetch('./i18n/locales/fr.json').then(res => res.json())
         ]);
         setTranslations({ en, ar, fr });
       } catch (error) {
@@ -67,7 +67,26 @@ export const I18nProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, [language, translations, isLoading]);
 
   if (isLoading) {
-    return null; // Render nothing until translations are loaded
+    // Display a loading spinner instead of a blank screen. This helps with perceived performance and debugging.
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: '#f8fafc', gap: '1rem' }}>
+        <div style={{
+          border: '4px solid #e2e8f0',
+          borderTop: '4px solid #F85757',
+          borderRadius: '50%',
+          width: '50px',
+          height: '50px',
+          animation: 'spin 1s linear infinite'
+        }}></div>
+        <p style={{ fontFamily: 'sans-serif', color: '#475569' }}>Loading Store...</p>
+        <style>{`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
+      </div>
+    );
   }
 
   return (
