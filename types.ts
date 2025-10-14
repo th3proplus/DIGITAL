@@ -22,6 +22,7 @@ export interface ProductVariant {
 
 export interface Product {
   id: string;
+  slug: string;
   nameKey: string;
   logoUrl: string;
   imageUrl: string;

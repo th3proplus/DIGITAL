@@ -50,11 +50,12 @@ import { useSettings } from './hooks/useI18n';
 import { AliExpressPromoBanner } from './components/AliExpressPromoBanner';
 import { Header } from './components/Header';
 
-type ActiveServiceTab = 'mobile-recharge' | 'aliexpress';
+type AdminView = 'dashboard' | 'products' | 'orders' | 'settings' | 'addProduct' | 'editProduct' | 'pages' | 'addPage' | 'editPage' | 'mobileDataProviders' | 'addMobileDataProvider' | 'editMobileDataProvider' | 'giftCards' | 'addGiftCard' | 'editGiftCard' | 'marketing' | 'composeCampaign' | 'contactPage';
 
 const initialProducts: Product[] = [
     { 
         id: '1', 
+        slug: 'chatgpt-plus',
         nameKey: 'product_1_name',
         logoUrl: 'https://i.imgur.com/v1r8Y7k.png', 
         imageUrl: 'https://images.unsplash.com/photo-1678483789004-a8c7b8a7c2b2?q=80&w=800&auto=format&fit=crop',
@@ -83,6 +84,7 @@ const initialProducts: Product[] = [
     },
     { 
         id: '2', 
+        slug: 'spotify',
         nameKey: 'product_2_name',
         logoUrl: 'https://i.imgur.com/s63lGTc.png', 
         imageUrl: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=800&auto=format&fit=crop',
@@ -107,6 +109,7 @@ const initialProducts: Product[] = [
     },
     { 
         id: '3', 
+        slug: 'chatgpt-web',
         nameKey: 'product_3_name',
         logoUrl: 'https://i.imgur.com/v1r8Y7k.png', 
         imageUrl: 'https://images.unsplash.com/photo-1696205022839-439073180b35?q=80&w=800&auto=format&fit=crop',
@@ -131,6 +134,7 @@ const initialProducts: Product[] = [
     },
     { 
         id: '4', 
+        slug: 'disney-plus',
         nameKey: 'product_4_name',
         logoUrl: 'https://i.imgur.com/vHq1FpI.png', 
         imageUrl: 'https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?q=80&w=800&auto=format&fit=crop',
@@ -156,6 +160,7 @@ const initialProducts: Product[] = [
     },
     {
         id: '5',
+        slug: 'microsoft-office-365',
         nameKey: 'product_5_name',
         logoUrl: 'https://i.imgur.com/uSti7S1.png',
         imageUrl: 'https://images.unsplash.com/photo-1555949963-ff98c87ed85a?q=80&w=800&auto=format&fit=crop',
@@ -181,6 +186,7 @@ const initialProducts: Product[] = [
     },
     {
         id: '6',
+        slug: 'duolingo-super',
         nameKey: 'product_6_name',
         logoUrl: 'https://i.imgur.com/3yS2d6P.png',
         imageUrl: 'https://images.unsplash.com/photo-1528642474498-1af0c17fd8c3?q=80&w=800&auto=format&fit=crop',
@@ -205,6 +211,7 @@ const initialProducts: Product[] = [
     },
     {
         id: '7',
+        slug: 'scribd',
         nameKey: 'product_7_name',
         logoUrl: 'https://i.imgur.com/mZ6ZVJk.png',
         imageUrl: 'https://images.unsplash.com/photo-1506880018603-23d5b41a0206?q=80&w=800&auto=format&fit=crop',
@@ -229,6 +236,7 @@ const initialProducts: Product[] = [
     },
     {
         id: '8',
+        slug: 'slack-pro',
         nameKey: 'product_8_name',
         logoUrl: 'https://i.imgur.com/Y3j4j3j.png',
         imageUrl: 'https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=800&auto=format&fit=crop',
@@ -333,18 +341,6 @@ const initialPages: CustomPage[] = [
     { id: 'page-2', slug: 'privacy-policy', title: { en: 'Privacy Policy', fr: 'Politique de confidentialité', ar: 'سياسة الخصوصية' }, content: { en: 'Privacy policy content goes here.', fr: 'Le contenu de la politique de confidentialité va ici.', ar: 'محتوى سياسة الخصوصية يذهب هنا.' }, isVisible: true, showInHeader: false, showInFooter: true },
 ];
 
-const StoreFront: React.FC<{ products: Product[]; onSelectProduct: (product: Product) => void; }> = ({ products, onSelectProduct }) => {
-    return (
-      <main className="container py-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {products.map(product => (
-                  <ProductCard key={product.id} product={product} onSelectProduct={onSelectProduct} />
-              ))}
-          </div>
-      </main>
-    );
-};
-
 const WhatsappSupportButton: React.FC<{ phoneNumber: string }> = ({ phoneNumber }) => {
   const { language } = useI18n();
   const isRtl = language === 'ar';
@@ -371,20 +367,11 @@ const WhatsappSupportButton: React.FC<{ phoneNumber: string }> = ({ phoneNumber 
   );
 };
 
-type ViewState = 'store' | 'admin' | 'product' | 'checkout' | 'thankyou' | 'page' | 'giftCard' | 'aliexpress' | 'mobileData' | 'requestProduct' | 'requestProductThankYou' | 'internationalShopper' | 'userPanel' | 'contact' | 'admin_login' | 'explore';
-type AdminView = 'dashboard' | 'products' | 'orders' | 'settings' | 'addProduct' | 'editProduct' | 'pages' | 'addPage' | 'editPage' | 'mobileDataProviders' | 'addMobileDataProvider' | 'editMobileDataProvider' | 'giftCards' | 'addGiftCard' | 'editGiftCard' | 'marketing' | 'composeCampaign' | 'contactPage';
-
-
 function App() {
   const { t, language } = useI18n();
   const { settings, setSettings, formatCurrency } = useSettings();
 
-  const [view, setView] = useState<ViewState>('store');
-  const [adminView, setAdminView] = useState<AdminView>('dashboard');
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [selectedGiftCard, setSelectedGiftCard] = useState<GiftCard | null>(null);
-  const [selectedMobileDataProvider, setSelectedMobileDataProvider] = useState<MobileDataProvider | null>(null);
-  const [currentPageSlug, setCurrentPageSlug] = useState<string | null>(null);
+  const [location, setLocation] = useState(window.location.pathname);
   
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [giftCards, setGiftCards] = useState<GiftCard[]>(initialGiftCards);
@@ -401,11 +388,6 @@ function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [editingPage, setEditingPage] = useState<CustomPage | null>(null);
-  const [editingMobileDataProvider, setEditingMobileDataProvider] = useState<MobileDataProvider | null>(null);
-  const [editingGiftCard, setEditingGiftCard] = useState<GiftCard | null>(null);
-
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [adminSearchQuery, setAdminSearchQuery] = useState('');
@@ -434,28 +416,29 @@ function App() {
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   const [activeCategory, setActiveCategory] = useState(settings.categories[0]?.name || 'ALL');
-
+  
   useEffect(() => {
-    const handleHashChange = () => {
-      if (window.location.hash === '#admin') {
-        setView(isAdminAuthenticated ? 'admin' : 'admin_login');
-      }
+    const handlePopState = () => {
+        setLocation(window.location.pathname);
     };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
-    window.addEventListener('hashchange', handleHashChange, false);
-    handleHashChange(); // Initial check
-
-    return () => {
-      window.removeEventListener('hashchange', handleHashChange, false);
-    };
-  }, [isAdminAuthenticated]);
+  const navigate = (path: string, scrollToTop = true) => {
+    if (window.location.pathname === path && window.location.hash === '') return;
+    window.history.pushState({}, '', path);
+    setLocation(path);
+    if (scrollToTop) {
+        window.scrollTo(0, 0);
+    }
+  };
 
   const handleAdminLogin = (email: string, pass: string): boolean => {
     const adminUser = users.find(u => u.email === settings.adminUsername);
     if (adminUser && adminUser.email === email && adminUser.password === pass) {
       setIsAdminAuthenticated(true);
-      setView('admin');
-      window.location.hash = ''; // Clear hash after successful login
+      navigate('/admin/dashboard');
       return true;
     }
     return false;
@@ -463,15 +446,7 @@ function App() {
 
   const handleAdminLogout = () => {
     setIsAdminAuthenticated(false);
-    setView('store');
-  };
-
-
-  const navigateTo = (newView: ViewState, scrollToTop = true) => {
-    setView(newView);
-    if (scrollToTop) {
-      window.scrollTo(0, 0);
-    }
+    navigate('/');
   };
 
   useEffect(() => {
@@ -532,7 +507,7 @@ function App() {
     if (settings.accessControl.requireLoginToCheckout && !isAuthenticated) {
         setIsAuthModalOpen(true);
     } else {
-        navigateTo('checkout');
+        navigate('/checkout');
     }
   };
 
@@ -650,26 +625,19 @@ function App() {
   };
 
   const handleSelectProduct = (product: Product) => {
-    setSelectedProduct(product);
-    navigateTo('product');
+    navigate(`/product/${product.slug}`);
   };
 
   const handleSelectGiftCard = (card: GiftCard) => {
-    setSelectedGiftCard(card);
-    navigateTo('giftCard');
+    navigate(`/gift-card/${card.id}`);
   };
   
   const handleSelectMobileDataProvider = (provider: MobileDataProvider) => {
-    setSelectedMobileDataProvider(provider);
-    navigateTo('mobileData');
+    navigate(`/mobile-data/${provider.id}`);
   };
 
   const handleBackToStore = () => {
-    setSelectedProduct(null);
-    setCurrentPageSlug(null);
-    setSelectedGiftCard(null);
-    setSelectedMobileDataProvider(null);
-    navigateTo('store');
+    navigate('/');
   };
   
   const handleIncrementCartItem = (productId: string, variantId: string) => {
@@ -726,19 +694,19 @@ function App() {
     setOrders(prev => [newOrder, ...prev]);
     setCartItems([]);
     setLastOrder(newOrder);
-    navigateTo('thankyou');
+    navigate('/thankyou');
   };
 
   const handleNavigateToEditProduct = (product: Product) => {
-    setEditingProduct(product);
-    setAdminView('editProduct');
+    navigate(`/admin/products/edit/${product.id}`);
   };
 
   const handleSaveProduct = (productDataFromForm: Product) => {
-    if (editingProduct) {
+    const isEditing = !!productDataFromForm.id;
+    if (isEditing) {
       setProducts(prevProducts =>
         prevProducts.map(p => {
-          if (p.id !== editingProduct.id) {
+          if (p.id !== productDataFromForm.id) {
             return p;
           }
           const updatedVariants = productDataFromForm.variants.map((variant, index) => {
@@ -758,7 +726,7 @@ function App() {
             updatedDefaultVariantId = updatedVariants[0].id;
           }
 
-          return { ...p, ...productDataFromForm, id: p.id, variants: updatedVariants, defaultVariantId: updatedDefaultVariantId };
+          return { ...p, ...productDataFromForm, variants: updatedVariants, defaultVariantId: updatedDefaultVariantId };
         })
       );
     } else {
@@ -781,6 +749,7 @@ function App() {
       const newProduct: Product = {
         ...productDataFromForm,
         id: newProductId,
+        slug: `${productDataFromForm.nameKey.toLowerCase().replace(/\s/g, '-')}-${newProductId}`, // simple slug generation
         variants: newVariants,
         defaultVariantId: newDefaultVariantId,
         featuresKeys: productDataFromForm.featuresKeys || [],
@@ -792,33 +761,32 @@ function App() {
 
       setProducts(prevProducts => [newProduct, ...prevProducts]);
     }
-    setAdminView('products');
-    setEditingProduct(null);
+    navigate('/admin/products');
   };
 
-  const handleAddNewProduct = (productData: Product) => { handleSaveProduct(productData); };
   const handleUpdateOrder = (updatedOrder: Order) => { setOrders(prevOrders => prevOrders.map(order => order.id === updatedOrder.id ? updatedOrder : order)); };
   const handleDeleteOrders = (orderIds: string[]) => { setOrders(prevOrders => prevOrders.filter(order => !orderIds.includes(order.id))); };
   const handleDeleteProductClick = (productId: string) => { setProductToDeleteId(productId); setIsConfirmDeleteModalOpen(true); };
   const handleConfirmDelete = () => { if (productToDeleteId) { setProducts(prevProducts => prevProducts.filter(p => p.id !== productToDeleteId)); setProductToDeleteId(null); setIsConfirmDeleteModalOpen(false); } };
   const handleCloseConfirmDeleteModal = () => { setProductToDeleteId(null); setIsConfirmDeleteModalOpen(false); };
-  const handleNavigateToPage = (slug: string) => { setCurrentPageSlug(slug); navigateTo('page'); };
+  const handleNavigateToPage = (slug: string) => { navigate(`/page/${slug}`); };
   
-  const handleNavigateToAliExpress = () => { navigateTo('aliexpress'); };
-  const handleNavigateToInternationalShopper = () => { navigateTo('internationalShopper'); };
-  const handleNavigateToRequestProduct = () => { navigateTo('requestProduct'); };
+  const handleNavigateToAliExpress = () => { navigate('/service/aliexpress-shopper'); };
+  const handleNavigateToInternationalShopper = () => { navigate('/service/international-shopper'); };
+  const handleNavigateToRequestProduct = () => { navigate('/service/request-product'); };
 
   const handleNavigateToUserPanel = (tab: UserPanelTab = 'dashboard') => {
     setInitialUserPanelTab(tab);
-    navigateTo('userPanel');
+    navigate('/account');
   };
 
   const handleNavigateToSubscriptions = () => {
-    handleNavigateToUserPanel('subscriptions');
+    setInitialUserPanelTab('subscriptions');
+    navigate('/account');
   };
   
   const handleNavigateToContact = () => {
-    navigateTo('contact');
+    navigate('/contact');
   };
 
   const handleProductRequestSubmit = (submission: { formData: Record<string, string>, userName: string, userEmail: string }) => {
@@ -831,32 +799,31 @@ function App() {
         formData: submission.formData,
     };
     setProductRequests(prev => [newRequest, ...prev]);
-    navigateTo('requestProductThankYou');
+    navigate('/service/request-product/thankyou');
   };
 
 
-  const handleNavigateToEditPage = (page: CustomPage) => { setEditingPage(page); setAdminView('editPage'); };
-  const handleSavePage = (pageData: CustomPage) => { if (editingPage) { setPages(prev => prev.map(p => p.id === pageData.id ? pageData : p)); } else { const newPage = { ...pageData, id: `page-${Date.now()}` }; setPages(prev => [...prev, newPage]); } setEditingPage(null); setAdminView('pages'); };
+  const handleNavigateToEditPage = (page: CustomPage) => { navigate(`/admin/pages/edit/${page.id}`); };
+  const handleSavePage = (pageData: CustomPage) => { if (pageData.id) { setPages(prev => prev.map(p => p.id === pageData.id ? pageData : p)); } else { const newPage = { ...pageData, id: `page-${Date.now()}` }; setPages(prev => [...prev, newPage]); } navigate('/admin/pages'); };
   const handleDeletePageClick = (pageId: string) => { setPageToDeleteId(pageId); setIsConfirmDeletePageModalOpen(true); };
   const handleConfirmDeletePage = () => { if (pageToDeleteId) { setPages(prev => prev.filter(p => p.id !== pageToDeleteId)); setPageToDeleteId(null); setIsConfirmDeletePageModalOpen(false); } };
   const handleCloseConfirmDeletePageModal = () => { setPageToDeleteId(null); setIsConfirmDeletePageModalOpen(false); };
-  const handleNavigateToEditMobileDataProvider = (provider: MobileDataProvider) => { setEditingMobileDataProvider(provider); setAdminView('editMobileDataProvider'); };
+  const handleNavigateToEditMobileDataProvider = (provider: MobileDataProvider) => { navigate(`/admin/mobile-data-providers/edit/${provider.id}`); };
 
   const handleSaveMobileDataProvider = (providerData: MobileDataProvider) => {
-    if (editingMobileDataProvider) {
-        setMobileDataProviders(prev => prev.map(p => { if (p.id !== editingMobileDataProvider.id) return p; const updatedPlans = providerData.plans.map((plan, index) => { if (plan.id.startsWith('new-')) { return { ...plan, id: `${p.id}-plan-${Date.now() + index}` }; } return plan; }); return { ...p, ...providerData, id: p.id, plans: updatedPlans }; }));
+    if (providerData.id) {
+        setMobileDataProviders(prev => prev.map(p => { if (p.id !== providerData.id) return p; const updatedPlans = providerData.plans.map((plan, index) => { if (plan.id.startsWith('new-')) { return { ...plan, id: `${p.id}-plan-${Date.now() + index}` }; } return plan; }); return { ...p, ...providerData, plans: updatedPlans }; }));
     } else {
         const newProviderId = `provider_${Date.now()}`; const newPlans: DataPlan[] = providerData.plans.map((plan, index) => ({ ...plan, id: `${newProviderId}-plan-${index + 1}` })); const newProvider: MobileDataProvider = { ...providerData, id: newProviderId, plans: newPlans }; setMobileDataProviders(prev => [newProvider, ...prev]);
     }
-    setAdminView('mobileDataProviders');
-    setEditingMobileDataProvider(null);
+    navigate('/admin/mobile-data-providers');
   };
 
   const handleDeleteMobileDataProviderClick = (providerId: string) => { setMobileDataProviderToDeleteId(providerId); setIsConfirmDeleteMobileDataProviderModalOpen(true); };
   const handleConfirmDeleteMobileDataProvider = () => { if (mobileDataProviderToDeleteId) { setMobileDataProviders(prev => prev.filter(p => p.id !== mobileDataProviderToDeleteId)); setMobileDataProviderToDeleteId(null); setIsConfirmDeleteMobileDataProviderModalOpen(false); } };
   const handleCloseConfirmDeleteMobileDataProviderModal = () => { setMobileDataProviderToDeleteId(null); setIsConfirmDeleteMobileDataProviderModalOpen(false); };
-  const handleNavigateToEditGiftCard = (card: GiftCard) => { setEditingGiftCard(card); setAdminView('editGiftCard'); };
-  const handleSaveGiftCard = (cardData: GiftCard) => { if (editingGiftCard) { setGiftCards(prev => prev.map(c => c.id === editingGiftCard.id ? { ...cardData, id: c.id } : c)); } else { const newCard: GiftCard = { ...cardData, id: `giftcard_${Date.now()}` }; setGiftCards(prev => [newCard, ...prev]); } setAdminView('giftCards'); setEditingGiftCard(null); };
+  const handleNavigateToEditGiftCard = (card: GiftCard) => { navigate(`/admin/gift-cards/edit/${card.id}`); };
+  const handleSaveGiftCard = (cardData: GiftCard) => { if (cardData.id) { setGiftCards(prev => prev.map(c => c.id === cardData.id ? { ...cardData } : c)); } else { const newCard: GiftCard = { ...cardData, id: `giftcard_${Date.now()}` }; setGiftCards(prev => [newCard, ...prev]); } navigate('/admin/gift-cards'); };
   const handleDeleteGiftCardClick = (cardId: string) => { setGiftCardToDeleteId(cardId); setIsConfirmDeleteGiftCardModalOpen(true); };
   const handleConfirmDeleteGiftCard = () => { if (giftCardToDeleteId) { setGiftCards(prev => prev.filter(c => c.id !== giftCardToDeleteId)); setGiftCardToDeleteId(null); setIsConfirmDeleteGiftCardModalOpen(false); } };
   const handleCloseConfirmDeleteGiftCardModal = () => { setGiftCardToDeleteId(null); setIsConfirmDeleteGiftCardModalOpen(false); };
@@ -887,7 +854,7 @@ function App() {
     setCampaigns(prev => [newCampaign, ...prev]);
     setToast({ message: t('admin.campaign_sent_success'), type: 'success' });
     setTimeout(() => setToast(null), 4000);
-    setAdminView('marketing');
+    navigate('/admin/marketing');
   };
 
   const filteredAdminProducts = products.filter(p => t(p.nameKey).toLowerCase().includes(adminSearchQuery.toLowerCase()) || p.category.toLowerCase().includes(adminSearchQuery.toLowerCase()));
@@ -897,166 +864,226 @@ function App() {
   const filteredAdminGiftCards = giftCards.filter(g => g.name.toLowerCase().includes(adminSearchQuery.toLowerCase()));
   const filteredAdminSubscribers = subscribers.filter(s => s.email.toLowerCase().includes(adminSearchQuery.toLowerCase()));
 
-  const renderAdminView = () => {
-      switch (adminView) {
-          case 'products': return <AdminProductsPage products={filteredAdminProducts} onNavigateToAddProduct={() => setAdminView('addProduct')} onEditProduct={handleNavigateToEditProduct} onDeleteProduct={handleDeleteProductClick} />;
-          case 'addProduct': return <AdminAddProductPage onSave={handleAddNewProduct} onCancel={() => setAdminView('products')} categories={settings.categories.filter(c => c.name !== 'ALL')} />;
-          case 'editProduct': return editingProduct ? <AdminEditProductPage productToEdit={editingProduct} onSave={handleSaveProduct} onCancel={() => { setAdminView('products'); setEditingProduct(null); }} categories={settings.categories.filter(c => c.name !== 'ALL')} /> : null;
-          case 'orders': return <AdminOrdersPage orders={filteredAdminOrders} onUpdateOrder={handleUpdateOrder} onDeleteOrders={handleDeleteOrders} />;
-          case 'pages': return <AdminPagesPage pages={filteredAdminPages} onNavigateToAddPage={() => { setEditingPage(null); setAdminView('addPage'); }} onEditPage={handleNavigateToEditPage} onDeletePage={handleDeletePageClick} />;
-          case 'addPage': return <AdminEditPage onSave={handleSavePage} onCancel={() => setAdminView('pages')} />;
-          case 'editPage': return editingPage ? <AdminEditPage pageToEdit={editingPage} onSave={handleSavePage} onCancel={() => { setAdminView('pages'); setEditingPage(null); }} /> : null;
-          case 'mobileDataProviders': return <AdminMobileDataProvidersPage providers={filteredAdminMobileDataProviders} onNavigateToAddProvider={() => { setEditingMobileDataProvider(null); setAdminView('addMobileDataProvider'); }} onEditProvider={handleNavigateToEditMobileDataProvider} onDeleteProvider={handleDeleteMobileDataProviderClick} />;
-          case 'addMobileDataProvider': return <AdminEditMobileDataProviderPage onSave={handleSaveMobileDataProvider} onCancel={() => setAdminView('mobileDataProviders')} />;
-          case 'editMobileDataProvider': return editingMobileDataProvider ? <AdminEditMobileDataProviderPage providerToEdit={editingMobileDataProvider} onSave={handleSaveMobileDataProvider} onCancel={() => { setAdminView('mobileDataProviders'); setEditingMobileDataProvider(null); }} /> : null;
-          case 'giftCards': return <AdminGiftCardsPage cards={filteredAdminGiftCards} onNavigateToAddCard={() => { setEditingGiftCard(null); setAdminView('addGiftCard'); }} onEditCard={handleNavigateToEditGiftCard} onDeleteCard={handleDeleteGiftCardClick} />;
-          case 'addGiftCard': return <AdminEditGiftCardPage onSave={handleSaveGiftCard} onCancel={() => setAdminView('giftCards')} />;
-          case 'editGiftCard': return editingGiftCard ? <AdminEditGiftCardPage cardToEdit={editingGiftCard} onSave={handleSaveGiftCard} onCancel={() => { setAdminView('giftCards'); setEditingGiftCard(null); }} /> : null;
-          case 'marketing': return <AdminMarketingPage campaigns={campaigns} subscribers={filteredAdminSubscribers} onNavigateToCompose={() => setAdminView('composeCampaign')} onDeleteSubscribers={handleDeleteSubscribers} />;
-          case 'composeCampaign': return <AdminComposeCampaignPage onSendCampaign={handleSendCampaign} onCancel={() => setAdminView('marketing')} />;
-          case 'settings': return <AdminSettingsPage settings={settings} onSettingsChange={setSettings} />;
-          case 'dashboard': default: return <AdminDashboard orders={orders} products={products} />;
-      }
-  };
-
-  const handleAdminNavigate = (view: 'dashboard' | 'products' | 'orders' | 'settings' | 'pages' | 'mobileDataProviders' | 'giftCards' | 'marketing') => {
-    setAdminView(view);
-    setAdminSearchQuery('');
-  }
-
   const MainContent = () => {
-    if (view === 'admin_login') {
-      return <AdminLoginPage onLogin={handleAdminLogin} />;
+    const adminMatch = location.match(/^\/admin(\/.*)?$/);
+    if (adminMatch) {
+        if (!isAdminAuthenticated) {
+            return <AdminLoginPage onLogin={handleAdminLogin} />;
+        }
+        
+        const adminPath = adminMatch[1] || '/dashboard';
+        const pathParts = adminPath.split('/').filter(Boolean);
+        let adminPageView: AdminView = 'dashboard';
+        let editingId: string | undefined = undefined;
+
+        const mainSection = pathParts[0] as AdminView | undefined;
+        if(mainSection) {
+            if(pathParts[1] === 'add') adminPageView = `add${mainSection.charAt(0).toUpperCase() + mainSection.slice(1,-1)}` as AdminView;
+            else if (pathParts[1] === 'edit' && pathParts[2]) {
+                adminPageView = `edit${mainSection.charAt(0).toUpperCase() + mainSection.slice(1,-1)}` as AdminView;
+                editingId = pathParts[2];
+            }
+            else adminPageView = mainSection;
+        }
+
+        const renderAdminView = () => {
+            switch(adminPageView) {
+                case 'products': return <AdminProductsPage products={filteredAdminProducts} onNavigateToAddProduct={() => navigate('/admin/products/add')} onEditProduct={handleNavigateToEditProduct} onDeleteProduct={handleDeleteProductClick} />;
+                case 'addProduct': return <AdminAddProductPage onSave={handleSaveProduct} onCancel={() => navigate('/admin/products')} categories={settings.categories.filter(c => c.name !== 'ALL')} />;
+                case 'editProduct': {
+                    const productToEdit = products.find(p => p.id === editingId);
+                    return productToEdit ? <AdminEditProductPage productToEdit={productToEdit} onSave={handleSaveProduct} onCancel={() => navigate('/admin/products')} categories={settings.categories.filter(c => c.name !== 'ALL')} /> : null;
+                }
+                case 'orders': return <AdminOrdersPage orders={filteredAdminOrders} onUpdateOrder={handleUpdateOrder} onDeleteOrders={handleDeleteOrders} />;
+                case 'pages': return <AdminPagesPage pages={filteredAdminPages} onNavigateToAddPage={() => navigate('/admin/pages/add')} onEditPage={handleNavigateToEditPage} onDeletePage={handleDeletePageClick} />;
+                case 'addPage': return <AdminEditPage onSave={handleSavePage} onCancel={() => navigate('/admin/pages')} />;
+                case 'editPage': {
+                    const pageToEdit = pages.find(p => p.id === editingId);
+                    return pageToEdit ? <AdminEditPage pageToEdit={pageToEdit} onSave={handleSavePage} onCancel={() => navigate('/admin/pages')} /> : null;
+                }
+                case 'mobileDataProviders': return <AdminMobileDataProvidersPage providers={filteredAdminMobileDataProviders} onNavigateToAddProvider={() => navigate('/admin/mobile-data-providers/add')} onEditProvider={handleNavigateToEditMobileDataProvider} onDeleteProvider={handleDeleteMobileDataProviderClick} />;
+                case 'addMobileDataProvider': return <AdminEditMobileDataProviderPage onSave={handleSaveMobileDataProvider} onCancel={() => navigate('/admin/mobile-data-providers')} />;
+                case 'editMobileDataProvider': {
+                    const providerToEdit = mobileDataProviders.find(p => p.id === editingId);
+                    return providerToEdit ? <AdminEditMobileDataProviderPage providerToEdit={providerToEdit} onSave={handleSaveMobileDataProvider} onCancel={() => navigate('/admin/mobile-data-providers')} /> : null;
+                }
+                case 'giftCards': return <AdminGiftCardsPage cards={filteredAdminGiftCards} onNavigateToAddCard={() => navigate('/admin/gift-cards/add')} onEditCard={handleNavigateToEditGiftCard} onDeleteCard={handleDeleteGiftCardClick} />;
+                case 'addGiftCard': return <AdminEditGiftCardPage onSave={handleSaveGiftCard} onCancel={() => navigate('/admin/gift-cards')} />;
+                case 'editGiftCard': {
+                    const cardToEdit = giftCards.find(c => c.id === editingId);
+                    return cardToEdit ? <AdminEditGiftCardPage cardToEdit={cardToEdit} onSave={handleSaveGiftCard} onCancel={() => navigate('/admin/gift-cards')} /> : null;
+                }
+                case 'marketing': return <AdminMarketingPage campaigns={campaigns} subscribers={filteredAdminSubscribers} onNavigateToCompose={() => navigate('/admin/marketing/compose')} onDeleteSubscribers={handleDeleteSubscribers} />;
+                case 'composeCampaign': return <AdminComposeCampaignPage onSendCampaign={handleSendCampaign} onCancel={() => navigate('/admin/marketing')} />;
+                case 'settings': return <AdminSettingsPage settings={settings} onSettingsChange={setSettings} />;
+                case 'dashboard': default: return <AdminDashboard orders={orders} products={products} />;
+            }
+        };
+
+        return (
+            <AdminLayout 
+              onSwitchToStore={() => navigate('/')} 
+              onLogout={handleAdminLogout}
+              activeView={adminPageView} 
+              onNavigate={(view) => navigate(`/admin/${view}`)} 
+              searchQuery={adminSearchQuery} 
+              onSearchChange={setAdminSearchQuery}
+            >
+                {renderAdminView()}
+            </AdminLayout>
+          );
     }
     
-    if (view === 'admin') {
-      if (isAdminAuthenticated) {
-        return (
-          <AdminLayout 
-            onSwitchToStore={() => navigateTo('store')} 
-            onLogout={handleAdminLogout}
-            activeView={adminView} 
-            onNavigate={handleAdminNavigate} 
-            searchQuery={adminSearchQuery} 
-            onSearchChange={setAdminSearchQuery}
-          >
-              {renderAdminView()}
-          </AdminLayout>
-        );
-      } else {
-        return <AdminLoginPage onLogin={handleAdminLogin} />;
-      }
-    }
-
     if (settings.advanced.maintenanceMode) {
-      return <MaintenancePage onNavigateToAdmin={() => setView('admin_login')} />;
+      return <MaintenancePage onNavigateToAdmin={() => navigate('/admin/login')} />;
     }
 
     const cartItemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
+    const renderStoreView = () => {
+        const productMatch = location.match(/^\/product\/(.+)/);
+        if (productMatch) {
+            const product = products.find(p => p.slug === productMatch[1]);
+            return product ? <ProductPage product={product} onAddToCart={handleAddToCart} onBackToStore={handleBackToStore} onBuyNow={handleBuyNow} categories={settings.categories} /> : <div>Not Found</div>;
+        }
+
+        const giftCardMatch = location.match(/^\/gift-card\/(.+)/);
+        if (giftCardMatch) {
+            const card = giftCards.find(c => c.id === giftCardMatch[1]);
+            return card ? <GiftCardPage giftCard={card} onAddToCart={handleGiftCardAddToCart} onBuyNow={handleGiftCardBuyNow} onBackToStore={handleBackToStore} /> : <div>Not Found</div>;
+        }
+
+        const mobileDataMatch = location.match(/^\/mobile-data\/(.+)/);
+        if (mobileDataMatch) {
+            const provider = mobileDataProviders.find(p => p.id === mobileDataMatch[1]);
+            return provider ? <MobileDataPage provider={provider} onAddToCart={handleMobileDataAddToCart} onBuyNow={handleMobileDataBuyNow} onBackToStore={handleBackToStore} /> : <div>Not Found</div>;
+        }
+        
+        const pageMatch = location.match(/^\/page\/(.+)/);
+        if (pageMatch) {
+            const page = pages.find(p => p.slug === pageMatch[1] && p.isVisible);
+            return <CustomPageViewer page={page} onBackToStore={handleBackToStore} />;
+        }
+
+        switch (location) {
+            case '/checkout':
+                return <CheckoutPage cartItems={cartItems} onPlaceOrder={handlePlaceOrder} onBackToStore={handleBackToStore} currentUser={currentUser} />;
+            case '/thankyou':
+                return lastOrder ? <ThankYouPage order={lastOrder} onContinueShopping={handleBackToStore} /> : <div/>;
+            case '/service/aliexpress-shopper':
+                return <AliExpressPage onAddToCart={handleAddItemToCart} onBackToStore={handleBackToStore} />;
+            case '/service/international-shopper':
+                 return <InternationalShopperPage onAddToCart={handleAddItemToCart} onBackToStore={handleBackToStore} />;
+            case '/service/request-product':
+                 return <RequestProductPage onSubmit={handleProductRequestSubmit} onBackToStore={handleBackToStore} currentUser={currentUser} settings={settings.services.requestProduct} />;
+            case '/service/request-product/thankyou':
+                 return <RequestProductThankYouPage onContinueShopping={handleBackToStore} />;
+            case '/account':
+                 return currentUser ? <UserPanelPage currentUser={currentUser} orders={orders.filter(o => o.customerEmail === currentUser.email)} subscriptions={subscriptions.filter(s => s.userId === currentUser.id)} onUpdateUser={handleUpdateUser} onBackToStore={handleBackToStore} initialTab={initialUserPanelTab} /> : <div/>;
+            case '/contact':
+                 return <ContactUsPage settings={settings} />;
+            case '/explore':
+                 return <ExplorePage 
+                    products={products}
+                    giftCards={giftCards}
+                    mobileDataProviders={mobileDataProviders}
+                    pages={pages}
+                    categories={settings.categories}
+                    onSelectProduct={handleSelectProduct}
+                    onSelectGiftCard={handleSelectGiftCard}
+                    onSelectMobileDataProvider={handleSelectMobileDataProvider}
+                    onNavigateToPage={handleNavigateToPage}
+                    onNavigateToAliExpress={handleNavigateToAliExpress}
+                    onNavigateToInternationalShopper={handleNavigateToInternationalShopper}
+                    onNavigateToRequestProduct={handleNavigateToRequestProduct}
+                />;
+            case '/':
+            default:
+                return (
+                    <>
+                        <div className="bg-brand-red">
+                            <div className="container">
+                                <div className="text-center pt-12 pb-16 text-brand-text-on-red">
+                                    <h2 className="text-4xl md:text-5xl font-extrabold mb-2 tracking-tight">{settings.homePage.hero.title[language]}</h2>
+                                    <p className="text-lg opacity-90">{settings.homePage.hero.subtitle[language]}</p>
+                                </div>
+                            </div>
+                        </div>
+                  
+                        <nav className="bg-white shadow-sm">
+                            <div className="container">
+                              <div className="flex items-center gap-4 overflow-x-auto no-scrollbar -mx-6 px-6">
+                                 {settings.categories.map((category) => (
+                                    <button 
+                                        key={category.id} 
+                                        onClick={() => setActiveCategory(category.name)}
+                                        className={`flex flex-col items-center gap-2 pt-4 pb-3 px-2 text-sm font-medium transition-colors duration-200 shrink-0 border-b-2 whitespace-nowrap ${
+                                            activeCategory === category.name 
+                                            ? 'text-brand-red border-brand-red' 
+                                            : 'text-brand-text-secondary border-transparent hover:text-brand-red'
+                                        }`}>
+                                        <Icon name={category.icon} className="text-2xl" />
+                                        <span>{category.displayName[language]}</span>
+                                    </button>
+                                 ))}
+                              </div>
+                            </div>
+                        </nav>
+
+                        <div className="flex-grow">
+                            <main className="container py-10">
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                    {filteredProducts.map(product => (
+                                        <ProductCard key={product.id} product={product} onSelectProduct={handleSelectProduct} />
+                                    ))}
+                                </div>
+                            </main>
+                            {(() => {
+                                const componentMap: { [key: string]: React.ReactNode } = {
+                                    requestProductPromo: <RequestProductPromoBanner key="requestProductPromo" onNavigate={handleNavigateToRequestProduct} />,
+                                    internationalShopperPromo: <InternationalShopperPromoBanner key="internationalShopperPromo" onLearnMore={handleNavigateToInternationalShopper} />,
+                                    aliexpressPromo: <AliExpressPromoBanner key="aliexpressPromo" onLearnMore={handleNavigateToAliExpress} />,
+                                    mobileData: <MobileDataGallery key="mobileData" providers={mobileDataProviders} onSelectProvider={handleSelectMobileDataProvider} />,
+                                    giftCards: <GiftCardGallery key="giftCards" giftCards={giftCards} onSelectGiftCard={handleSelectGiftCard} />,
+                                    whyUs: <WhyUs key="whyUs" settings={settings} />,
+                                };
+                                return settings.homePage.componentsOrder.map(key => componentMap[key]);
+                            })()}
+                        </div>
+                    </>
+                );
+        }
+    };
+    
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col">
-        <header className="bg-white shadow-sm sticky top-0 z-20">
-            <Header 
-              onCartClick={() => setIsCartOpen(true)}
-              onSearchClick={() => setIsSearchModalOpen(true)}
-              cartItemCount={cartItemCount} 
-              isAuthenticated={isAuthenticated}
-              currentUser={currentUser}
-              onLoginClick={() => setIsAuthModalOpen(true)}
-              onLogout={handleLogout}
-              onGoHome={handleBackToStore}
-              pages={pages}
-              onNavigateToPage={handleNavigateToPage}
-              onNavigateToExplore={() => navigateTo('explore')}
-              onNavigateToUserPanel={() => handleNavigateToUserPanel()}
-              onNavigateToSubscriptions={handleNavigateToSubscriptions}
-              onNavigateToContact={handleNavigateToContact}
-            />
-        </header>
-        
-        {view === 'store' && (
-          <>
-              <div className="bg-brand-red">
-                  <div className="container">
-                      <div className="text-center pt-12 pb-16 text-brand-text-on-red">
-                          <h2 className="text-4xl md:text-5xl font-extrabold mb-2 tracking-tight">{settings.homePage.hero.title[language]}</h2>
-                          <p className="text-lg opacity-90">{settings.homePage.hero.subtitle[language]}</p>
-                      </div>
-                  </div>
-              </div>
-        
-              <nav className="bg-white shadow-sm">
-                  <div className="container">
-                    <div className="flex items-center gap-4 overflow-x-auto no-scrollbar -mx-6 px-6">
-                       {settings.categories.map((category) => (
-                          <button 
-                              key={category.id} 
-                              onClick={() => setActiveCategory(category.name)}
-                              className={`flex flex-col items-center gap-2 pt-4 pb-3 px-2 text-sm font-medium transition-colors duration-200 shrink-0 border-b-2 whitespace-nowrap ${
-                                  activeCategory === category.name 
-                                  ? 'text-brand-red border-brand-red' 
-                                  : 'text-brand-text-secondary border-transparent hover:text-brand-red'
-                              }`}>
-                              <Icon name={category.icon} className="text-2xl" />
-                              <span>{category.displayName[language]}</span>
-                          </button>
-                       ))}
-                    </div>
-                  </div>
-              </nav>
+        <div className="min-h-screen bg-gray-50 flex flex-col">
+            <header className="bg-white shadow-sm sticky top-0 z-20">
+                <Header 
+                    onCartClick={() => setIsCartOpen(true)}
+                    onSearchClick={() => setIsSearchModalOpen(true)}
+                    cartItemCount={cartItemCount} 
+                    isAuthenticated={isAuthenticated}
+                    currentUser={currentUser}
+                    onLoginClick={() => setIsAuthModalOpen(true)}
+                    onLogout={handleLogout}
+                    onGoHome={handleBackToStore}
+                    pages={pages}
+                    onNavigateToPage={handleNavigateToPage}
+                    onNavigateToExplore={() => navigate('/explore')}
+                    onNavigateToUserPanel={() => navigate('/account')}
+                    onNavigateToSubscriptions={handleNavigateToSubscriptions}
+                    onNavigateToContact={handleNavigateToContact}
+                />
+            </header>
+            
+            {renderStoreView()}
 
-              <div className="flex-grow">
-                  <StoreFront products={filteredProducts} onSelectProduct={handleSelectProduct} />
-                  {(() => {
-                      const componentMap: { [key: string]: React.ReactNode } = {
-                          requestProductPromo: <RequestProductPromoBanner key="requestProductPromo" onNavigate={handleNavigateToRequestProduct} />,
-                          internationalShopperPromo: <InternationalShopperPromoBanner key="internationalShopperPromo" onLearnMore={handleNavigateToInternationalShopper} />,
-                          aliexpressPromo: <AliExpressPromoBanner key="aliexpressPromo" onLearnMore={handleNavigateToAliExpress} />,
-                          mobileData: <MobileDataGallery key="mobileData" providers={mobileDataProviders} onSelectProvider={handleSelectMobileDataProvider} />,
-                          giftCards: <GiftCardGallery key="giftCards" giftCards={giftCards} onSelectGiftCard={handleSelectGiftCard} />,
-                          whyUs: <WhyUs key="whyUs" settings={settings} />,
-                      };
-                      return settings.homePage.componentsOrder.map(key => componentMap[key]);
-                  })()}
-              </div>
-          </>
-        )}
-
-        {view === 'product' && selectedProduct && <ProductPage product={selectedProduct} onAddToCart={handleAddToCart} onBackToStore={handleBackToStore} onBuyNow={handleBuyNow} categories={settings.categories} />}
-        {view === 'giftCard' && selectedGiftCard && <GiftCardPage giftCard={selectedGiftCard} onAddToCart={handleGiftCardAddToCart} onBuyNow={handleGiftCardBuyNow} onBackToStore={handleBackToStore} />}
-        {view === 'mobileData' && selectedMobileDataProvider && <MobileDataPage provider={selectedMobileDataProvider} onAddToCart={handleMobileDataAddToCart} onBuyNow={handleMobileDataBuyNow} onBackToStore={handleBackToStore} />}
-        {view === 'aliexpress' && <AliExpressPage onAddToCart={handleAddItemToCart} onBackToStore={handleBackToStore} />}
-        {view === 'internationalShopper' && <InternationalShopperPage onAddToCart={handleAddItemToCart} onBackToStore={handleBackToStore} />}
-        {view === 'requestProduct' && <RequestProductPage onSubmit={handleProductRequestSubmit} onBackToStore={handleBackToStore} currentUser={currentUser} settings={settings.services.requestProduct} />}
-        {view === 'checkout' && <CheckoutPage cartItems={cartItems} onPlaceOrder={handlePlaceOrder} onBackToStore={handleBackToStore} currentUser={currentUser} />}
-        {view === 'thankyou' && lastOrder && <ThankYouPage order={lastOrder} onContinueShopping={handleBackToStore} />}
-        {view === 'requestProductThankYou' && <RequestProductThankYouPage onContinueShopping={handleBackToStore} />}
-        {view === 'page' && currentPageSlug && <CustomPageViewer page={pages.find(p => p.slug === currentPageSlug && p.isVisible)} onBackToStore={handleBackToStore} />}
-        {view === 'userPanel' && currentUser && <UserPanelPage currentUser={currentUser} orders={orders.filter(o => o.customerEmail === currentUser.email)} subscriptions={subscriptions.filter(s => s.userId === currentUser.id)} onUpdateUser={handleUpdateUser} onBackToStore={handleBackToStore} initialTab={initialUserPanelTab} />}
-        {view === 'contact' && <ContactUsPage settings={settings} />}
-        {view === 'explore' && <ExplorePage 
-            products={products}
-            giftCards={giftCards}
-            mobileDataProviders={mobileDataProviders}
-            pages={pages}
-            categories={settings.categories}
-            onSelectProduct={handleSelectProduct}
-            onSelectGiftCard={handleSelectGiftCard}
-            onSelectMobileDataProvider={handleSelectMobileDataProvider}
-            onNavigateToPage={handleNavigateToPage}
-            onNavigateToAliExpress={handleNavigateToAliExpress}
-            onNavigateToInternationalShopper={handleNavigateToInternationalShopper}
-            onNavigateToRequestProduct={handleNavigateToRequestProduct}
-        />}
-
-
-        <Footer settings={settings} pages={pages} onNavigateToPage={handleNavigateToPage} onSubscribe={handleSubscribe} onNavigateToContact={handleNavigateToContact} />
-        
-        <Cart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} cartItems={cartItems} onRemoveFromCart={handleRemoveFromCart} onCheckout={handleCheckout} onIncrement={handleIncrementCartItem} onDecrement={handleDecrementCartItem} onClearCart={handleClearCart} />
-        {view !== 'admin' && settings.supportWhatsappNumber && <WhatsappSupportButton phoneNumber={settings.supportWhatsappNumber} />}
-        {isAuthModalOpen && <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} onLogin={handleLogin} onSignup={handleSignup} settings={settings.accessControl} />}
-        <SearchModal isOpen={isSearchModalOpen} onClose={() => { setIsSearchModalOpen(false); setSearchQuery(''); }} query={searchQuery} onQueryChange={setSearchQuery} results={searchResults} onSelectProduct={handleSelectProductFromSearch} categories={settings.categories} />
+            <Footer settings={settings} pages={pages} onNavigateToPage={handleNavigateToPage} onSubscribe={handleSubscribe} onNavigateToContact={handleNavigateToContact} />
+            
+            <Cart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} cartItems={cartItems} onRemoveFromCart={handleRemoveFromCart} onCheckout={handleCheckout} onIncrement={handleIncrementCartItem} onDecrement={handleDecrementCartItem} onClearCart={handleClearCart} />
+            {settings.supportWhatsappNumber && <WhatsappSupportButton phoneNumber={settings.supportWhatsappNumber} />}
+            {isAuthModalOpen && <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} onLogin={handleLogin} onSignup={handleSignup} settings={settings.accessControl} />}
+            <SearchModal isOpen={isSearchModalOpen} onClose={() => { setIsSearchModalOpen(false); setSearchQuery(''); }} query={searchQuery} onQueryChange={setSearchQuery} results={searchResults} onSelectProduct={handleSelectProductFromSearch} categories={settings.categories} />
       </div>
     );
   }

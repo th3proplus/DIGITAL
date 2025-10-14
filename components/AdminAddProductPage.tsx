@@ -9,7 +9,9 @@ interface AdminAddProductPageProps {
   categories: Category[];
 }
 
+// FIX: Add missing 'slug' property. It is auto-generated on save.
 const defaultProductData: Omit<Product, 'id' | 'socialProof' | 'rating' | 'reviewsCount'> = {
+    slug: '',
     nameKey: '',
     logoUrl: '',
     imageUrl: '',
