@@ -366,12 +366,34 @@ const initialSettings: Settings = {
 export const I18nContext = createContext<I18nContextType | undefined>(undefined);
 export const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
+const SETTINGS_STORAGE_KEY = 'nexus-digital-store-settings';
 
 export const I18nProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [language, setLanguage] = useState<Language>('ar'); // Default to Arabic
   const [translations, setTranslations] = useState<{ [key in Language]?: Translations }>({});
   const [isLoading, setIsLoading] = useState(true);
-  const [settings, setSettings] = useState<Settings>(initialSettings);
+  
+  const [settings, setSettings] = useState<Settings>(() => {
+    try {
+      const storedSettings = window.localStorage.getItem(SETTINGS_STORAGE_KEY);
+      // If settings are stored, parse them. Otherwise, use initial settings.
+      return storedSettings ? JSON.parse(storedSettings) : initialSettings;
+    } catch (error) {
+      console.error("Error reading settings from localStorage", error);
+      // Fallback to initial settings if parsing fails
+      return initialSettings;
+    }
+  });
+
+  // Save settings to localStorage whenever they change
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
+    } catch (error) {
+      console.error("Error saving settings to localStorage", error);
+    }
+  }, [settings]);
+
 
   useEffect(() => {
     const fetchTranslations = async () => {

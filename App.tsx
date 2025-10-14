@@ -41,6 +41,7 @@ import { UserPanelPage } from './components/UserPanelPage';
 import { ContactUsPage } from './components/ContactUsPage';
 import { Toast } from './components/Toast';
 import { MaintenancePage } from './components/MaintenancePage';
+import { AdminLoginPage } from './components/AdminLoginPage';
 import { useI18n } from './hooks/useI18n';
 import type { Language } from './contexts/I18nContext';
 import { Logo } from './components/Logo';
@@ -331,7 +332,6 @@ const initialPages: CustomPage[] = [
 ];
 
 const Header: React.FC<{ 
-    onAdminClick: () => void; 
     onCartClick: () => void;
     onSearchClick: () => void;
     cartItemCount: number; 
@@ -346,7 +346,7 @@ const Header: React.FC<{
     onNavigateToUserPanel: () => void;
     onNavigateToSubscriptions: () => void;
     onNavigateToContact: () => void;
-}> = ({ onAdminClick, onCartClick, onSearchClick, cartItemCount, isAuthenticated, currentUser, onLoginClick, onLogout, onGoHome, pages, onNavigateToPage, onNavigateToServices, onNavigateToUserPanel, onNavigateToSubscriptions, onNavigateToContact }) => {
+}> = ({ onCartClick, onSearchClick, cartItemCount, isAuthenticated, currentUser, onLoginClick, onLogout, onGoHome, pages, onNavigateToPage, onNavigateToServices, onNavigateToUserPanel, onNavigateToSubscriptions, onNavigateToContact }) => {
     const { t, language, setLanguage } = useI18n();
     const { settings } = useSettings();
     const isRtl = language === 'ar';
@@ -435,7 +435,6 @@ const Header: React.FC<{
     
     const ActionIcons = (
         <div className={`flex items-center gap-1 md:gap-2 flex-row-reverse`}>
-            <button onClick={onAdminClick} className="ms-2 bg-brand-red text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-brand-red-light transition-colors inline-flex">{t('nav.admin_panel')}</button>
             <button onClick={onCartClick} className="p-2.5 hover:bg-gray-100 rounded-full relative text-brand-text-secondary" aria-label={`Open cart with ${cartItemCount} items`}>
                 <Icon name="cart" className="text-xl"/>
                 {cartItemCount > 0 && (
@@ -661,7 +660,7 @@ const WhatsappSupportButton: React.FC<{ phoneNumber: string }> = ({ phoneNumber 
   );
 };
 
-type ViewState = 'store' | 'admin' | 'product' | 'checkout' | 'thankyou' | 'page' | 'giftCard' | 'aliexpress' | 'mobileData' | 'requestProduct' | 'requestProductThankYou' | 'internationalShopper' | 'userPanel' | 'contact';
+type ViewState = 'store' | 'admin' | 'product' | 'checkout' | 'thankyou' | 'page' | 'giftCard' | 'aliexpress' | 'mobileData' | 'requestProduct' | 'requestProductThankYou' | 'internationalShopper' | 'userPanel' | 'contact' | 'admin_login';
 type AdminView = 'dashboard' | 'products' | 'orders' | 'settings' | 'addProduct' | 'editProduct' | 'pages' | 'addPage' | 'editPage' | 'mobileDataProviders' | 'addMobileDataProvider' | 'editMobileDataProvider' | 'giftCards' | 'addGiftCard' | 'editGiftCard' | 'marketing' | 'composeCampaign' | 'contactPage';
 
 
@@ -716,6 +715,7 @@ function App() {
     { id: '1', name: 'Alex Turner', email: 'admin@nexus.store', password: 'password123' },
   ]);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
   const isAuthenticated = !!currentUser;
 
   const [initialUserPanelTab, setInitialUserPanelTab] = useState<UserPanelTab>('dashboard');
@@ -723,6 +723,38 @@ function App() {
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   const [activeCategory, setActiveCategory] = useState(settings.categories[0]?.name || 'ALL');
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      if (window.location.hash === '#admin') {
+        setView(isAdminAuthenticated ? 'admin' : 'admin_login');
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange, false);
+    handleHashChange(); // Initial check
+
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange, false);
+    };
+  }, [isAdminAuthenticated]);
+
+  const handleAdminLogin = (email: string, pass: string): boolean => {
+    const adminUser = users.find(u => u.email === settings.adminUsername);
+    if (adminUser && adminUser.email === email && adminUser.password === pass) {
+      setIsAdminAuthenticated(true);
+      setView('admin');
+      window.location.hash = ''; // Clear hash after successful login
+      return true;
+    }
+    return false;
+  };
+
+  const handleAdminLogout = () => {
+    setIsAdminAuthenticated(false);
+    setView('store');
+  };
+
 
   const navigateTo = (newView: ViewState, scrollToTop = true) => {
     setView(newView);
@@ -1187,16 +1219,31 @@ function App() {
   }
 
   const MainContent = () => {
-    if (settings.advanced.maintenanceMode && view !== 'admin') {
-      return <MaintenancePage onNavigateToAdmin={() => setView('admin')} />;
+    if (view === 'admin_login') {
+      return <AdminLoginPage onLogin={handleAdminLogin} />;
     }
-      
+    
     if (view === 'admin') {
-      return (
-          <AdminLayout onSwitchToStore={() => navigateTo('store')} activeView={adminView} onNavigate={handleAdminNavigate} searchQuery={adminSearchQuery} onSearchChange={setAdminSearchQuery}>
+      if (isAdminAuthenticated) {
+        return (
+          <AdminLayout 
+            onSwitchToStore={() => navigateTo('store')} 
+            onLogout={handleAdminLogout}
+            activeView={adminView} 
+            onNavigate={handleAdminNavigate} 
+            searchQuery={adminSearchQuery} 
+            onSearchChange={setAdminSearchQuery}
+          >
               {renderAdminView()}
           </AdminLayout>
-      );
+        );
+      } else {
+        return <AdminLoginPage onLogin={handleAdminLogin} />;
+      }
+    }
+
+    if (settings.advanced.maintenanceMode) {
+      return <MaintenancePage onNavigateToAdmin={() => setView('admin_login')} />;
     }
 
     const cartItemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
@@ -1205,7 +1252,6 @@ function App() {
       <div className="min-h-screen bg-gray-50 flex flex-col">
         <header className="bg-white shadow-sm sticky top-0 z-20">
             <Header 
-              onAdminClick={() => navigateTo('admin', false)} 
               onCartClick={() => setIsCartOpen(true)}
               onSearchClick={() => setIsSearchModalOpen(true)}
               cartItemCount={cartItemCount} 

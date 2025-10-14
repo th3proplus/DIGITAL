@@ -9,6 +9,7 @@ interface AdminLayoutProps {
   onNavigate: (view: 'dashboard' | 'products' | 'orders' | 'settings' | 'pages' | 'mobileDataProviders' | 'giftCards' | 'marketing') => void;
   searchQuery: string;
   onSearchChange: (query: string) => void;
+  onLogout: () => void;
 }
 
 const NavItem: React.FC<{
@@ -33,7 +34,7 @@ const NavItem: React.FC<{
   </button>
 );
 
-export const AdminLayout: React.FC<AdminLayoutProps> = ({ onSwitchToStore, children, activeView, onNavigate, searchQuery, onSearchChange }) => {
+export const AdminLayout: React.FC<AdminLayoutProps> = ({ onSwitchToStore, children, activeView, onNavigate, searchQuery, onSearchChange, onLogout }) => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -166,7 +167,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ onSwitchToStore, child
 
         <div className="mt-auto">
           <NavItem iconName="external" label="Back to Store" isCollapsed={isSidebarCollapsed} isActive={false} onClick={onSwitchToStore} />
-          <NavItem iconName="logout" label="Logout" isCollapsed={isSidebarCollapsed} isActive={false} onClick={() => {}} />
+          <NavItem iconName="logout" label="Logout" isCollapsed={isSidebarCollapsed} isActive={false} onClick={onLogout} />
         </div>
       </aside>
 
