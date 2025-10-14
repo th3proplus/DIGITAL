@@ -49,7 +49,7 @@ export const Footer: React.FC<FooterProps> = ({ settings, pages, onNavigateToPag
 
     return (
         <footer className="bg-brand-primary text-gray-300">
-            <div className="container mx-auto px-6 pt-20 pb-12">
+            <div className="container pt-20 pb-12">
 
                 {/* Newsletter CTA */}
                 <div className="max-w-3xl mx-auto bg-brand-secondary rounded-2xl p-8 sm:p-10 text-center mb-16 shadow-lg">
@@ -124,7 +124,7 @@ export const Footer: React.FC<FooterProps> = ({ settings, pages, onNavigateToPag
 
             {/* Sub-footer */}
             <div className="border-t border-gray-800">
-                <div className="container mx-auto px-6 py-6 flex flex-col-reverse sm:flex-row justify-between items-center text-sm text-gray-500">
+                <div className="container py-6 flex flex-col-reverse sm:flex-row justify-between items-center text-sm text-gray-500">
                     <p className="mt-4 sm:mt-0">{footer.copyrightText[language]}</p>
                     <div className="flex gap-x-6 gap-y-2 flex-wrap justify-center">
                         {footer.subfooterLinks.map(link => (

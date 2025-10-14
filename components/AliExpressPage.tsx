@@ -131,14 +131,14 @@ export const AliExpressPage: React.FC<AliExpressPageProps> = ({ onAddToCart, onB
         <main className="flex-grow bg-slate-50">
             {/* Hero Section */}
             <div className="bg-gradient-to-br from-red-50 to-orange-50">
-                <div className="container mx-auto px-6 text-center pt-16 pb-20">
+                <div className="container text-center pt-16 pb-20">
                     <Icon name="globe" className="w-16 h-16 text-brand-red mx-auto mb-4 opacity-50"/>
                     <h1 className="text-4xl md:text-5xl font-extrabold text-brand-text-primary tracking-tight mb-3">{t('aliexpress_shopper.title')}</h1>
                     <p className="text-lg text-brand-text-secondary max-w-2xl mx-auto">{t('aliexpress_shopper.subtitle')}</p>
                 </div>
             </div>
 
-            <div className="container mx-auto px-6 py-16">
+            <div className="container py-16">
                 {/* How It Works Section */}
                 <section className="text-center">
                     <h2 className="text-3xl font-bold text-brand-text-primary mb-12">{t('aliexpress_shopper.how_it_works_title')}</h2>

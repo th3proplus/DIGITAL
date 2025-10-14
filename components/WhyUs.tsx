@@ -33,7 +33,7 @@ export const WhyUs: React.FC<WhyUsProps> = ({ settings }) => {
 
   return (
     <section className="bg-gray-50/50 py-24">
-      <div className="container mx-auto px-6">
+      <div className="container">
         <div className="text-center mb-16 max-w-3xl mx-auto">
           <h2 className="text-4xl lg:text-5xl font-extrabold text-slate-800 tracking-tight">
             {whyUs.titlePart1[language]}{' '}

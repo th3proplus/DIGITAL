@@ -77,7 +77,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ product, onAddToCart, 
 
   return (
     <main className="flex-grow bg-white">
-      <div className="container mx-auto px-6 py-8">
+      <div className="container py-8">
         {/* Breadcrumbs */}
         <nav className="text-sm text-brand-text-secondary mb-8" aria-label="Breadcrumb">
           <ol className="list-none p-0 inline-flex">

@@ -14,7 +14,7 @@ export const CustomPageViewer: React.FC<CustomPageViewerProps> = ({ page, onBack
   if (!page) {
     return (
       <main className="flex-grow bg-white flex items-center justify-center py-16">
-        <div className="container mx-auto px-6 text-center max-w-2xl">
+        <div className="container text-center max-w-2xl">
           <Icon name="file-search" className="w-20 h-20 text-gray-300 mx-auto mb-6" />
           <h1 className="text-4xl font-extrabold text-brand-text-primary tracking-tight mb-3">
             {t('page.not_found_title')}
@@ -38,7 +38,7 @@ export const CustomPageViewer: React.FC<CustomPageViewerProps> = ({ page, onBack
 
   return (
     <main className="flex-grow bg-white py-12">
-      <div className="container mx-auto px-6 max-w-4xl">
+      <div className="container max-w-4xl">
         <div className="bg-white p-8 md:p-12 rounded-lg">
           <h1 className="text-4xl md:text-5xl font-extrabold text-brand-text-primary tracking-tight mb-8">
             {title}

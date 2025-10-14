@@ -100,7 +100,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, onPlaceOr
     if (isAliExpressOrder) {
         return (
             <main className="flex-grow bg-gray-50">
-                <div className="container mx-auto px-6 py-12">
+                <div className="container py-12">
                     <div className="text-center mb-12">
                         <h1 className="text-4xl font-extrabold text-brand-text-primary tracking-tight">{settings.services.aliexpress.checkoutTitle[language]}</h1>
                         <p className="text-brand-text-secondary mt-2">{settings.services.aliexpress.checkoutSubtitle[language]}</p>
@@ -163,7 +163,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, onPlaceOr
     return (
         <>
             <main className="flex-grow bg-gray-50">
-                <div className="container mx-auto px-6 py-12">
+                <div className="container py-12">
                     <div className="text-center mb-12">
                         <h1 className="text-4xl font-extrabold text-brand-text-primary tracking-tight">{t('checkout.title')}</h1>
                         <button onClick={onBackToStore} className="text-sm text-brand-red font-semibold mt-2 hover:underline">

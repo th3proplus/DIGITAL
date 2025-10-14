@@ -37,9 +37,9 @@ export const MobileDataGallery: React.FC<MobileDataGalleryProps> = ({ providers,
     const { settings } = useSettings();
 
     return (
-        <section className="bg-white py-16" id="services-section">
-            <div className="container mx-auto">
-                <div className="text-center mb-10 px-6">
+        <section className="bg-white py-16">
+            <div className="container">
+                <div className="text-center mb-10">
                     <h2 className="text-3xl font-bold text-brand-text-primary">{settings.homePage.mobileDataPromo.title[language]}</h2>
                     <p className="text-lg text-brand-text-secondary mt-2 max-w-2xl mx-auto">{settings.homePage.mobileDataPromo.subtitle[language]}</p>
                 </div>

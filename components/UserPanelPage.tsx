@@ -198,7 +198,7 @@ export const UserPanelPage: React.FC<UserPanelPageProps> = ({ currentUser, order
 
   return (
     <main className="flex-grow bg-gray-50">
-      <div className="container mx-auto px-6 py-12">
+      <div className="container py-12">
         <nav className="text-sm text-brand-text-secondary mb-4" aria-label="Breadcrumb">
           <ol className="list-none p-0 inline-flex">
             <li className="flex items-center">

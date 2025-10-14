@@ -67,7 +67,7 @@ export const ContactUsPage: React.FC<ContactUsPageProps> = ({ settings }) => {
 
     return (
         <main className="flex-grow bg-gray-50">
-            <div className="container mx-auto px-6 py-16">
+            <div className="container py-16">
                 <div className="text-center mb-12 max-w-3xl mx-auto">
                     <h1 className="text-4xl md:text-5xl font-extrabold text-brand-text-primary tracking-tight">{contactPage.title[language]}</h1>
                     <p className="text-lg text-brand-text-secondary mt-4">{contactPage.subtitle[language]}</p>

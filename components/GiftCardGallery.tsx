@@ -78,8 +78,8 @@ export const GiftCardGallery: React.FC<GiftCardGalleryProps> = ({ giftCards, onS
 
     return (
         <section className="bg-slate-50 py-16">
-            <div className="container mx-auto">
-                <div className="text-center mb-10 px-6">
+            <div className="container">
+                <div className="text-center mb-10">
                     <h2 className="text-3xl font-bold text-brand-text-primary">{settings.homePage.giftCardPromo.title[language]}</h2>
                     <p className="text-lg text-brand-text-secondary mt-2 max-w-2xl mx-auto">{settings.homePage.giftCardPromo.subtitle[language]}</p>
                 </div>

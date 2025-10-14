@@ -52,7 +52,7 @@ export const ThankYouPage: React.FC<ThankYouPageProps> = ({ order, onContinueSho
 
   return (
     <main className="flex-grow bg-white flex items-center justify-center py-16">
-      <div className="container mx-auto px-6 text-center max-w-2xl">
+      <div className="container text-center max-w-2xl">
         <div className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 ${getIconBgColor()}`}>
           <Icon name={getIcon()} className={`w-12 h-12 ${getIconColor()}`} />
         </div>
