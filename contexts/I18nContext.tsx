@@ -28,7 +28,7 @@ export const I18nProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   useEffect(() => {
     const fetchTranslations = async () => {
       try {
-        // Use absolute paths from the root to ensure they work on any route.
+        // Use root-relative paths for robust routing in an SPA
         const [en, ar, fr] = await Promise.all([
           fetch('/i18n/locales/en.json').then(res => res.json()),
           fetch('/i18n/locales/ar.json').then(res => res.json()),

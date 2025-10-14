@@ -1,0 +1,55 @@
+# Example Server Configurations for Single-Page Application (SPA)
+
+This file provides example configurations for popular web servers to correctly handle client-side routing for this application. For any path requested by a user, the server should return the main `index.html` file, allowing the React router to take over.
+
+---
+
+## Nginx Configuration
+
+Add the following `location` block to your server block configuration (e.g., in `/etc/nginx/sites-available/your-site`).
+
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+    
+    # Path to your project's built files
+    root /var/www/your-project-root; 
+    index index.html;
+
+    location / {
+        # This is the key part: try to serve the file directly,
+        # otherwise fall back to serving index.html.
+        try_files $uri $uri/ /index.html;
+    }
+
+    # You might also want to add configuration for caching, gzip, etc.
+}
+```
+
+---
+
+## Apache Configuration
+
+Ensure `mod_rewrite` is enabled. Then, create or edit a `.htaccess` file in the root directory of your project (the same directory as `index.html`).
+
+```apache
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  
+  # Don't rewrite calls to files or directories that exist
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+  
+  # Rewrite all other calls to index.html
+  RewriteRule ^ index.html [L]
+</IfModule>
+```
+If you are deploying to a subdirectory, e.g. `your-domain.com/my-app/`, you will need to add `RewriteBase /my-app/` after `RewriteEngine On`.
+
+---
+
+## Other Servers
+
+Most modern web servers and hosting platforms have a similar "rewrite" or "fallback" feature. Please consult the documentation for your specific server environment and look for instructions on deploying a "Single-Page Application (SPA)".
