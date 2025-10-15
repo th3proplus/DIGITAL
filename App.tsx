@@ -341,6 +341,16 @@ const initialPages: CustomPage[] = [
     { id: 'page-2', slug: 'privacy-policy', title: { en: 'Privacy Policy', fr: 'Politique de confidentialité', ar: 'سياسة الخصوصية' }, content: { en: 'Privacy policy content goes here.', fr: 'Le contenu de la politique de confidentialité va ici.', ar: 'محتوى سياسة الخصوصية يذهب هنا.' }, isVisible: true, showInHeader: false, showInFooter: true },
 ];
 
+const kebabToCamel = (s: string) => s.replace(/-./g, x => x.toUpperCase()[1]);
+
+const kebabToPascalSingular = (kebab: string) => {
+    const pascal = kebab.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('');
+    if (pascal.endsWith('s')) {
+        return pascal.slice(0, -1);
+    }
+    return pascal;
+}
+
 const WhatsappSupportButton: React.FC<{ phoneNumber: string }> = ({ phoneNumber }) => {
   const { language } = useI18n();
   const isRtl = language === 'ar';
@@ -888,14 +898,18 @@ function App() {
         let adminPageView: AdminView = 'dashboard';
         let editingId: string | undefined = undefined;
 
-        const mainSection = pathParts[0] as AdminView | undefined;
-        if(mainSection) {
-            if(pathParts[1] === 'add') adminPageView = `add${mainSection.charAt(0).toUpperCase() + mainSection.slice(1,-1)}` as AdminView;
-            else if (pathParts[1] === 'edit' && pathParts[2]) {
-                adminPageView = `edit${mainSection.charAt(0).toUpperCase() + mainSection.slice(1,-1)}` as AdminView;
+        const mainSectionKebab = pathParts[0];
+        if (mainSectionKebab) {
+            if (pathParts[1] === 'add') {
+                const pascalSingular = kebabToPascalSingular(mainSectionKebab);
+                adminPageView = `add${pascalSingular}` as AdminView;
+            } else if (pathParts[1] === 'edit' && pathParts[2]) {
+                const pascalSingular = kebabToPascalSingular(mainSectionKebab);
+                adminPageView = `edit${pascalSingular}` as AdminView;
                 editingId = pathParts[2];
+            } else {
+                adminPageView = kebabToCamel(mainSectionKebab) as AdminView;
             }
-            else adminPageView = mainSection;
         }
 
         const renderAdminView = () => {

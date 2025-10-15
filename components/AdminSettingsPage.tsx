@@ -423,9 +423,7 @@ export const AdminSettingsPage: React.FC<AdminSettingsPageProps> = ({ settings, 
     };
 
     const handleSaveChanges = () => {
-        // We don't save the password with the main save button.
-        const { adminPassword, ...settingsToSave } = localSettings;
-        onSettingsChange(settingsToSave as Settings);
+        onSettingsChange(localSettings);
         setShowSuccess(true);
         window.scrollTo(0, 0);
         setTimeout(() => setShowSuccess(false), 3000);

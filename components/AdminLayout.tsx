@@ -6,7 +6,7 @@ interface AdminLayoutProps {
   onSwitchToStore: () => void;
   children: React.ReactNode;
   activeView: string;
-  onNavigate: (view: 'dashboard' | 'products' | 'orders' | 'settings' | 'pages' | 'mobileDataProviders' | 'giftCards' | 'marketing') => void;
+  onNavigate: (view: 'dashboard' | 'products' | 'orders' | 'settings' | 'pages' | 'mobile-data-providers' | 'gift-cards' | 'marketing') => void;
   searchQuery: string;
   onSearchChange: (query: string) => void;
   onLogout: () => void;
@@ -66,21 +66,24 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ onSwitchToStore, child
     { id: 'products', icon: 'products', label: 'Products' },
     { id: 'marketing', icon: 'rocket', label: 'Marketing' },
     { id: 'pages', icon: 'file-search', label: 'Pages' },
-    { id: 'mobileDataProviders', icon: 'wallet', label: 'Mobile Data' },
-    { id: 'giftCards', icon: 'credit-card', label: 'Gift Cards' },
+    { id: 'mobile-data-providers', icon: 'wallet', label: 'Mobile Data' },
+    { id: 'gift-cards', icon: 'credit-card', label: 'Gift Cards' },
     { id: 'settings', icon: 'settings', label: 'Settings' },
   ];
 
+  const kebabToCamel = (s: string) => s.replace(/-./g, x => x.toUpperCase()[1]);
+
   const isViewActive = (viewId: string) => {
-    if (viewId === 'marketing' && (activeView === 'marketing' || activeView === 'composeCampaign' || activeView === 'viewCampaign')) return true;
+    const camelViewId = kebabToCamel(viewId);
+    if (camelViewId === 'marketing' && (activeView === 'marketing' || activeView === 'composeCampaign' || activeView === 'viewCampaign')) return true;
 
     if (activeView.startsWith('add') || activeView.startsWith('edit')) {
-      if (viewId === 'products' && (activeView === 'addProduct' || activeView === 'editProduct')) return true;
-      if (viewId === 'pages' && (activeView === 'addPage' || activeView === 'editPage')) return true;
-      if (viewId === 'mobileDataProviders' && (activeView === 'addMobileDataProvider' || activeView === 'editMobileDataProvider')) return true;
-      if (viewId === 'giftCards' && (activeView === 'addGiftCard' || activeView === 'editGiftCard')) return true;
+      if (camelViewId === 'products' && (activeView === 'addProduct' || activeView === 'editProduct')) return true;
+      if (camelViewId === 'pages' && (activeView === 'addPage' || activeView === 'editPage')) return true;
+      if (camelViewId === 'mobileDataProviders' && (activeView === 'addMobileDataProvider' || activeView === 'editMobileDataProvider')) return true;
+      if (camelViewId === 'giftCards' && (activeView === 'addGiftCard' || activeView === 'editGiftCard')) return true;
     }
-    return activeView === viewId;
+    return activeView === camelViewId;
   };
   
   useEffect(() => {
