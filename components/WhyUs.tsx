@@ -1,4 +1,5 @@
 import React from 'react';
+// FIX: Corrected import path for useI18n hook.
 import { useI18n } from '../hooks/useI18n';
 import { Settings } from '../types';
 import { Icon } from './Icon';

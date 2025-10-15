@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Product, ProductVariant, Category, ProductStatus } from '../types';
+// FIX: Corrected import path for useI18n hook.
 import { useI18n } from '../hooks/useI18n';
 import { Icon } from './Icon';
+// FIX: Corrected import path for useSettings hook.
 import { useSettings } from '../hooks/useI18n';
 
 interface ProductPageProps {

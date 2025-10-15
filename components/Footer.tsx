@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Icon } from './Icon';
+// FIX: Corrected import path for useI18n hook.
 import { useI18n } from '../hooks/useI18n';
 import { Settings, CustomPage } from '../types';
 

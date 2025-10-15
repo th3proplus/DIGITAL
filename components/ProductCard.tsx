@@ -1,7 +1,7 @@
 import React from 'react';
 import { Product } from '../types';
-import { useI18n } from '../hooks/useI18n';
-import { useSettings } from '../hooks/useI18n';
+// FIX: Corrected import path for hooks.
+import { useI18n, useSettings } from '../hooks/useI18n';
 import { Icon } from './Icon';
 
 interface ProductCardProps {

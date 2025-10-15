@@ -1,5 +1,6 @@
 import React from 'react';
 import { Order, Product, OrderStatus } from '../types';
+// FIX: Corrected import path for useSettings hook.
 import { useSettings } from '../hooks/useI18n';
 import { Icon } from './Icon';
 

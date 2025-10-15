@@ -1,8 +1,8 @@
 import React from 'react';
 import { CartItem } from '../types';
 import { Icon } from './Icon';
-import { useI18n } from '../hooks/useI18n';
-import { useSettings } from '../hooks/useI18n';
+// FIX: Corrected import paths for hooks.
+import { useI18n, useSettings } from '../hooks/useI18n';
 
 interface CartProps {
   isOpen: boolean;

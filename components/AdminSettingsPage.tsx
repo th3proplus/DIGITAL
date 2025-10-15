@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Settings, Category, RequestProductFormField, SectionSettings } from '../types';
 import { Icon } from './Icon';
 import { IntegrationCard } from './IntegrationCard';
+// FIX: Corrected import path for Language type.
 import type { Language } from '../contexts/I18nContext';
 import set from 'lodash.set';
 
