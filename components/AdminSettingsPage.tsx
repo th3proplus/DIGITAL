@@ -75,7 +75,8 @@ const AccordionItem: React.FC<{
   );
 };
 
-const InputField: React.FC<{ label: string; id: string; value: string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; name?: string; type?: string; placeholder?: string; description?: string; }> = ({ label, id, description, ...props }) => (
+// FIX: Updated InputField prop types to accept all standard input attributes, including 'required'.
+const InputField: React.FC<React.InputHTMLAttributes<HTMLInputElement> & { label: string; description?: string; }> = ({ label, id, description, ...props }) => (
     <div>
         <label htmlFor={id} className="block text-sm font-medium text-slate-600 mb-1.5">{label}</label>
         <input id={id} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-slate-800 focus:bg-white focus:ring-2 focus:ring-brand-red/50 focus:border-brand-red transition-all" {...props} />
