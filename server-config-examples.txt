@@ -1,0 +1,127 @@
+# Backend Setup Guide: Connecting to MySQL
+
+This guide provides examples for connecting your backend server to the MySQL database using the credentials you've configured in the setup page.
+
+The frontend application will send these credentials to your backend only once during setup. Your backend should save them securely, for example, in a `.env` file, and use them to establish a database connection pool.
+
+---
+
+## 1. Environment Variables (.env)
+
+Your backend should read the database configuration from environment variables. Create a `.env` file in the root of your server project:
+
+```
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=your_db_user
+DB_PASSWORD=your_db_password
+DB_NAME=your_db_name
+```
+
+---
+
+## 2. Example Backend Implementations
+
+Here are examples of how to use these variables in popular backend frameworks.
+
+### A. Node.js with Express & mysql2
+
+First, install the necessary packages:
+`npm install express mysql2 dotenv`
+
+Then, in your main server file (e.g., `server.js` or `index.js`):
+
+```javascript
+// Load environment variables
+require('dotenv').config();
+
+const express = require('express');
+const mysql = require('mysql2/promise');
+
+const app = express();
+const PORT = process.env.PORT || 3001;
+
+// Create a MySQL connection pool
+// This is more efficient than creating a new connection for every query.
+const pool = mysql.createPool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT || 3306,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
+});
+
+// Example API endpoint to get products
+app.get('/api/products', async (req, res) => {
+  try {
+    const [rows, fields] = await pool.query('SELECT * FROM products');
+    res.json(rows);
+  } catch (err) {
+    console.error('Error fetching products:', err);
+    res.status(500).json({ error: 'Failed to retrieve data from the database.' });
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
+```
+
+### B. Python with Flask & mysql-connector-python
+
+First, install the necessary packages:
+`pip install Flask mysql-connector-python python-dotenv`
+
+Then, in your main application file (e.g., `app.py`):
+
+```python
+import os
+from dotenv import load_dotenv
+from flask import Flask, jsonify
+import mysql.connector
+from mysql.connector import pooling
+
+# Load environment variables
+load_dotenv()
+
+app = Flask(__name__)
+
+# Create a MySQL connection pool
+db_pool = pooling.MySQLConnectionPool(
+    pool_name="my_pool",
+    pool_size=5,
+    host=os.getenv('DB_HOST'),
+    port=os.getenv('DB_PORT', 3306),
+    user=os.getenv('DB_USER'),
+    password=os.getenv('DB_PASSWORD'),
+    database=os.getenv('DB_NAME')
+)
+
+# Example API endpoint to get products
+@app.route('/api/products')
+def get_products():
+    try:
+        # Get a connection from the pool
+        conn = db_pool.get_connection()
+        cursor = conn.cursor(dictionary=True)
+        
+        cursor.execute("SELECT * FROM products")
+        products = cursor.fetchall()
+        
+        return jsonify(products)
+        
+    except Exception as e:
+        print(f"Error fetching products: {e}")
+        return jsonify({"error": "Failed to retrieve data from the database."}), 500
+        
+    finally:
+        if 'conn' in locals() and conn.is_connected():
+            cursor.close()
+            conn.close()
+
+if __name__ == '__main__':
+    app.run(debug=True, port=os.getenv('PORT', 3001))
+```

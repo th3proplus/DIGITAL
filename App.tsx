@@ -49,6 +49,7 @@ import { Logo } from './components/Logo';
 import { useSettings } from './hooks/useI18n';
 import { AliExpressPromoBanner } from './components/AliExpressPromoBanner';
 import { Header } from './components/Header';
+import { SetupPage } from './components/SetupPage';
 
 type AdminView = 'dashboard' | 'products' | 'orders' | 'settings' | 'addProduct' | 'editProduct' | 'pages' | 'addPage' | 'editPage' | 'mobileDataProviders' | 'addMobileDataProvider' | 'editMobileDataProvider' | 'giftCards' | 'addGiftCard' | 'editGiftCard' | 'marketing' | 'composeCampaign' | 'contactPage';
 
@@ -383,6 +384,7 @@ function App() {
 
   const [location, setLocation] = useState(window.location.pathname);
   
+  const [isSetupComplete, setIsSetupComplete] = useState(false);
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [giftCards, setGiftCards] = useState<GiftCard[]>(initialGiftCards);
   const [mobileDataProviders, setMobileDataProviders] = useState<MobileDataProvider[]>(initialMobileDataProviders);
@@ -428,12 +430,21 @@ function App() {
   const [activeCategory, setActiveCategory] = useState(settings.categories[0]?.name || 'ALL');
   
   useEffect(() => {
+    // Check if setup is complete from localStorage
+    if (localStorage.getItem('isSetupComplete') === 'true') {
+      setIsSetupComplete(true);
+    }
     const handlePopState = () => {
         setLocation(window.location.pathname);
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
+
+  const handleSetupComplete = () => {
+    localStorage.setItem('isSetupComplete', 'true');
+    setIsSetupComplete(true);
+  };
 
   const navigate = (path: string, options: { scrollToTop?: boolean; replace?: boolean } = {}) => {
     const { scrollToTop = true, replace = false } = options;
@@ -910,6 +921,10 @@ function App() {
   const filteredAdminSubscribers = subscribers.filter(s => s.email.toLowerCase().includes(adminSearchQuery.toLowerCase()));
 
   const MainContent = () => {
+    if (!isSetupComplete) {
+      return <SetupPage onSetupComplete={handleSetupComplete} />;
+    }
+    
     // Special route for login page, always accessible
     if (location === '/jarya/admin/login') {
       return <AdminLoginPage onLogin={handleAdminLogin} onBackToStore={handleBackToStore} />;
