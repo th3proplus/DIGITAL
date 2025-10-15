@@ -343,6 +343,7 @@
   "language.english": "English",
   "language.french": "Français",
   "language.arabic": "العربية",
+  "footer.language": "اللغة",
   "footer.subscribed": "تم الاشتراك!",
   "footer.email_exists": "هذا البريد الإلكتروني مشترك بالفعل.",
   "footer.subscribe_success": "شكراً لاشتراكك! أهلاً بك في عالمنا الرقمي.",

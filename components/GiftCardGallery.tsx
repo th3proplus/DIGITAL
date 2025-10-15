@@ -21,7 +21,7 @@ const GiftCardItem: React.FC<{ card: GiftCard; onSelect: () => void; }> = ({ car
             aria-label={`Shop ${card.name} gift cards`}
             style={isComingSoon ? { '--glow-color': '#FBBF24' } as React.CSSProperties : {}}
         >
-            <div className={card.status === 'out_of_stock' ? 'grayscale' : ''}>
+            <div className={`h-full ${card.status === 'out_of_stock' ? 'grayscale' : ''}`}>
                 <img draggable="false" src={card.galleryImageUrl} alt={card.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
                 <div className="relative h-full flex flex-col justify-between p-5 text-white">

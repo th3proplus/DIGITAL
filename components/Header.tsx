@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { User, CustomPage } from '../types';
 import { Icon } from './Icon';
-import { useI18n, useSettings } from '../hooks/useI18n';
+import { useI18n } from '../hooks/useI18n';
 import type { Language } from '../contexts/I18nContext';
 import { Logo } from './Logo';
 
@@ -22,7 +22,6 @@ export const Header: React.FC<{
     onNavigateToContact: () => void;
 }> = ({ onCartClick, onSearchClick, cartItemCount, isAuthenticated, currentUser, onLoginClick, onLogout, onGoHome, pages, onNavigateToPage, onNavigateToExplore, onNavigateToUserPanel, onNavigateToSubscriptions, onNavigateToContact }) => {
     const { t, language, setLanguage } = useI18n();
-    const { settings } = useSettings();
     const isRtl = language === 'ar';
     const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -52,19 +51,12 @@ export const Header: React.FC<{
     const flagMap: { [key in Language]: string } = {
         en: '🇬🇧',
         fr: '🇫🇷',
-        ar: '🇸🇦',
+        ar: '🇹🇳',
     };
 
     useEffect(() => {
         setIsMobileMenuOpen(false);
     }, [language]);
-
-    const LogoComponent = () => {
-        if (settings.logoUrl) {
-            return <img src={settings.logoUrl} alt={t('header.store_name')} className="h-10 object-contain max-w-[150px]" />;
-        }
-        return <Logo />;
-    };
     
     const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, item: typeof navItems[0]) => {
       if (item.isCustom) {
@@ -109,12 +101,6 @@ export const Header: React.FC<{
     
     const ActionIcons = (
         <div className={`flex items-center gap-1 md:gap-2`}>
-            <button onClick={onCartClick} className="p-2.5 hover:bg-gray-100 rounded-full relative text-brand-text-secondary" aria-label={`Open cart with ${cartItemCount} items`}>
-                <Icon name="cart" className="text-xl"/>
-                {cartItemCount > 0 && (
-                    <span className="absolute top-1 right-1 block h-4 w-4 rounded-full bg-brand-red text-white text-xs font-bold ring-2 ring-white flex items-center justify-center">{cartItemCount}</span>
-                )}
-            </button>
             {isAuthenticated && currentUser ? (
                 <div className="relative">
                     <button onClick={() => setIsUserMenuOpen(!isUserMenuOpen)} className="flex items-center gap-2 ps-2 pe-3 py-2 hover:bg-gray-100 rounded-full">
@@ -163,6 +149,12 @@ export const Header: React.FC<{
                 )}
             </div>
             <button onClick={onSearchClick} className="p-2.5 hover:bg-gray-100 rounded-full text-brand-text-secondary"><Icon name="search" className="text-xl"/></button>
+            <button onClick={onCartClick} className="p-2.5 hover:bg-gray-100 rounded-full relative text-brand-text-secondary" aria-label={`Open cart with ${cartItemCount} items`}>
+                <Icon name="cart" className="text-xl"/>
+                {cartItemCount > 0 && (
+                    <span className="absolute top-1 right-1 block h-4 w-4 rounded-full bg-brand-red text-white text-xs font-bold ring-2 ring-white flex items-center justify-center">{cartItemCount}</span>
+                )}
+            </button>
         </div>
     );
 
@@ -179,7 +171,7 @@ export const Header: React.FC<{
 
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                         <button onClick={onGoHome} className="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-red/50 rounded-lg" aria-label="Go to homepage">
-                            <LogoComponent />
+                            <Logo />
                         </button>
                     </div>
 
@@ -202,7 +194,7 @@ export const Header: React.FC<{
                     {/* Left/Start Side: Logo */}
                     <div className="flex-1 flex justify-start">
                         <button onClick={onGoHome} className="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-red/50 rounded-lg" aria-label="Go to homepage">
-                            <LogoComponent />
+                            <Logo />
                         </button>
                     </div>
 
@@ -232,8 +224,8 @@ export const Header: React.FC<{
             >
                 <div className="flex flex-col h-full">
                     <div className="flex items-center justify-between p-6 border-b">
-                         <div onClick={onGoHome} className="cursor-pointer">
-                            <LogoComponent />
+                         <div onClick={() => { onGoHome(); setIsMobileMenuOpen(false); }} className="cursor-pointer">
+                            <Logo />
                          </div>
                          <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-gray-500 hover:text-gray-800">
                             <Icon name="close" className="text-2xl" />
@@ -258,7 +250,7 @@ export const Header: React.FC<{
                     <div className="p-6 border-t bg-gray-50">
                         {/* Language switcher in mobile menu */}
                         <div className="mb-6">
-                             <p className="font-semibold text-gray-500 text-sm mb-2 px-3">{t('footer.language')}</p>
+                             <p className="font-semibold text-gray-500 text-sm mb-2 px-3">Language</p>
                              <div className="flex flex-col items-start gap-1">
                                 {languages.map(lang => (
                                     <button

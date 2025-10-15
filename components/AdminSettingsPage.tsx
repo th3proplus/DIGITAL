@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Settings, Category, RequestProductFormField } from '../types';
+import React, { useState, useEffect, useRef } from 'react';
+import { Settings, Category, RequestProductFormField, SectionSettings } from '../types';
 import { Icon } from './Icon';
 import { IntegrationCard } from './IntegrationCard';
 import type { Language } from '../contexts/I18nContext';
@@ -11,7 +11,7 @@ interface AdminSettingsPageProps {
     onSettingsChange: (newSettings: Settings) => void;
 }
 
-type SettingsTab = 'homePage' | 'general' | 'appearance' | 'categories' | 'account' | 'accessControl' | 'payments' | 'services' | 'marketing' | 'advanced' | 'contactPage';
+type SettingsTab = 'homePage' | 'general' | 'appearance' | 'categories' | 'account' | 'accessControl' | 'payments' | 'services' | 'marketing' | 'advanced' | 'contactPage' | 'explorePage';
 
 const availableIcons = ['grid', 'video', 'music', 'ai', 'code', 'book', 'sparkles', 'cart', 'store', 'rocket', 'headset', 'handshake', 'search', 'edit', 'user', 'globe', 'dollar-sign'];
 const socialIcons = ['facebook', 'telegram', 'tiktok', 'youtube', 'twitter-x', 'google', 'whatsapp'];
@@ -137,6 +137,7 @@ export const AdminSettingsPage: React.FC<AdminSettingsPageProps> = ({ settings, 
     const [openAccordion, setOpenAccordion] = useState<string | null>('hero');
     const [expandedRequestField, setExpandedRequestField] = useState<string | null>(null);
     const [draggedItemIndex, setDraggedItemIndex] = useState<number | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const bankTransferFields: (keyof Omit<Settings['payments']['bankTransfer'], 'enabled' | 'name'>)[] = ['accountName', 'accountNumber', 'bankName', 'whatsappNumber'];
     const bankFieldLabels: { [key: string]: string } = {
@@ -156,6 +157,30 @@ export const AdminSettingsPage: React.FC<AdminSettingsPageProps> = ({ settings, 
         setLocalSettings(prev => {
             const newSettings = JSON.parse(JSON.stringify(prev));
             set(newSettings, name, value);
+            return newSettings;
+        });
+    };
+
+    const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const base64String = reader.result as string;
+                setLocalSettings(prev => {
+                    const newSettings = JSON.parse(JSON.stringify(prev));
+                    newSettings.logoUrl = base64String;
+                    return newSettings;
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleRemoveLogo = () => {
+        setLocalSettings(prev => {
+            const newSettings = JSON.parse(JSON.stringify(prev));
+            newSettings.logoUrl = '';
             return newSettings;
         });
     };
@@ -356,6 +381,14 @@ export const AdminSettingsPage: React.FC<AdminSettingsPageProps> = ({ settings, 
             return newSettings;
         });
     };
+    
+    const handleSectionToggle = (section: keyof Settings['explorePage']['sections'], checked: boolean) => {
+        setLocalSettings(prev => {
+            const newSettings = JSON.parse(JSON.stringify(prev));
+            newSettings.explorePage.sections[section].enabled = checked;
+            return newSettings;
+        });
+    };
 
     const handleSaveChanges = () => {
         onSettingsChange(localSettings);
@@ -366,6 +399,7 @@ export const AdminSettingsPage: React.FC<AdminSettingsPageProps> = ({ settings, 
     
     const tabs: { id: SettingsTab; icon: string; label: string; description: string; }[] = [
         { id: 'homePage', icon: 'dashboard', label: 'Home Page', description: "Customize the content of your store's main page." },
+        { id: 'explorePage', icon: 'search', label: 'Explore Page', description: "Customize titles and section visibility on the Explore page." },
         { id: 'contactPage', icon: 'mail', label: 'Contact Page', description: "Customize the content of the 'Contact Us' page." },
         { id: 'general', icon: 'store', label: 'General', description: "Manage your store's core information and localization." },
         { id: 'appearance', icon: 'palette', label: 'Appearance', description: "Customize your store's look and feel with your logo and brand colors." },
@@ -578,6 +612,55 @@ export const AdminSettingsPage: React.FC<AdminSettingsPageProps> = ({ settings, 
                         </AccordionItem>
                     </div>
                 )}
+                
+                {activeTab === 'explorePage' && (
+                    <div className="space-y-4">
+                        <AccordionItem
+                            title="Page Header"
+                            description="Set the main title and subtitle for the explore page."
+                            icon="file-search"
+                            isOpen={openAccordion === 'exploreHeader'}
+                            onToggle={() => setOpenAccordion(openAccordion === 'exploreHeader' ? null : 'exploreHeader')}
+                        >
+                            <div className="space-y-4">
+                                <MultilingualInputField baseId="explore-title" label="Title" name="explorePage.title" values={localSettings.explorePage.title} onChange={handleInputChange} />
+                                <MultilingualInputField baseId="explore-subtitle" label="Subtitle" name="explorePage.subtitle" values={localSettings.explorePage.subtitle} onChange={handleInputChange} />
+                            </div>
+                        </AccordionItem>
+                        <AccordionItem
+                            title="Page Sections"
+                            description="Customize the title and visibility of each section on the page."
+                            icon="grid"
+                            isOpen={openAccordion === 'exploreSections'}
+                            onToggle={() => setOpenAccordion(openAccordion === 'exploreSections' ? null : 'exploreSections')}
+                        >
+                            <div className="space-y-6">
+                                {/* FIX: Use a more specific type assertion to correctly type `sectionKey` as a key of sections. */}
+                                {(Object.keys(localSettings.explorePage.sections) as (keyof Settings['explorePage']['sections'])[]).map(sectionKey => {
+                                    const section = localSettings.explorePage.sections[sectionKey];
+                                    const sectionLabels: Record<string, string> = {
+                                        products: 'All Products Section',
+                                        services: 'Special Services Section',
+                                        giftCards: 'Gift Cards Section',
+                                        mobileData: 'Mobile Data Section',
+                                        pages: 'Information Pages Section'
+                                    };
+                                    return (
+                                        <div key={sectionKey} className="border-t pt-6 first:border-t-0 first:pt-0">
+                                            <div className="flex items-center justify-between mb-4">
+                                                <h4 className="font-semibold text-slate-700">{sectionLabels[sectionKey]}</h4>
+                                                <ToggleSwitch checked={section.enabled} onChange={(checked) => handleSectionToggle(sectionKey, checked)} />
+                                            </div>
+                                            {section.enabled && (
+                                                <MultilingualInputField baseId={`explore-${sectionKey}-title`} label="Section Title" name={`explorePage.sections.${sectionKey}.title`} values={section.title} onChange={handleInputChange} />
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </AccordionItem>
+                    </div>
+                )}
 
                 {activeTab === 'contactPage' && (
                     <div className="space-y-4">
@@ -684,7 +767,45 @@ export const AdminSettingsPage: React.FC<AdminSettingsPageProps> = ({ settings, 
                 
                 {activeTab === 'appearance' && (
                     <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200 space-y-6">
-                         <InputField label="Store Logo" id="logoUrl" name="logoUrl" value={localSettings.logoUrl} onChange={handleInputChange} description="Enter the URL for your store's logo." />
+                         <div>
+                            <label className="block text-sm font-medium text-slate-600 mb-1.5">Store Logo</label>
+                            <div className="mt-2 flex items-center gap-4">
+                                {localSettings.logoUrl ? (
+                                    <div className="p-2 border rounded-lg bg-slate-50">
+                                        <img src={localSettings.logoUrl} alt="Store Logo Preview" className="h-12 max-w-[200px] object-contain" />
+                                    </div>
+                                ) : (
+                                    <div className="h-12 w-32 flex items-center justify-center bg-slate-100 rounded-lg text-xs text-slate-500">
+                                        No Logo
+                                    </div>
+                                )}
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    className="hidden"
+                                    onChange={handleLogoUpload}
+                                    accept="image/png, image/jpeg, image/gif, image/svg+xml"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => fileInputRef.current?.click()}
+                                    className="bg-white hover:bg-slate-50 text-slate-700 font-semibold py-2 px-4 rounded-lg border border-slate-300 transition-colors duration-200 text-sm flex items-center gap-2"
+                                >
+                                    <Icon name="upload" className="w-4 h-4" />
+                                    Upload Logo
+                                </button>
+                                {localSettings.logoUrl && (
+                                    <button
+                                        type="button"
+                                        onClick={handleRemoveLogo}
+                                        className="text-red-600 hover:text-red-800 font-semibold text-sm"
+                                    >
+                                        Remove
+                                    </button>
+                                )}
+                            </div>
+                             <p className="text-xs text-slate-500 mt-2">Recommended: Horizontal logo, max height 40px.</p>
+                        </div>
                          <div>
                             <label htmlFor="themeColor" className="block text-sm font-medium text-slate-600 mb-1.5">Theme Color</label>
                             <div className="relative">

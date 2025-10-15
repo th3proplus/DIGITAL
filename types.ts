@@ -235,6 +235,11 @@ export interface FooterSocialLink {
   href: string;
 }
 
+interface SectionSettings {
+  title: MultilingualText;
+  enabled: boolean;
+}
+
 export interface Settings {
   storeName: string;
   storeDescription: string;
@@ -287,6 +292,17 @@ export interface Settings {
       buttonText: MultilingualText;
     };
     componentsOrder: string[];
+  };
+  explorePage: {
+    title: MultilingualText;
+    subtitle: MultilingualText;
+    sections: {
+      products: SectionSettings;
+      services: SectionSettings;
+      giftCards: SectionSettings;
+      mobileData: SectionSettings;
+      pages: SectionSettings;
+    };
   };
   contactPage: {
     title: MultilingualText;

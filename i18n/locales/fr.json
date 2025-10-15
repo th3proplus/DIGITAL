@@ -343,6 +343,7 @@
   "language.english": "English",
   "language.french": "Français",
   "language.arabic": "العربية",
+  "footer.language": "Langue",
   "footer.subscribed": "Abonné !",
   "footer.email_exists": "Cet e-mail est déjà abonné.",
   "footer.subscribe_success": "Merci de vous être abonné ! Bienvenue dans notre univers numérique.",
