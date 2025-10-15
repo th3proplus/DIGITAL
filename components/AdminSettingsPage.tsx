@@ -17,7 +17,7 @@ const availableIcons = ['grid', 'video', 'music', 'ai', 'code', 'book', 'sparkle
 const socialIcons = ['facebook', 'telegram', 'tiktok', 'youtube', 'twitter-x', 'google', 'whatsapp'];
 
 const componentNames: { [key: string]: string } = {
-  mobileData: 'Mobile Data Gallery',
+  mobileDataPromoBanner: 'Mobile Data Promo Banner',
   giftCards: 'Gift Card Gallery',
   requestProductPromo: 'Request a Product Banner',
   internationalShopperPromo: 'International Shopper Banner',
@@ -130,14 +130,16 @@ const MultilingualTextareaField: React.FC<{ baseId: string; name: string; values
 );
 
 export const AdminSettingsPage: React.FC<AdminSettingsPageProps> = ({ settings, onSettingsChange }) => {
-    const [activeTab, setActiveTab] = useState<SettingsTab>('homePage');
+    const [activeTab, setActiveTab] = useState<SettingsTab>('account');
     const [localSettings, setLocalSettings] = useState<Settings>(settings);
     const [showSuccess, setShowSuccess] = useState(false);
     const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
-    const [openAccordion, setOpenAccordion] = useState<string | null>('hero');
+    const [openAccordion, setOpenAccordion] = useState<string | null>(null);
     const [expandedRequestField, setExpandedRequestField] = useState<string | null>(null);
     const [draggedItemIndex, setDraggedItemIndex] = useState<number | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [passwordData, setPasswordData] = useState({ current: '', new: '', confirm: '' });
+    const [passwordMessage, setPasswordMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
     const bankTransferFields: (keyof Omit<Settings['payments']['bankTransfer'], 'enabled' | 'name'>)[] = ['accountName', 'accountNumber', 'bankName', 'whatsappNumber'];
     const bankFieldLabels: { [key: string]: string } = {
@@ -160,6 +162,36 @@ export const AdminSettingsPage: React.FC<AdminSettingsPageProps> = ({ settings, 
             return newSettings;
         });
     };
+    
+    const handlePasswordInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setPasswordData(prev => ({...prev, [name]: value}));
+        setPasswordMessage(null);
+    };
+
+    const handlePasswordUpdate = (e: React.FormEvent) => {
+        e.preventDefault();
+        setPasswordMessage(null);
+
+        if (passwordData.current !== (localSettings.adminPassword || 'password123')) {
+            setPasswordMessage({ type: 'error', text: 'Current password does not match.' });
+            return;
+        }
+        if (!passwordData.new || passwordData.new.length < 6) {
+            setPasswordMessage({ type: 'error', text: 'New password must be at least 6 characters long.' });
+            return;
+        }
+        if (passwordData.new !== passwordData.confirm) {
+            setPasswordMessage({ type: 'error', text: 'New passwords do not match.' });
+            return;
+        }
+
+        const newSettings = { ...localSettings, adminPassword: passwordData.new };
+        onSettingsChange(newSettings);
+        setPasswordMessage({ type: 'success', text: 'Password updated successfully!' });
+        setPasswordData({ current: '', new: '', confirm: '' });
+    };
+
 
     const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -391,7 +423,9 @@ export const AdminSettingsPage: React.FC<AdminSettingsPageProps> = ({ settings, 
     };
 
     const handleSaveChanges = () => {
-        onSettingsChange(localSettings);
+        // We don't save the password with the main save button.
+        const { adminPassword, ...settingsToSave } = localSettings;
+        onSettingsChange(settingsToSave as Settings);
         setShowSuccess(true);
         window.scrollTo(0, 0);
         setTimeout(() => setShowSuccess(false), 3000);
@@ -857,12 +891,24 @@ export const AdminSettingsPage: React.FC<AdminSettingsPageProps> = ({ settings, 
                     <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200 space-y-6">
                          <InputField label="Admin Username" id="adminUsername" name="adminUsername" value={localSettings.adminUsername} onChange={handleInputChange} />
                          <div className="border-t pt-6">
-                            <h3 className="text-lg font-semibold text-slate-800 mb-4">Change Password</h3>
-                            <div className="space-y-4">
-                                <InputField label="Current Password" id="currentPassword" type="password" value="" onChange={() => {}} />
-                                <InputField label="New Password" id="newPassword" type="password" value="" onChange={() => {}} />
-                                <InputField label="Confirm New Password" id="confirmNewPassword" type="password" value="" onChange={() => {}} />
-                            </div>
+                            <form onSubmit={handlePasswordUpdate}>
+                                <h3 className="text-lg font-semibold text-slate-800 mb-4">Change Password</h3>
+                                <div className="space-y-4">
+                                    <InputField label="Current Password" id="currentPassword" type="password" name="current" value={passwordData.current} onChange={handlePasswordInputChange} required />
+                                    <InputField label="New Password" id="newPassword" type="password" name="new" value={passwordData.new} onChange={handlePasswordInputChange} required />
+                                    <InputField label="Confirm New Password" id="confirmNewPassword" type="password" name="confirm" value={passwordData.confirm} onChange={handlePasswordInputChange} required />
+                                </div>
+                                {passwordMessage && (
+                                    <p className={`text-sm mt-4 ${passwordMessage.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>
+                                        {passwordMessage.text}
+                                    </p>
+                                )}
+                                <div className="mt-6 text-right">
+                                    <button type="submit" className="bg-slate-800 text-white font-semibold px-5 py-2.5 rounded-lg hover:bg-slate-700 transition-colors">
+                                        Update Password
+                                    </button>
+                                </div>
+                            </form>
                          </div>
                     </div>
                 )}

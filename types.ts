@@ -250,6 +250,7 @@ export interface Settings {
   logoUrl: string;
   themeColor: string;
   adminUsername: string;
+  adminPassword?: string;
   categories: Category[];
   homePage: {
     hero: {

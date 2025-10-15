@@ -26,7 +26,8 @@ const initialSettings: Settings = {
     currency: 'TND',
     logoUrl: '',
     themeColor: '#F85757',
-    adminUsername: 'admin@nexus.store',
+    adminUsername: 'admin',
+    adminPassword: 'password123',
     categories: [
       { id: 'cat-1', name: 'ALL', icon: 'grid', displayName: { en: 'ALL', fr: 'TOUS', ar: 'الكل' } },
       { id: 'cat-2', name: 'SVOD', icon: 'video', displayName: { en: 'SVOD', fr: 'SVOD', ar: 'فيديو حسب الطلب' } },
@@ -151,7 +152,7 @@ const initialSettings: Settings = {
         }
       },
       componentsOrder: [
-        'mobileData',
+        'mobileDataPromoBanner',
         'giftCards',
         'requestProductPromo',
         'internationalShopperPromo',
@@ -159,7 +160,6 @@ const initialSettings: Settings = {
         'whyUs'
       ]
     },
-    // FIX: Added missing 'explorePage' property to satisfy the Settings type.
     explorePage: {
       title: {
         en: 'Explore Our Catalog',

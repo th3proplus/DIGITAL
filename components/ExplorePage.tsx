@@ -1,10 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Product, GiftCard, MobileDataProvider, CustomPage, Category } from '../types';
 import { useI18n, useSettings } from '../hooks/useI18n';
 import { Icon } from './Icon';
 import { ProductCard } from './ProductCard';
 import { GiftCardGallery } from './GiftCardGallery';
-import { MobileDataGallery } from './MobileDataGallery';
 
 interface ExplorePageProps {
   products: Product[];
@@ -14,12 +13,11 @@ interface ExplorePageProps {
   categories: Category[];
   onSelectProduct: (product: Product) => void;
   onSelectGiftCard: (card: GiftCard) => void;
-  onSelectMobileDataProvider: (provider: MobileDataProvider) => void;
   onNavigateToPage: (slug: string) => void;
   onNavigateToAliExpress: () => void;
   onNavigateToInternationalShopper: () => void;
   onNavigateToRequestProduct: () => void;
-  onSelectCategory: (categoryName: string) => void;
+  onNavigateToMobileData: () => void;
 }
 
 // A generic card for services, pages, etc.
@@ -48,22 +46,23 @@ const Section: React.FC<{ title: string; children: React.ReactNode; className?: 
 export const ExplorePage: React.FC<ExplorePageProps> = ({
   products,
   giftCards,
-  mobileDataProviders,
   pages,
   categories,
   onSelectProduct,
   onSelectGiftCard,
-  onSelectMobileDataProvider,
   onNavigateToPage,
   onNavigateToAliExpress,
   onNavigateToInternationalShopper,
   onNavigateToRequestProduct,
-  onSelectCategory,
+  onNavigateToMobileData,
 }) => {
     const { t, language } = useI18n();
     const { settings } = useSettings();
     const { explorePage } = settings;
     const visiblePages = pages.filter(p => p.isVisible);
+
+    const [activeCategory, setActiveCategory] = useState('ALL');
+    const filteredProducts = activeCategory === 'ALL' ? products : products.filter(p => p.category === activeCategory);
 
     return (
         <main className="flex-grow bg-gray-50">
@@ -74,37 +73,38 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({
                 </div>
             </div>
             
-            {/* Categories Section */}
-            {explorePage.sections.categories.enabled && categories.length > 0 && (
-                <div className="container pb-10">
-                    <Section title={explorePage.sections.categories.title[language]}>
-                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                            {categories.filter(c => c.name !== 'ALL').map(category => (
-                            <div 
-                                key={category.id} 
-                                onClick={() => onSelectCategory(category.name)}
-                                className="bg-white p-4 rounded-xl shadow-md border border-gray-200 hover:shadow-xl hover:border-brand-red transition-all duration-300 cursor-pointer flex flex-col items-center justify-center gap-2 aspect-square group"
-                            >
-                                <Icon name={category.icon} className="w-10 h-10 text-brand-red transition-transform group-hover:scale-110" />
-                                <h3 className="text-sm font-bold text-brand-text-primary text-center">{category.displayName[language]}</h3>
-                            </div>
-                            ))}
-                        </div>
-                    </Section>
-                </div>
-            )}
-
-            {/* All Products Section */}
+            {/* All Products Section with sticky category bar */}
             {explorePage.sections.products.enabled && products.length > 0 && (
-                <div className="container">
-                    <Section title={explorePage.sections.products.title[language]}>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            {products.map(product => (
-                                <ProductCard key={product.id} product={product} onSelectProduct={onSelectProduct} />
-                            ))}
+                <>
+                    <nav className="bg-white shadow-sm sticky top-20 z-10">
+                        <div className="container">
+                          <div className="flex items-center gap-4 overflow-x-auto no-scrollbar -mx-6 px-6">
+                             {settings.categories.map((category) => (
+                                <button 
+                                    key={category.id} 
+                                    onClick={() => setActiveCategory(category.name)}
+                                    className={`flex flex-col items-center gap-2 pt-4 pb-3 px-2 text-sm font-medium transition-colors duration-200 shrink-0 border-b-2 whitespace-nowrap ${
+                                        activeCategory === category.name 
+                                        ? 'text-brand-red border-brand-red' 
+                                        : 'text-brand-text-secondary border-transparent hover:text-brand-red'
+                                    }`}>
+                                    <Icon name={category.icon} className="text-2xl" />
+                                    <span>{category.displayName[language]}</span>
+                                </button>
+                             ))}
+                          </div>
                         </div>
-                    </Section>
-                </div>
+                    </nav>
+                    <div className="container">
+                        <Section title={explorePage.sections.products.title[language]}>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                {filteredProducts.map(product => (
+                                    <ProductCard key={product.id} product={product} onSelectProduct={onSelectProduct} />
+                                ))}
+                            </div>
+                        </Section>
+                    </div>
+                </>
             )}
             
             {/* Services Section */}
@@ -149,14 +149,22 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({
             )}
 
             {/* Mobile Data Section */}
-            {explorePage.sections.mobileData.enabled && mobileDataProviders.length > 0 && (
-                <MobileDataGallery 
-                    providers={mobileDataProviders}
-                    onSelectProvider={onSelectMobileDataProvider}
-                    title={explorePage.sections.mobileData.title[language]}
-                    subtitle=""
-                />
+            {explorePage.sections.mobileData.enabled && (
+                <div className="container">
+                    <Section title={explorePage.sections.mobileData.title[language]}>
+                        <div className="max-w-xl mx-auto">
+                            <InfoCard
+                                title={t('services.mobile_data_page.title')}
+                                description={settings.homePage.mobileDataPromo.subtitle[language]}
+                                icon="wallet"
+                                onClick={onNavigateToMobileData}
+                                cta="Top-Up Now"
+                            />
+                        </div>
+                    </Section>
+                </div>
             )}
+
 
             {/* Pages Section */}
              {explorePage.sections.pages.enabled && visiblePages.length > 0 && (

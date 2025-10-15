@@ -30,8 +30,9 @@ import { GiftCardPage } from './components/GiftCardPage';
 import { AliExpressPage } from './components/AliExpressPage';
 import { InternationalShopperPage } from './components/InternationalShopperPage';
 import { InternationalShopperPromoBanner } from './components/InternationalShopperPromoBanner';
-import { MobileDataGallery } from './components/MobileDataGallery';
+import { MobileDataPromoBanner } from './components/MobileDataPromoBanner';
 import { MobileDataPage } from './components/MobileDataPage';
+import { MobileDataTopUpPage } from './components/MobileDataTopUpPage';
 import { RequestProductPage } from './components/RequestProductPage';
 import { RequestProductThankYouPage } from './components/RequestProductThankYouPage';
 import { RequestProductPromoBanner } from './components/RequestProductPromoBanner';
@@ -405,7 +406,7 @@ function App() {
   const [giftCardToDeleteId, setGiftCardToDeleteId] = useState<string | null>(null);
   
   const [users, setUsers] = useState<User[]>([
-    { id: '1', name: 'Alex Turner', email: 'admin@nexus.store', password: 'password123' },
+    { id: '1', name: 'Alex Turner', email: 'user@example.com', password: 'password123' },
   ]);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
@@ -434,11 +435,10 @@ function App() {
     }
   };
 
-  const handleAdminLogin = (email: string, pass: string): boolean => {
-    const adminUser = users.find(u => u.email === settings.adminUsername);
-    if (adminUser && adminUser.email === email && adminUser.password === pass) {
+  const handleAdminLogin = (username: string, pass: string): boolean => {
+    if (username === settings.adminUsername && pass === (settings.adminPassword || 'password123')) {
       setIsAdminAuthenticated(true);
-      navigate('/admin/dashboard');
+      navigate('/jarya/admin/dashboard');
       return true;
     }
     return false;
@@ -698,7 +698,7 @@ function App() {
   };
 
   const handleNavigateToEditProduct = (product: Product) => {
-    navigate(`/admin/products/edit/${product.id}`);
+    navigate(`/jarya/admin/products/edit/${product.id}`);
   };
 
   const handleSaveProduct = (productDataFromForm: Product) => {
@@ -761,7 +761,7 @@ function App() {
 
       setProducts(prevProducts => [newProduct, ...prevProducts]);
     }
-    navigate('/admin/products');
+    navigate('/jarya/admin/products');
   };
 
   const handleUpdateOrder = (updatedOrder: Order) => { setOrders(prevOrders => prevOrders.map(order => order.id === updatedOrder.id ? updatedOrder : order)); };
@@ -774,6 +774,7 @@ function App() {
   const handleNavigateToAliExpress = () => { navigate('/service/aliexpress-shopper'); };
   const handleNavigateToInternationalShopper = () => { navigate('/service/international-shopper'); };
   const handleNavigateToRequestProduct = () => { navigate('/service/request-product'); };
+  const handleNavigateToMobileData = () => { navigate('/service/mobile-data'); };
 
   const handleNavigateToUserPanel = (tab: UserPanelTab = 'dashboard') => {
     setInitialUserPanelTab(tab);
@@ -808,12 +809,12 @@ function App() {
   };
 
 
-  const handleNavigateToEditPage = (page: CustomPage) => { navigate(`/admin/pages/edit/${page.id}`); };
-  const handleSavePage = (pageData: CustomPage) => { if (pageData.id) { setPages(prev => prev.map(p => p.id === pageData.id ? pageData : p)); } else { const newPage = { ...pageData, id: `page-${Date.now()}` }; setPages(prev => [...prev, newPage]); } navigate('/admin/pages'); };
+  const handleNavigateToEditPage = (page: CustomPage) => { navigate(`/jarya/admin/pages/edit/${page.id}`); };
+  const handleSavePage = (pageData: CustomPage) => { if (pageData.id) { setPages(prev => prev.map(p => p.id === pageData.id ? pageData : p)); } else { const newPage = { ...pageData, id: `page-${Date.now()}` }; setPages(prev => [...prev, newPage]); } navigate('/jarya/admin/pages'); };
   const handleDeletePageClick = (pageId: string) => { setPageToDeleteId(pageId); setIsConfirmDeletePageModalOpen(true); };
   const handleConfirmDeletePage = () => { if (pageToDeleteId) { setPages(prev => prev.filter(p => p.id !== pageToDeleteId)); setPageToDeleteId(null); setIsConfirmDeletePageModalOpen(false); } };
   const handleCloseConfirmDeletePageModal = () => { setPageToDeleteId(null); setIsConfirmDeletePageModalOpen(false); };
-  const handleNavigateToEditMobileDataProvider = (provider: MobileDataProvider) => { navigate(`/admin/mobile-data-providers/edit/${provider.id}`); };
+  const handleNavigateToEditMobileDataProvider = (provider: MobileDataProvider) => { navigate(`/jarya/admin/mobile-data-providers/edit/${provider.id}`); };
 
   const handleSaveMobileDataProvider = (providerData: MobileDataProvider) => {
     if (providerData.id) {
@@ -821,14 +822,14 @@ function App() {
     } else {
         const newProviderId = `provider_${Date.now()}`; const newPlans: DataPlan[] = providerData.plans.map((plan, index) => ({ ...plan, id: `${newProviderId}-plan-${index + 1}` })); const newProvider: MobileDataProvider = { ...providerData, id: newProviderId, plans: newPlans }; setMobileDataProviders(prev => [newProvider, ...prev]);
     }
-    navigate('/admin/mobile-data-providers');
+    navigate('/jarya/admin/mobile-data-providers');
   };
 
   const handleDeleteMobileDataProviderClick = (providerId: string) => { setMobileDataProviderToDeleteId(providerId); setIsConfirmDeleteMobileDataProviderModalOpen(true); };
   const handleConfirmDeleteMobileDataProvider = () => { if (mobileDataProviderToDeleteId) { setMobileDataProviders(prev => prev.filter(p => p.id !== mobileDataProviderToDeleteId)); setMobileDataProviderToDeleteId(null); setIsConfirmDeleteMobileDataProviderModalOpen(false); } };
   const handleCloseConfirmDeleteMobileDataProviderModal = () => { setMobileDataProviderToDeleteId(null); setIsConfirmDeleteMobileDataProviderModalOpen(false); };
-  const handleNavigateToEditGiftCard = (card: GiftCard) => { navigate(`/admin/gift-cards/edit/${card.id}`); };
-  const handleSaveGiftCard = (cardData: GiftCard) => { if (cardData.id) { setGiftCards(prev => prev.map(c => c.id === cardData.id ? { ...cardData } : c)); } else { const newCard: GiftCard = { ...cardData, id: `giftcard_${Date.now()}` }; setGiftCards(prev => [newCard, ...prev]); } navigate('/admin/gift-cards'); };
+  const handleNavigateToEditGiftCard = (card: GiftCard) => { navigate(`/jarya/admin/gift-cards/edit/${card.id}`); };
+  const handleSaveGiftCard = (cardData: GiftCard) => { if (cardData.id) { setGiftCards(prev => prev.map(c => c.id === cardData.id ? { ...cardData } : c)); } else { const newCard: GiftCard = { ...cardData, id: `giftcard_${Date.now()}` }; setGiftCards(prev => [newCard, ...prev]); } navigate('/jarya/admin/gift-cards'); };
   const handleDeleteGiftCardClick = (cardId: string) => { setGiftCardToDeleteId(cardId); setIsConfirmDeleteGiftCardModalOpen(true); };
   const handleConfirmDeleteGiftCard = () => { if (giftCardToDeleteId) { setGiftCards(prev => prev.filter(c => c.id !== giftCardToDeleteId)); setGiftCardToDeleteId(null); setIsConfirmDeleteGiftCardModalOpen(false); } };
   const handleCloseConfirmDeleteGiftCardModal = () => { setGiftCardToDeleteId(null); setIsConfirmDeleteGiftCardModalOpen(false); };
@@ -859,7 +860,7 @@ function App() {
     setCampaigns(prev => [newCampaign, ...prev]);
     setToast({ message: t('admin.campaign_sent_success'), type: 'success' });
     setTimeout(() => setToast(null), 4000);
-    navigate('/admin/marketing');
+    navigate('/jarya/admin/marketing');
   };
 
   const filteredAdminProducts = products.filter(p => t(p.nameKey).toLowerCase().includes(adminSearchQuery.toLowerCase()) || p.category.toLowerCase().includes(adminSearchQuery.toLowerCase()));
@@ -870,11 +871,19 @@ function App() {
   const filteredAdminSubscribers = subscribers.filter(s => s.email.toLowerCase().includes(adminSearchQuery.toLowerCase()));
 
   const MainContent = () => {
-    const adminMatch = location.match(/^\/admin(\/.*)?$/);
+    // Special route for login page, always accessible
+    if (location === '/jarya/admin/login') {
+      return <AdminLoginPage onLogin={handleAdminLogin} onBackToStore={handleBackToStore} />;
+    }
+
+    // New regex for all other admin routes
+    const adminMatch = location.match(/^\/jarya\/admin(\/.*)?$/);
     if (adminMatch) {
-        if (!isAdminAuthenticated) {
-            return <AdminLoginPage onLogin={handleAdminLogin} />;
-        }
+      if (!isAdminAuthenticated) {
+        // Redirect to login if not authenticated
+        navigate('/jarya/admin/login');
+        return null; // Render nothing while redirecting
+      }
         
         const adminPath = adminMatch[1] || '/dashboard';
         const pathParts = adminPath.split('/').filter(Boolean);
@@ -893,33 +902,33 @@ function App() {
 
         const renderAdminView = () => {
             switch(adminPageView) {
-                case 'products': return <AdminProductsPage products={filteredAdminProducts} onNavigateToAddProduct={() => navigate('/admin/products/add')} onEditProduct={handleNavigateToEditProduct} onDeleteProduct={handleDeleteProductClick} />;
-                case 'addProduct': return <AdminAddProductPage onSave={handleSaveProduct} onCancel={() => navigate('/admin/products')} categories={settings.categories.filter(c => c.name !== 'ALL')} />;
+                case 'products': return <AdminProductsPage products={filteredAdminProducts} onNavigateToAddProduct={() => navigate('/jarya/admin/products/add')} onEditProduct={handleNavigateToEditProduct} onDeleteProduct={handleDeleteProductClick} />;
+                case 'addProduct': return <AdminAddProductPage onSave={handleSaveProduct} onCancel={() => navigate('/jarya/admin/products')} categories={settings.categories.filter(c => c.name !== 'ALL')} />;
                 case 'editProduct': {
                     const productToEdit = products.find(p => p.id === editingId);
-                    return productToEdit ? <AdminEditProductPage productToEdit={productToEdit} onSave={handleSaveProduct} onCancel={() => navigate('/admin/products')} categories={settings.categories.filter(c => c.name !== 'ALL')} /> : null;
+                    return productToEdit ? <AdminEditProductPage productToEdit={productToEdit} onSave={handleSaveProduct} onCancel={() => navigate('/jarya/admin/products')} categories={settings.categories.filter(c => c.name !== 'ALL')} /> : null;
                 }
                 case 'orders': return <AdminOrdersPage orders={filteredAdminOrders} onUpdateOrder={handleUpdateOrder} onDeleteOrders={handleDeleteOrders} />;
-                case 'pages': return <AdminPagesPage pages={filteredAdminPages} onNavigateToAddPage={() => navigate('/admin/pages/add')} onEditPage={handleNavigateToEditPage} onDeletePage={handleDeletePageClick} />;
-                case 'addPage': return <AdminEditPage onSave={handleSavePage} onCancel={() => navigate('/admin/pages')} />;
+                case 'pages': return <AdminPagesPage pages={filteredAdminPages} onNavigateToAddPage={() => navigate('/jarya/admin/pages/add')} onEditPage={handleNavigateToEditPage} onDeletePage={handleDeletePageClick} />;
+                case 'addPage': return <AdminEditPage onSave={handleSavePage} onCancel={() => navigate('/jarya/admin/pages')} />;
                 case 'editPage': {
                     const pageToEdit = pages.find(p => p.id === editingId);
-                    return pageToEdit ? <AdminEditPage pageToEdit={pageToEdit} onSave={handleSavePage} onCancel={() => navigate('/admin/pages')} /> : null;
+                    return pageToEdit ? <AdminEditPage pageToEdit={pageToEdit} onSave={handleSavePage} onCancel={() => navigate('/jarya/admin/pages')} /> : null;
                 }
-                case 'mobileDataProviders': return <AdminMobileDataProvidersPage providers={filteredAdminMobileDataProviders} onNavigateToAddProvider={() => navigate('/admin/mobile-data-providers/add')} onEditProvider={handleNavigateToEditMobileDataProvider} onDeleteProvider={handleDeleteMobileDataProviderClick} />;
-                case 'addMobileDataProvider': return <AdminEditMobileDataProviderPage onSave={handleSaveMobileDataProvider} onCancel={() => navigate('/admin/mobile-data-providers')} />;
+                case 'mobileDataProviders': return <AdminMobileDataProvidersPage providers={filteredAdminMobileDataProviders} onNavigateToAddProvider={() => navigate('/jarya/admin/mobile-data-providers/add')} onEditProvider={handleNavigateToEditMobileDataProvider} onDeleteProvider={handleDeleteMobileDataProviderClick} />;
+                case 'addMobileDataProvider': return <AdminEditMobileDataProviderPage onSave={handleSaveMobileDataProvider} onCancel={() => navigate('/jarya/admin/mobile-data-providers')} />;
                 case 'editMobileDataProvider': {
                     const providerToEdit = mobileDataProviders.find(p => p.id === editingId);
-                    return providerToEdit ? <AdminEditMobileDataProviderPage providerToEdit={providerToEdit} onSave={handleSaveMobileDataProvider} onCancel={() => navigate('/admin/mobile-data-providers')} /> : null;
+                    return providerToEdit ? <AdminEditMobileDataProviderPage providerToEdit={providerToEdit} onSave={handleSaveMobileDataProvider} onCancel={() => navigate('/jarya/admin/mobile-data-providers')} /> : null;
                 }
-                case 'giftCards': return <AdminGiftCardsPage cards={filteredAdminGiftCards} onNavigateToAddCard={() => navigate('/admin/gift-cards/add')} onEditCard={handleNavigateToEditGiftCard} onDeleteCard={handleDeleteGiftCardClick} />;
-                case 'addGiftCard': return <AdminEditGiftCardPage onSave={handleSaveGiftCard} onCancel={() => navigate('/admin/gift-cards')} />;
+                case 'giftCards': return <AdminGiftCardsPage cards={filteredAdminGiftCards} onNavigateToAddCard={() => navigate('/jarya/admin/gift-cards/add')} onEditCard={handleNavigateToEditGiftCard} onDeleteCard={handleDeleteGiftCardClick} />;
+                case 'addGiftCard': return <AdminEditGiftCardPage onSave={handleSaveGiftCard} onCancel={() => navigate('/jarya/admin/gift-cards')} />;
                 case 'editGiftCard': {
                     const cardToEdit = giftCards.find(c => c.id === editingId);
-                    return cardToEdit ? <AdminEditGiftCardPage cardToEdit={cardToEdit} onSave={handleSaveGiftCard} onCancel={() => navigate('/admin/gift-cards')} /> : null;
+                    return cardToEdit ? <AdminEditGiftCardPage cardToEdit={cardToEdit} onSave={handleSaveGiftCard} onCancel={() => navigate('/jarya/admin/gift-cards')} /> : null;
                 }
-                case 'marketing': return <AdminMarketingPage campaigns={campaigns} subscribers={filteredAdminSubscribers} onNavigateToCompose={() => navigate('/admin/marketing/compose')} onDeleteSubscribers={handleDeleteSubscribers} />;
-                case 'composeCampaign': return <AdminComposeCampaignPage onSendCampaign={handleSendCampaign} onCancel={() => navigate('/admin/marketing')} />;
+                case 'marketing': return <AdminMarketingPage campaigns={campaigns} subscribers={filteredAdminSubscribers} onNavigateToCompose={() => navigate('/jarya/admin/marketing/compose')} onDeleteSubscribers={handleDeleteSubscribers} />;
+                case 'composeCampaign': return <AdminComposeCampaignPage onSendCampaign={handleSendCampaign} onCancel={() => navigate('/jarya/admin/marketing')} />;
                 case 'settings': return <AdminSettingsPage settings={settings} onSettingsChange={setSettings} />;
                 case 'dashboard': default: return <AdminDashboard orders={orders} products={products} />;
             }
@@ -930,7 +939,7 @@ function App() {
               onSwitchToStore={() => navigate('/')} 
               onLogout={handleAdminLogout}
               activeView={adminPageView} 
-              onNavigate={(view) => navigate(`/admin/${view}`)} 
+              onNavigate={(view) => navigate(`/jarya/admin/${view}`)} 
               searchQuery={adminSearchQuery} 
               onSearchChange={setAdminSearchQuery}
             >
@@ -939,6 +948,12 @@ function App() {
           );
     }
     
+    // Legacy redirect for old /admin links
+    if (location.startsWith('/admin')) {
+        navigate(location.replace('/admin', '/jarya/admin'));
+        return null; // Render nothing while redirecting
+    }
+
     if (settings.advanced.maintenanceMode) {
       return <MaintenancePage />;
     }
@@ -983,6 +998,8 @@ function App() {
                  return <RequestProductPage onSubmit={handleProductRequestSubmit} onBackToStore={handleBackToStore} currentUser={currentUser} settings={settings.services.requestProduct} />;
             case '/service/request-product/thankyou':
                  return <RequestProductThankYouPage onContinueShopping={handleBackToStore} />;
+            case '/service/mobile-data':
+                return <MobileDataTopUpPage providers={mobileDataProviders} onAddToCart={handleMobileDataAddToCart} onBuyNow={handleMobileDataBuyNow} onBackToStore={handleBackToStore} />;
             case '/account':
                  return currentUser ? <UserPanelPage currentUser={currentUser} orders={orders.filter(o => o.customerEmail === currentUser.email)} subscriptions={subscriptions.filter(s => s.userId === currentUser.id)} onUpdateUser={handleUpdateUser} onBackToStore={handleBackToStore} initialTab={initialUserPanelTab} /> : <div/>;
             case '/contact':
@@ -996,12 +1013,11 @@ function App() {
                     categories={settings.categories}
                     onSelectProduct={handleSelectProduct}
                     onSelectGiftCard={handleSelectGiftCard}
-                    onSelectMobileDataProvider={handleSelectMobileDataProvider}
                     onNavigateToPage={handleNavigateToPage}
                     onNavigateToAliExpress={handleNavigateToAliExpress}
                     onNavigateToInternationalShopper={handleNavigateToInternationalShopper}
                     onNavigateToRequestProduct={handleNavigateToRequestProduct}
-                    onSelectCategory={handleSelectCategory}
+                    onNavigateToMobileData={handleNavigateToMobileData}
                 />;
             case '/':
             default:
@@ -1049,7 +1065,7 @@ function App() {
                                     requestProductPromo: <RequestProductPromoBanner key="requestProductPromo" onNavigate={handleNavigateToRequestProduct} />,
                                     internationalShopperPromo: <InternationalShopperPromoBanner key="internationalShopperPromo" onLearnMore={handleNavigateToInternationalShopper} />,
                                     aliexpressPromo: <AliExpressPromoBanner key="aliexpressPromo" onLearnMore={handleNavigateToAliExpress} />,
-                                    mobileData: <MobileDataGallery key="mobileData" providers={mobileDataProviders} onSelectProvider={handleSelectMobileDataProvider} />,
+                                    mobileDataPromoBanner: <MobileDataPromoBanner key="mobileDataPromoBanner" onNavigate={handleNavigateToMobileData} />,
                                     giftCards: <GiftCardGallery key="giftCards" giftCards={giftCards} onSelectGiftCard={handleSelectGiftCard} />,
                                     whyUs: <WhyUs key="whyUs" settings={settings} />,
                                 };
