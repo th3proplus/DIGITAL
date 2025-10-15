@@ -13,6 +13,7 @@ interface AdminProductModalProps {
 
 const defaultProductData: Product = {
     id: '', // Will be overwritten or generated
+    // FIX: Add missing 'slug' property to match the Product type.
     slug: '',
     nameKey: '',
     logoUrl: '',
