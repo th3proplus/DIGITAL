@@ -1,6 +1,7 @@
 import React from 'react';
 import { Product } from '../types';
-import { useI18n, useSettings } from '../hooks/useI18n';
+import { useI18n } from '../hooks/useI18n';
+import { useSettings } from '../hooks/useI18n';
 import { Icon } from './Icon';
 
 interface ProductCardProps {
@@ -27,7 +28,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelectProdu
   return (
     <div 
       onClick={handleCardClick}
-      className={`relative rounded-2xl shadow-lg overflow-hidden flex flex-col transition-all duration-300 ease-out group ${isAvailable ? 'hover:shadow-2xl hover:shadow-brand-red/20 transform hover:-translate-y-1 hover:scale-105 cursor-pointer' : 'cursor-not-allowed'} ${isComingSoon ? 'animate-glow' : ''}`}
+      className={`relative rounded-2xl shadow-lg overflow-hidden flex flex-col transition-all duration-500 ease-out group ${isAvailable ? 'hover:shadow-2xl hover:shadow-brand-red/20 transform hover:-translate-y-2 cursor-pointer' : 'cursor-not-allowed'} ${isComingSoon ? 'animate-glow' : ''}`}
       aria-label={`View details for ${name}`}
       role="button"
       tabIndex={isAvailable ? 0 : -1}
@@ -39,7 +40,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelectProdu
           <img 
             src={product.imageUrl} 
             alt="" // Decorative image
-            className="w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-110" 
+            className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110" 
           />
         </div>
 

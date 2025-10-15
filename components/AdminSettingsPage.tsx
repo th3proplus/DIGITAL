@@ -75,6 +75,7 @@ const AccordionItem: React.FC<{
   );
 };
 
+// FIX: Updated InputField prop types to accept all standard input attributes, including 'required'.
 const InputField: React.FC<React.InputHTMLAttributes<HTMLInputElement> & { label: string; description?: string; }> = ({ label, id, description, ...props }) => (
     <div>
         <label htmlFor={id} className="block text-sm font-medium text-slate-600 mb-1.5">{label}</label>
@@ -667,6 +668,7 @@ export const AdminSettingsPage: React.FC<AdminSettingsPageProps> = ({ settings, 
                             onToggle={() => setOpenAccordion(openAccordion === 'exploreSections' ? null : 'exploreSections')}
                         >
                             <div className="space-y-6">
+                                {/* FIX: Use a more specific type assertion to correctly type `sectionKey` as a key of sections. */}
                                 {(Object.keys(localSettings.explorePage.sections) as (keyof Settings['explorePage']['sections'])[]).map(sectionKey => {
                                     const section = localSettings.explorePage.sections[sectionKey];
                                     const sectionLabels: Record<string, string> = {

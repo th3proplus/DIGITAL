@@ -6,126 +6,103 @@ interface SetupPageProps {
   onSetupComplete: () => void;
 }
 
-const InputField: React.FC<React.InputHTMLAttributes<HTMLInputElement> & { label: string; icon: string }> = ({ label, id, icon, ...props }) => (
-    <div>
-      <label htmlFor={id} className="block text-sm font-medium text-slate-700 mb-1">{label}</label>
-      <div className="relative">
-        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <Icon name={icon} className="h-5 w-5 text-gray-400" />
-        </div>
-        <input
-          id={id}
-          className="appearance-none block w-full px-3 py-3 pl-10 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand-red focus:border-brand-red sm:text-sm"
-          {...props}
-        />
-      </div>
-    </div>
-);
-
 export const SetupPage: React.FC<SetupPageProps> = ({ onSetupComplete }) => {
+  const [step, setStep] = useState(1); // 1: Form, 2: Connecting, 3: Success
   const [dbConfig, setDbConfig] = useState({
     host: 'localhost',
-    port: '3306',
-    user: 'root',
-    password: '',
-    database: 'nexus_store'
+    name: '',
+    user: '',
+    pass: '',
   });
-  const [isTesting, setIsTesting] = useState(false);
-  const [testSuccess, setTestSuccess] = useState(false);
-  const [testError, setTestError] = useState('');
+  const [error, setError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDbConfig({ ...dbConfig, [e.target.name]: e.target.value });
-    setTestSuccess(false);
-    setTestError('');
-  };
-
-  const handleTestConnection = async () => {
-    setIsTesting(true);
-    setTestError('');
-    setTestSuccess(false);
-    // Simulate an API call to the backend to test the connection
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    // In a real scenario, you'd check the response from your server.
-    // Here, we'll just simulate a success.
-    setIsTesting(false);
-    setTestSuccess(true);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (testSuccess) {
-      // In a real app, you would send these credentials to your backend
-      // to be saved (e.g., in a .env file).
-      console.log('Saving configuration:', dbConfig);
-      onSetupComplete();
-    } else {
-      setTestError('Please test the connection successfully before continuing.');
-    }
+    setError('');
+    setStep(2); // Show connecting state
+
+    // Simulate connection and installation
+    setTimeout(() => {
+      // Simulate a potential error
+      if (dbConfig.pass === 'fail') {
+        setError('Could not connect to the database. Please check your credentials.');
+        setStep(1);
+        return;
+      }
+
+      setStep(3); // Show success state
+      setTimeout(() => {
+        onSetupComplete();
+      }, 2000); // Wait 2 seconds on success screen before redirecting
+    }, 2500); // Simulate 2.5 second connection time
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-slate-100 p-4" dir="ltr">
-      <div className="w-full max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden flex">
-        <div className="hidden lg:flex flex-col justify-between w-1/2 p-12 bg-gradient-to-br from-slate-900 to-slate-700 text-white">
-          <div>
-            <Logo />
-            <h1 className="text-4xl font-bold mt-8">Store Setup</h1>
-            <p className="text-slate-300 mt-2">Connect to your database to get started.</p>
-            <div className="mt-10 p-4 bg-slate-800/50 rounded-lg border border-slate-600">
-              <h3 className="font-semibold flex items-center gap-2"><Icon name="database" className="w-5 h-5 text-brand-red"/> MySQL Database</h3>
-              <p className="text-sm text-slate-400 mt-2">
-                Provide the connection details for your local MySQL database. Your backend server will use these credentials to store and manage products, orders, and user data. This information is not stored in the browser.
-              </p>
+      <div className="w-full max-w-lg mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden">
+        <div className="p-8 sm:p-12">
+          <div className="text-center mb-10">
+            <div className="inline-block">
+              <Logo />
             </div>
+            <h1 className="text-3xl font-extrabold text-slate-900 mt-4">
+              Welcome to Setup
+            </h1>
+            <p className="text-slate-500 mt-2">Let's get your digital store up and running.</p>
           </div>
-          <p className="text-xs text-slate-400">&copy; 2025 NEXUS. All Rights Reserved.</p>
-        </div>
-        <div className="w-full lg:w-1/2 p-8 sm:p-12 flex flex-col justify-center">
-          <div className="w-full max-w-sm mx-auto">
-            <div className="text-center lg:text-left mb-10">
-              <h2 className="text-3xl font-extrabold text-slate-900">
-                Database Connection
-              </h2>
-              <p className="text-slate-500 mt-2">Enter your MySQL credentials.</p>
-            </div>
-            <form className="space-y-5" onSubmit={handleSubmit}>
-              <InputField label="Host" id="host" name="host" icon="globe" value={dbConfig.host} onChange={handleChange} required />
-              <InputField label="Port" id="port" name="port" icon="list" value={dbConfig.port} onChange={handleChange} required />
-              <InputField label="Database Name" id="database" name="database" icon="database" value={dbConfig.database} onChange={handleChange} required />
-              <InputField label="Username" id="user" name="user" icon="user" value={dbConfig.user} onChange={handleChange} required />
-              <InputField label="Password" id="password" name="password" icon="key" type="password" value={dbConfig.password} onChange={handleChange} />
-              
-              {testError && <p className="text-sm text-red-600">{testError}</p>}
-              {testSuccess && <p className="text-sm text-green-600 font-semibold flex items-center gap-2"><Icon name="check" className="w-5 h-5"/> Connection successful!</p>}
 
-              <div className="flex flex-col sm:flex-row gap-3 !mt-8">
-                <button
-                  type="button"
-                  onClick={handleTestConnection}
-                  disabled={isTesting}
-                  className="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 disabled:opacity-50"
-                >
-                  {isTesting ? (
-                    <>
-                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-slate-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Testing...
-                    </>
-                  ) : 'Test Connection'}
-                </button>
-                <button
-                  type="submit"
-                  disabled={!testSuccess}
-                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-brand-red hover:bg-brand-red-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-red disabled:bg-slate-400 disabled:cursor-not-allowed"
-                >
-                  Save & Continue
+          {step === 1 && (
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <h2 className="text-lg font-semibold text-slate-700 border-b pb-2 flex items-center gap-2">
+                <Icon name="database" className="text-xl" />
+                MySQL Database Connection
+              </h2>
+              <div>
+                <label htmlFor="host" className="block text-sm font-medium text-slate-700 mb-1">Database Host</label>
+                <input id="host" name="host" type="text" value={dbConfig.host} onChange={handleChange} required className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-red focus:border-brand-red" />
+              </div>
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-1">Database Name</label>
+                <input id="name" name="name" type="text" value={dbConfig.name} onChange={handleChange} required placeholder="e.g., nexus_store" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-red focus:border-brand-red" />
+              </div>
+              <div>
+                <label htmlFor="user" className="block text-sm font-medium text-slate-700 mb-1">Database User</label>
+                <input id="user" name="user" type="text" value={dbConfig.user} onChange={handleChange} required placeholder="e.g., nexus_user" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-red focus:border-brand-red" />
+              </div>
+              <div>
+                <label htmlFor="pass" className="block text-sm font-medium text-slate-700 mb-1">Database Password</label>
+                <input id="pass" name="pass" type="password" value={dbConfig.pass} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-red focus:border-brand-red" />
+              </div>
+              {error && <p className="text-sm text-red-600 text-center">{error}</p>}
+              <div>
+                <button type="submit" className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-brand-red hover:bg-brand-red-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-red">
+                  Connect & Install
                 </button>
               </div>
             </form>
-          </div>
+          )}
+
+          {step === 2 && (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-red mx-auto"></div>
+              <p className="mt-6 text-slate-600 font-semibold">Connecting to database...</p>
+              <p className="text-sm text-slate-500 mt-1">This may take a moment.</p>
+            </div>
+          )}
+          
+          {step === 3 && (
+            <div className="text-center py-12">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Icon name="check" className="w-10 h-10 text-green-600" />
+              </div>
+              <p className="mt-4 text-slate-600 font-semibold text-lg">Installation Complete!</p>
+              <p className="text-slate-500 text-sm">Redirecting you to your store...</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

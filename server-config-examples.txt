@@ -1,127 +1,66 @@
-# Backend Setup Guide: Connecting to MySQL
+# Example Server Configurations for Single-Page Application (SPA)
 
-This guide provides examples for connecting your backend server to the MySQL database using the credentials you've configured in the setup page.
-
-The frontend application will send these credentials to your backend only once during setup. Your backend should save them securely, for example, in a `.env` file, and use them to establish a database connection pool.
+This file provides example configurations for popular web servers to correctly handle client-side routing for this application. For any path requested by a user, the server should return the main `index.html` file, allowing the React router to take over.
 
 ---
 
-## 1. Environment Variables (.env)
+## Netlify
 
-Your backend should read the database configuration from environment variables. Create a `.env` file in the root of your server project:
+Create a file named `_redirects` in your publish directory (the root of your site) with the following content:
 
 ```
-DB_HOST=localhost
-DB_PORT=3306
-DB_USER=your_db_user
-DB_PASSWORD=your_db_password
-DB_NAME=your_db_name
+/*    /index.html   200
+```
+This rule tells Netlify to serve `index.html` for any path that doesn't match a deployed file.
+
+---
+
+## Nginx Configuration
+
+Add the following `location` block to your server block configuration (e.g., in `/etc/nginx/sites-available/your-site`).
+
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+    
+    # Path to your project's built files
+    root /var/www/your-project-root; 
+    index index.html;
+
+    location / {
+        # This is the key part: try to serve the file directly,
+        # otherwise fall back to serving index.html.
+        try_files $uri $uri/ /index.html;
+    }
+
+    # You might also want to add configuration for caching, gzip, etc.
+}
 ```
 
 ---
 
-## 2. Example Backend Implementations
+## Apache Configuration
 
-Here are examples of how to use these variables in popular backend frameworks.
+Ensure `mod_rewrite` is enabled. Then, create or edit a `.htaccess` file in the root directory of your project (the same directory as `index.html`).
 
-### A. Node.js with Express & mysql2
-
-First, install the necessary packages:
-`npm install express mysql2 dotenv`
-
-Then, in your main server file (e.g., `server.js` or `index.js`):
-
-```javascript
-// Load environment variables
-require('dotenv').config();
-
-const express = require('express');
-const mysql = require('mysql2/promise');
-
-const app = express();
-const PORT = process.env.PORT || 3001;
-
-// Create a MySQL connection pool
-// This is more efficient than creating a new connection for every query.
-const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  port: process.env.DB_PORT || 3306,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-});
-
-// Example API endpoint to get products
-app.get('/api/products', async (req, res) => {
-  try {
-    const [rows, fields] = await pool.query('SELECT * FROM products');
-    res.json(rows);
-  } catch (err) {
-    console.error('Error fetching products:', err);
-    res.status(500).json({ error: 'Failed to retrieve data from the database.' });
-  }
-});
-
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+```apache
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  
+  # Don't rewrite calls to files or directories that exist
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+  
+  # Rewrite all other calls to index.html
+  RewriteRule ^ index.html [L]
+</IfModule>
 ```
+If you are deploying to a subdirectory, e.g. `your-domain.com/my-app/`, you will need to add `RewriteBase /my-app/` after `RewriteEngine On`.
 
-### B. Python with Flask & mysql-connector-python
+---
 
-First, install the necessary packages:
-`pip install Flask mysql-connector-python python-dotenv`
+## Other Servers
 
-Then, in your main application file (e.g., `app.py`):
-
-```python
-import os
-from dotenv import load_dotenv
-from flask import Flask, jsonify
-import mysql.connector
-from mysql.connector import pooling
-
-# Load environment variables
-load_dotenv()
-
-app = Flask(__name__)
-
-# Create a MySQL connection pool
-db_pool = pooling.MySQLConnectionPool(
-    pool_name="my_pool",
-    pool_size=5,
-    host=os.getenv('DB_HOST'),
-    port=os.getenv('DB_PORT', 3306),
-    user=os.getenv('DB_USER'),
-    password=os.getenv('DB_PASSWORD'),
-    database=os.getenv('DB_NAME')
-)
-
-# Example API endpoint to get products
-@app.route('/api/products')
-def get_products():
-    try:
-        # Get a connection from the pool
-        conn = db_pool.get_connection()
-        cursor = conn.cursor(dictionary=True)
-        
-        cursor.execute("SELECT * FROM products")
-        products = cursor.fetchall()
-        
-        return jsonify(products)
-        
-    except Exception as e:
-        print(f"Error fetching products: {e}")
-        return jsonify({"error": "Failed to retrieve data from the database."}), 500
-        
-    finally:
-        if 'conn' in locals() and conn.is_connected():
-            cursor.close()
-            conn.close()
-
-if __name__ == '__main__':
-    app.run(debug=True, port=os.getenv('PORT', 3001))
-```
+Most modern web servers and hosting platforms have a similar "rewrite" or "fallback" feature. Please consult the documentation for your specific server environment and look for instructions on deploying a "Single-Page Application (SPA)".
