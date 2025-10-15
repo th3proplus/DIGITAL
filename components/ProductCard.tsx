@@ -28,7 +28,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelectProdu
   return (
     <div 
       onClick={handleCardClick}
-      className={`relative rounded-2xl shadow-lg overflow-hidden flex flex-col transition-all duration-300 ${isAvailable ? 'hover:shadow-2xl transform hover:-translate-y-2 cursor-pointer' : 'cursor-not-allowed'} ${isComingSoon ? 'animate-glow' : ''}`}
+      className={`relative rounded-2xl shadow-lg overflow-hidden flex flex-col transition-all duration-500 ease-out group ${isAvailable ? 'hover:shadow-2xl hover:shadow-brand-red/20 transform hover:-translate-y-2 cursor-pointer' : 'cursor-not-allowed'} ${isComingSoon ? 'animate-glow' : ''}`}
       aria-label={`View details for ${name}`}
       role="button"
       tabIndex={isAvailable ? 0 : -1}
@@ -36,11 +36,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelectProdu
     >
       <div className={product.status === 'out_of_stock' ? 'grayscale' : ''}>
         {/* Background Image */}
-        <div className="h-40 w-full">
+        <div className="h-40 w-full overflow-hidden">
           <img 
             src={product.imageUrl} 
             alt="" // Decorative image
-            className="w-full h-full object-cover" 
+            className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110" 
           />
         </div>
 

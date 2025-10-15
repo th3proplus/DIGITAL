@@ -88,7 +88,6 @@ export const Cart: React.FC<CartProps> = ({ isOpen, onClose, cartItems, onRemove
                           )}
                         </div>
                         <p className="text-sm text-brand-text-secondary">{variantName}</p>
-                        {/* FIX: Corrected typo 'mobileRecharge' to 'mobileData' to match the type definition. */}
                         {item.metadata?.customOrderType === 'mobileData' && item.metadata.phoneNumber && (
                             <p className="text-sm font-semibold text-brand-text-primary mt-1">{item.metadata.phoneNumber}</p>
                         )}

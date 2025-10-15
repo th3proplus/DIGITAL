@@ -1099,28 +1099,28 @@ function App() {
             default:
                 return (
                     <>
-                        <div className="bg-brand-red">
+                        <div className="bg-gradient-to-br from-red-50 via-red-100 to-orange-100">
                             <div className="container">
-                                <div className="text-center pt-12 pb-16 text-brand-text-on-red">
-                                    <h2 className="text-4xl md:text-5xl font-extrabold mb-2 tracking-tight">{settings.homePage.hero.title[language]}</h2>
-                                    <p className="text-lg opacity-90">{settings.homePage.hero.subtitle[language]}</p>
+                                <div className="text-center pt-16 pb-20 text-brand-text-primary">
+                                    <h2 className="text-4xl md:text-5xl font-extrabold mb-3 tracking-tight">{settings.homePage.hero.title[language]}</h2>
+                                    <p className="text-lg text-brand-text-secondary opacity-90 max-w-2xl mx-auto">{settings.homePage.hero.subtitle[language]}</p>
                                 </div>
                             </div>
                         </div>
                   
-                        <nav className="bg-white shadow-sm">
+                        <nav className="bg-white/70 backdrop-blur-lg sticky top-[80px] z-10 -mt-8 shadow-sm">
                             <div className="container">
-                              <div className="flex items-center gap-4 overflow-x-auto no-scrollbar -mx-6 px-6">
+                              <div className="flex items-center justify-center gap-2 overflow-x-auto no-scrollbar py-4">
                                  {settings.categories.map((category) => (
                                     <button 
                                         key={category.id} 
-                                        onClick={() => setActiveCategory(category.name)}
-                                        className={`flex flex-col items-center gap-2 pt-4 pb-3 px-2 text-sm font-medium transition-colors duration-200 shrink-0 border-b-2 whitespace-nowrap ${
+                                        onClick={() => handleSelectCategory(category.name)}
+                                        className={`flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-full transition-all duration-300 whitespace-nowrap ${
                                             activeCategory === category.name 
-                                            ? 'text-brand-red border-brand-red' 
-                                            : 'text-brand-text-secondary border-transparent hover:text-brand-red'
+                                            ? 'bg-brand-red text-white shadow-md' 
+                                            : 'text-brand-text-secondary bg-white/50 hover:bg-red-50 hover:text-brand-red'
                                         }`}>
-                                        <Icon name={category.icon} className="text-2xl" />
+                                        <Icon name={category.icon} className="text-lg" />
                                         <span>{category.displayName[language]}</span>
                                     </button>
                                  ))}
@@ -1155,7 +1155,7 @@ function App() {
     
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
-            <header className="bg-white shadow-sm sticky top-0 z-20">
+            <header className="bg-white/80 backdrop-blur-lg sticky top-0 z-20 shadow-sm">
                 <Header 
                     onCartClick={() => setIsCartOpen(true)}
                     onSearchClick={() => setIsSearchModalOpen(true)}
