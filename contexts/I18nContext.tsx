@@ -152,7 +152,7 @@ const initialSettings: Settings = {
         }
       },
       componentsOrder: [
-        'mobileDataPromoBanner',
+        'mobileData',
         'giftCards',
         'requestProductPromo',
         'internationalShopperPromo',
@@ -389,33 +389,33 @@ export const SettingsContext = createContext<SettingsContextType | undefined>(un
 
 const SETTINGS_STORAGE_KEY = 'nexus-digital-store-settings';
 
+const simpleDeepMerge = (initial: any, saved: any): any => {
+  const merged = { ...initial };
+  for (const key in saved) {
+    if (Object.prototype.hasOwnProperty.call(saved, key)) {
+      const initialValue = initial[key];
+      const savedValue = saved[key];
+
+      if (
+        typeof savedValue === 'object' && savedValue !== null && !Array.isArray(savedValue) &&
+        Object.prototype.hasOwnProperty.call(initial, key) &&
+        typeof initialValue === 'object' && initialValue !== null && !Array.isArray(initialValue)
+      ) {
+        merged[key] = simpleDeepMerge(initialValue, savedValue);
+      } else {
+        merged[key] = savedValue;
+      }
+    }
+  }
+  return merged;
+};
+
 export const I18nProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [language, setLanguage] = useState<Language>('ar'); // Default to Arabic
   const [translations, setTranslations] = useState<{ [key in Language]?: Translations }>({});
   const [isLoading, setIsLoading] = useState(true);
   
   const [settings, setSettings] = useState<Settings>(() => {
-    const simpleDeepMerge = (initial: any, saved: any): any => {
-      const merged = { ...initial };
-      for (const key in saved) {
-        if (Object.prototype.hasOwnProperty.call(saved, key)) {
-          const initialValue = initial[key];
-          const savedValue = saved[key];
-
-          if (
-            typeof savedValue === 'object' && savedValue !== null && !Array.isArray(savedValue) &&
-            Object.prototype.hasOwnProperty.call(initial, key) &&
-            typeof initialValue === 'object' && initialValue !== null && !Array.isArray(initialValue)
-          ) {
-            merged[key] = simpleDeepMerge(initialValue, savedValue);
-          } else {
-            merged[key] = savedValue;
-          }
-        }
-      }
-      return merged;
-    };
-
     try {
       const storedSettings = window.localStorage.getItem(SETTINGS_STORAGE_KEY);
       if (storedSettings) {

@@ -4,6 +4,7 @@ import { useI18n, useSettings } from '../hooks/useI18n';
 import { Icon } from './Icon';
 import { ProductCard } from './ProductCard';
 import { GiftCardGallery } from './GiftCardGallery';
+import { MobileDataGallery } from './MobileDataGallery';
 
 interface ExplorePageProps {
   products: Product[];
@@ -13,11 +14,11 @@ interface ExplorePageProps {
   categories: Category[];
   onSelectProduct: (product: Product) => void;
   onSelectGiftCard: (card: GiftCard) => void;
+  onSelectMobileDataProvider: (provider: MobileDataProvider) => void;
   onNavigateToPage: (slug: string) => void;
   onNavigateToAliExpress: () => void;
   onNavigateToInternationalShopper: () => void;
   onNavigateToRequestProduct: () => void;
-  onNavigateToMobileData: () => void;
 }
 
 // A generic card for services, pages, etc.
@@ -46,15 +47,16 @@ const Section: React.FC<{ title: string; children: React.ReactNode; className?: 
 export const ExplorePage: React.FC<ExplorePageProps> = ({
   products,
   giftCards,
+  mobileDataProviders,
   pages,
   categories,
   onSelectProduct,
   onSelectGiftCard,
+  onSelectMobileDataProvider,
   onNavigateToPage,
   onNavigateToAliExpress,
   onNavigateToInternationalShopper,
   onNavigateToRequestProduct,
-  onNavigateToMobileData,
 }) => {
     const { t, language } = useI18n();
     const { settings } = useSettings();
@@ -117,21 +119,21 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({
                                 description={t('aliexpress_shopper.subtitle')}
                                 icon="cart"
                                 onClick={onNavigateToAliExpress}
-                                cta="Shop Now"
+                                cta={t('explore.cta.shop_now')}
                             />
                             <InfoCard 
                                 title={t('international_shopper.title')}
                                 description={t('international_shopper.subtitle')}
                                 icon="store"
                                 onClick={onNavigateToInternationalShopper}
-                                cta="Get a Quote"
+                                cta={t('explore.cta.get_a_quote')}
                             />
                              <InfoCard 
                                 title={t('request_product.title')}
                                 description={t('request_product.subtitle')}
                                 icon="package"
                                 onClick={onNavigateToRequestProduct}
-                                cta="Request"
+                                cta={t('explore.cta.request')}
                             />
                         </div>
                     </Section>
@@ -149,22 +151,14 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({
             )}
 
             {/* Mobile Data Section */}
-            {explorePage.sections.mobileData.enabled && (
-                <div className="container">
-                    <Section title={explorePage.sections.mobileData.title[language]}>
-                        <div className="max-w-xl mx-auto">
-                            <InfoCard
-                                title={t('services.mobile_data_page.title')}
-                                description={settings.homePage.mobileDataPromo.subtitle[language]}
-                                icon="wallet"
-                                onClick={onNavigateToMobileData}
-                                cta="Top-Up Now"
-                            />
-                        </div>
-                    </Section>
-                </div>
+            {explorePage.sections.mobileData.enabled && mobileDataProviders.length > 0 && (
+                <MobileDataGallery 
+                    providers={mobileDataProviders}
+                    onSelectProvider={onSelectMobileDataProvider}
+                    title={explorePage.sections.mobileData.title[language]}
+                    subtitle=""
+                />
             )}
-
 
             {/* Pages Section */}
              {explorePage.sections.pages.enabled && visiblePages.length > 0 && (

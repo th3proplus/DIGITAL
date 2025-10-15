@@ -17,7 +17,7 @@ const availableIcons = ['grid', 'video', 'music', 'ai', 'code', 'book', 'sparkle
 const socialIcons = ['facebook', 'telegram', 'tiktok', 'youtube', 'twitter-x', 'google', 'whatsapp'];
 
 const componentNames: { [key: string]: string } = {
-  mobileDataPromoBanner: 'Mobile Data Promo Banner',
+  mobileData: 'Mobile Data Gallery',
   giftCards: 'Gift Card Gallery',
   requestProductPromo: 'Request a Product Banner',
   internationalShopperPromo: 'International Shopper Banner',

@@ -36,7 +36,7 @@ const GiftCardItem: React.FC<{ card: GiftCard; onSelect: () => void; }> = ({ car
                         <p className="text-sm opacity-80">Digital Gift Card</p>
                         {isAvailable && (
                             <div className="mt-4 inline-flex items-center gap-2 text-sm font-semibold bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full hover:bg-white/30 transition-colors">
-                                Shop Now <Icon name="chevrons-right" className="w-4 h-4" />
+                                {t('gallery.shop_now')} <Icon name="chevrons-right" className="w-4 h-4" />
                             </div>
                         )}
                     </div>

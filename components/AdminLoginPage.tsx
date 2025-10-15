@@ -22,7 +22,7 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({ onLogin, onBackT
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-slate-100 p-4">
+    <div className="flex items-center justify-center min-h-screen bg-slate-100 p-4" dir="ltr">
       <div className="w-full max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden flex">
         {/* Left decorative panel */}
         <div className="hidden lg:flex flex-col justify-between w-1/2 p-12 bg-gradient-to-br from-slate-900 to-slate-700 text-white">

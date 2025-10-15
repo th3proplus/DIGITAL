@@ -30,9 +30,8 @@ import { GiftCardPage } from './components/GiftCardPage';
 import { AliExpressPage } from './components/AliExpressPage';
 import { InternationalShopperPage } from './components/InternationalShopperPage';
 import { InternationalShopperPromoBanner } from './components/InternationalShopperPromoBanner';
-import { MobileDataPromoBanner } from './components/MobileDataPromoBanner';
+import { MobileDataGallery } from './components/MobileDataGallery';
 import { MobileDataPage } from './components/MobileDataPage';
-import { MobileDataTopUpPage } from './components/MobileDataTopUpPage';
 import { RequestProductPage } from './components/RequestProductPage';
 import { RequestProductThankYouPage } from './components/RequestProductThankYouPage';
 import { RequestProductPromoBanner } from './components/RequestProductPromoBanner';
@@ -774,7 +773,6 @@ function App() {
   const handleNavigateToAliExpress = () => { navigate('/service/aliexpress-shopper'); };
   const handleNavigateToInternationalShopper = () => { navigate('/service/international-shopper'); };
   const handleNavigateToRequestProduct = () => { navigate('/service/request-product'); };
-  const handleNavigateToMobileData = () => { navigate('/service/mobile-data'); };
 
   const handleNavigateToUserPanel = (tab: UserPanelTab = 'dashboard') => {
     setInitialUserPanelTab(tab);
@@ -998,8 +996,6 @@ function App() {
                  return <RequestProductPage onSubmit={handleProductRequestSubmit} onBackToStore={handleBackToStore} currentUser={currentUser} settings={settings.services.requestProduct} />;
             case '/service/request-product/thankyou':
                  return <RequestProductThankYouPage onContinueShopping={handleBackToStore} />;
-            case '/service/mobile-data':
-                return <MobileDataTopUpPage providers={mobileDataProviders} onAddToCart={handleMobileDataAddToCart} onBuyNow={handleMobileDataBuyNow} onBackToStore={handleBackToStore} />;
             case '/account':
                  return currentUser ? <UserPanelPage currentUser={currentUser} orders={orders.filter(o => o.customerEmail === currentUser.email)} subscriptions={subscriptions.filter(s => s.userId === currentUser.id)} onUpdateUser={handleUpdateUser} onBackToStore={handleBackToStore} initialTab={initialUserPanelTab} /> : <div/>;
             case '/contact':
@@ -1013,11 +1009,11 @@ function App() {
                     categories={settings.categories}
                     onSelectProduct={handleSelectProduct}
                     onSelectGiftCard={handleSelectGiftCard}
+                    onSelectMobileDataProvider={handleSelectMobileDataProvider}
                     onNavigateToPage={handleNavigateToPage}
                     onNavigateToAliExpress={handleNavigateToAliExpress}
                     onNavigateToInternationalShopper={handleNavigateToInternationalShopper}
                     onNavigateToRequestProduct={handleNavigateToRequestProduct}
-                    onNavigateToMobileData={handleNavigateToMobileData}
                 />;
             case '/':
             default:
@@ -1065,7 +1061,7 @@ function App() {
                                     requestProductPromo: <RequestProductPromoBanner key="requestProductPromo" onNavigate={handleNavigateToRequestProduct} />,
                                     internationalShopperPromo: <InternationalShopperPromoBanner key="internationalShopperPromo" onLearnMore={handleNavigateToInternationalShopper} />,
                                     aliexpressPromo: <AliExpressPromoBanner key="aliexpressPromo" onLearnMore={handleNavigateToAliExpress} />,
-                                    mobileDataPromoBanner: <MobileDataPromoBanner key="mobileDataPromoBanner" onNavigate={handleNavigateToMobileData} />,
+                                    mobileData: <MobileDataGallery key="mobileData" providers={mobileDataProviders} onSelectProvider={handleSelectMobileDataProvider} />,
                                     giftCards: <GiftCardGallery key="giftCards" giftCards={giftCards} onSelectGiftCard={handleSelectGiftCard} />,
                                     whyUs: <WhyUs key="whyUs" settings={settings} />,
                                 };
