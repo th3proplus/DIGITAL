@@ -1099,18 +1099,18 @@ function App() {
             default:
                 return (
                     <>
-                        <div className="bg-gradient-to-br from-red-50 via-red-100 to-orange-100">
+                        <div className="bg-gradient-to-b from-white to-red-50">
                             <div className="container">
-                                <div className="text-center pt-16 pb-20 text-brand-text-primary">
+                                <div className="text-center pt-16 pb-12 text-brand-text-primary">
                                     <h2 className="text-4xl md:text-5xl font-extrabold mb-3 tracking-tight">{settings.homePage.hero.title[language]}</h2>
                                     <p className="text-lg text-brand-text-secondary opacity-90 max-w-2xl mx-auto">{settings.homePage.hero.subtitle[language]}</p>
                                 </div>
                             </div>
                         </div>
                   
-                        <nav className="bg-white/70 backdrop-blur-lg sticky top-[80px] z-10 -mt-8 shadow-sm">
+                        <nav className="bg-white/70 backdrop-blur-lg sticky top-[80px] z-10 shadow-sm">
                             <div className="container">
-                              <div className="flex items-center justify-center gap-2 overflow-x-auto no-scrollbar py-4">
+                              <div className="flex items-center justify-center gap-3 overflow-x-auto no-scrollbar py-4">
                                  {settings.categories.map((category) => (
                                     <button 
                                         key={category.id} 
@@ -1118,7 +1118,7 @@ function App() {
                                         className={`flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-full transition-all duration-300 whitespace-nowrap ${
                                             activeCategory === category.name 
                                             ? 'bg-brand-red text-white shadow-md' 
-                                            : 'text-brand-text-secondary bg-white/50 hover:bg-red-50 hover:text-brand-red'
+                                            : 'bg-white text-brand-text-secondary shadow-sm border border-gray-200 hover:shadow-md hover:border-brand-red/30 hover:text-brand-red'
                                         }`}>
                                         <Icon name={category.icon} className="text-lg" />
                                         <span>{category.displayName[language]}</span>
