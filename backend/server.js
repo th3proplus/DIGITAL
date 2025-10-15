@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import pool from './db.js';
+import { getPool } from './db.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -8,7 +8,7 @@ dotenv.config();
 const app = express();
 const port = 3001;
 
-// --- Database Initialization ---
+// --- INITIAL DATA (Used for seeding) ---
 
 const initialSettings = {
     storeName: 'Nexus Digital Store',
@@ -199,123 +199,120 @@ const initialData = {
   settings: initialSettings,
 };
 
-async function initializeDatabase() {
-  try {
-    // The pool is already created and attempting to connect from db.js
-    // Test the connection to provide a clear startup message
-    const connection = await pool.getConnection();
-    console.log('Successfully connected to the MySQL database.');
-    connection.release();
 
-    // Create table if it doesn't exist
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS store_data (
-        id VARCHAR(10) PRIMARY KEY,
-        data JSON
-      )
-    `);
-    console.log("Table 'store_data' checked/created.");
-
-    // Seed initial data only if the table is empty
-    const [rows] = await pool.query("SELECT id FROM store_data WHERE id = 'main'");
-    if (rows.length === 0) {
-      await pool.query("INSERT INTO store_data (id, data) VALUES ('main', ?)", [JSON.stringify(initialData)]);
-      console.log("Initial data seeded into 'store_data' table.");
-    } else {
-      console.log("Data already exists, skipping seed.");
-    }
-  } catch (error) {
-    console.error('FATAL: Failed to initialize database content.');
-    throw error; // Re-throw to be caught by the server startup logic
-  }
-}
-
-// --- API Endpoints ---
-
-// Middlewares
+// --- MIDDLEWARES ---
 app.use(cors());
-app.use(express.json({ limit: '10mb' })); // Allow larger request bodies
+app.use(express.json({ limit: '10mb' }));
 
-// A simple API endpoint to fetch all initial data
-app.get('/api/data', async (req, res) => {
+// --- SETUP & STATUS API ENDPOINTS ---
+
+app.get('/api/status', async (req, res) => {
     try {
-        let [rows] = await pool.query("SELECT data FROM store_data WHERE id = 'main'");
-        if (rows.length === 0) {
-             return res.status(404).json({ message: 'No store data found. The database might be empty.' });
-        }
-        const storeData = JSON.parse(rows[0].data);
-        res.json(storeData);
+        await getPool(); // This will throw if connection fails
+        const pool = await getPool(); // Get the instance
+        
+        // Check if table exists
+        await pool.query(`SELECT 1 FROM store_data LIMIT 1`);
+
+        // Check if data is seeded
+        const [rows] = await pool.query("SELECT id FROM store_data WHERE id = 'main'");
+        
+        res.json({
+            server: "ok",
+            dbConnection: "connected",
+            dbInitialized: rows.length > 0,
+        });
+
     } catch (error) {
-        console.error('API Error fetching data:', error);
-        res.status(500).json({ error: 'Failed to fetch store data from the database.' });
+        // Provide detailed error messages for the setup UI
+        if (error.code === 'ER_BAD_DB_ERROR') {
+             res.json({ server: "ok", dbConnection: "disconnected", dbInitialized: false, error: `Database '${process.env.DB_NAME}' does not exist. Please create it or check the name in your .env file.` });
+        } else if (error.code === 'ER_ACCESS_DENIED_ERROR') {
+             res.json({ server: "ok", dbConnection: "disconnected", dbInitialized: false, error: `Access denied for user '${process.env.DB_USER}'. Check username/password in .env.` });
+        } else if (error.code === 'ECONNREFUSED' || error.code === 'ENOTFOUND') {
+             res.json({ server: "ok", dbConnection: "disconnected", dbInitialized: false, error: `Could not connect to host '${process.env.DB_HOST}'. Is the database server running and accessible?` });
+        } else if (error.code === 'ER_NO_SUCH_TABLE') {
+             res.json({ server: "ok", dbConnection: "connected", dbInitialized: false, error: "Database is connected, but not initialized." });
+        } else {
+            res.json({ server: "ok", dbConnection: "disconnected", dbInitialized: false, error: error.message });
+        }
     }
 });
 
-// An endpoint to create a new order
-app.post('/api/orders', async (req, res) => {
+app.post('/api/initialize-database', async (req, res) => {
+    try {
+        const pool = await getPool();
+        
+        await pool.query(`
+          CREATE TABLE IF NOT EXISTS store_data (
+            id VARCHAR(10) PRIMARY KEY,
+            data JSON
+          )
+        `);
+        
+        // Using INSERT IGNORE to be safe if called multiple times
+        await pool.query("INSERT IGNORE INTO store_data (id, data) VALUES ('main', ?)", [JSON.stringify(initialData)]);
+
+        res.json({ success: true, message: "Database initialized successfully!" });
+
+    } catch (error) {
+        console.error('Error during database initialization:', error);
+        res.status(500).json({ success: false, message: `Initialization failed: ${error.message}` });
+    }
+});
+
+// --- MAIN API ENDPOINTS ---
+
+// Wrapper to handle DB connection for main API routes
+const withDb = (handler) => async (req, res) => {
+    try {
+        await handler(req, res);
+    } catch (error) {
+        console.error('API Error:', error.message);
+        res.status(500).json({ error: 'A database error occurred. The database may not be connected or configured properly.' });
+    }
+};
+
+app.get('/api/data', withDb(async (req, res) => {
+    const pool = await getPool();
+    const [rows] = await pool.query("SELECT data FROM store_data WHERE id = 'main'");
+    if (rows.length === 0) {
+        return res.status(404).json({ message: 'No store data found. The database might be empty.' });
+    }
+    const storeData = JSON.parse(rows[0].data);
+    res.json(storeData);
+}));
+
+app.post('/api/orders', withDb(async (req, res) => {
+    const pool = await getPool();
     const newOrder = req.body;
-    try {
-        let [rows] = await pool.query("SELECT data FROM store_data WHERE id = 'main'");
-        if (rows.length === 0) {
-             return res.status(404).json({ message: 'Store data not found.' });
-        }
-        
-        const storeData = JSON.parse(rows[0].data);
-        // Ensure orders array exists
-        if (!storeData.orders) {
-            storeData.orders = [];
-        }
-        storeData.orders.unshift(newOrder); // Add to the beginning of the list
-
-        await pool.query("UPDATE store_data SET data = ? WHERE id = 'main'", [JSON.stringify(storeData)]);
-
-        res.status(201).json(newOrder);
-    } catch (error) {
-        console.error('API Error creating order:', error);
-        res.status(500).json({ error: 'Failed to create order' });
+    const [rows] = await pool.query("SELECT data FROM store_data WHERE id = 'main'");
+    if (rows.length === 0) {
+        return res.status(404).json({ message: 'Store data not found.' });
     }
-});
+    const storeData = JSON.parse(rows[0].data);
+    if (!storeData.orders) storeData.orders = [];
+    storeData.orders.unshift(newOrder);
+    await pool.query("UPDATE store_data SET data = ? WHERE id = 'main'", [JSON.stringify(storeData)]);
+    res.status(201).json(newOrder);
+}));
 
-// An endpoint to update settings
-app.post('/api/settings', async (req, res) => {
+app.post('/api/settings', withDb(async (req, res) => {
+    const pool = await getPool();
     const newSettings = req.body;
-     try {
-        let [rows] = await pool.query("SELECT data FROM store_data WHERE id = 'main'");
-        if (rows.length === 0) {
-             return res.status(404).json({ message: 'Store data not found.' });
-        }
-        
-        const storeData = JSON.parse(rows[0].data);
-        storeData.settings = newSettings; // Overwrite settings
-
-        await pool.query("UPDATE store_data SET data = ? WHERE id = 'main'", [JSON.stringify(storeData)]);
-
-        res.status(200).json(newSettings);
-    } catch (error) {
-        console.error('API Error updating settings:', error);
-        res.status(500).json({ error: 'Failed to update settings' });
+    const [rows] = await pool.query("SELECT data FROM store_data WHERE id = 'main'");
+    if (rows.length === 0) {
+        return res.status(404).json({ message: 'Store data not found.' });
     }
-});
+    const storeData = JSON.parse(rows[0].data);
+    storeData.settings = newSettings;
+    await pool.query("UPDATE store_data SET data = ? WHERE id = 'main'", [JSON.stringify(storeData)]);
+    res.status(200).json(newSettings);
+}));
 
+// --- SERVER STARTUP ---
 
-// --- Server Startup ---
-app.listen(port, async () => {
-  console.log(`Backend server starting on http://127.0.0.1:${port}`);
-  try {
-    console.log("---");
-    console.log("Attempting to initialize database...");
-    await initializeDatabase();
-    console.log("Database setup complete and connection verified.");
-    console.log("Backend is ready and listening for requests.");
-    console.log("---");
-  } catch (err) {
-    console.error("\n!!!!!!!! FAILED TO START BACKEND !!!!!!!!");
-    console.error("An error occurred during database initialization:", err.message);
-    console.log("\nCommon causes:");
-    console.log("1. MySQL server is not running.");
-    console.log("2. Database credentials in 'backend/.env' are incorrect (host, user, password, database name).");
-    console.log("3. The database user does not have permission to create tables.");
-    console.log("\nPlease check your setup and try again.\n");
-    process.exit(1); // Exit with an error code
-  }
+app.listen(port, () => {
+  console.log(`Backend server started on http://127.0.0.1:${port}`);
+  console.log("API endpoints are ready. Database connection will be established on first API request.");
 });

@@ -43,6 +43,7 @@ import { Toast } from './components/Toast';
 import { MaintenancePage } from './components/MaintenancePage';
 import { AdminLoginPage } from './components/AdminLoginPage';
 import { ExplorePage } from './components/ExplorePage';
+import { SetupGuide } from './components/SetupGuide';
 import { useI18n } from './hooks/useI18n';
 import type { Language } from './contexts/I18nContext';
 import { Logo } from './components/Logo';
@@ -51,6 +52,7 @@ import { AliExpressPromoBanner } from './components/AliExpressPromoBanner';
 import { Header } from './components/Header';
 
 type AdminView = 'dashboard' | 'products' | 'orders' | 'settings' | 'addProduct' | 'editProduct' | 'pages' | 'addPage' | 'editPage' | 'mobileDataProviders' | 'addMobileDataProvider' | 'editMobileDataProvider' | 'giftCards' | 'addGiftCard' | 'editGiftCard' | 'marketing' | 'composeCampaign' | 'contactPage';
+type AppState = 'loading' | 'needs_setup' | 'ready' | 'backend_error';
 
 const kebabToCamel = (s: string) => s.replace(/-./g, x => x.toUpperCase()[1]);
 const kebabToPascalSingular = (kebab: string) => {
@@ -75,13 +77,14 @@ const WhatsappSupportButton: React.FC<{ phoneNumber: string }> = ({ phoneNumber 
 function App() {
   const { t, language } = useI18n();
   const { settings, setSettings, formatCurrency } = useSettings();
+
+  const [appState, setAppState] = useState<AppState>('loading');
   
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const [location, setLocation] = useState(window.location.pathname);
   
-  // All data is now fetched from the backend
   const [products, setProducts] = useState<Product[]>([]);
   const [giftCards, setGiftCards] = useState<GiftCard[]>([]);
   const [mobileDataProviders, setMobileDataProviders] = useState<MobileDataProvider[]>([]);
@@ -117,54 +120,61 @@ function App() {
   const [initialUserPanelTab, setInitialUserPanelTab] = useState<UserPanelTab>('dashboard');
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [activeCategory, setActiveCategory] = useState('ALL');
-
-  // Fetch all data from the backend on initial load
-  useEffect(() => {
-    const fetchData = async () => {
+  
+  const fetchData = async () => {
       try {
         setIsLoading(true);
         setError(null);
         const response = await fetch('/api/data');
-
-        if (!response.ok) {
-          throw new Error(`Network response was not ok: ${response.statusText} (${response.status})`);
-        }
-
-        // It's safer to read as text and then parse, to handle non-JSON responses gracefully
-        const responseText = await response.text();
-        try {
-          const data = JSON.parse(responseText);
-          setProducts(data.products || []);
-          setGiftCards(data.giftCards || []);
-          setMobileDataProviders(data.mobileDataProviders || []);
-          setOrders(data.orders || []);
-          setSubscriptions(data.subscriptions || []);
-          setPages(data.pages || []);
-          setSubscribers(data.subscribers || []);
-          setCampaigns(data.campaigns || []);
-          setProductRequests(data.productRequests || []);
-          setUsers(data.users || []);
-          if (data.settings) {
-              setSettings(data.settings);
-          }
-        } catch (jsonError) {
-            if (responseText.trim().toLowerCase().startsWith('<!doctype html>')) {
-                 throw new Error("Received an HTML page instead of data. This usually means the backend server is not running or is not accessible. Please check your backend server's console for errors.");
-            }
-            // The response was not JSON and not HTML, something else is wrong.
-            console.error("Raw response text:", responseText);
-            throw new Error('Failed to parse server response as JSON.');
-        }
+        if (!response.ok) throw new Error(`Network response was not ok: ${response.statusText} (${response.status})`);
+        const data = await response.json();
+        
+        setProducts(data.products || []);
+        setGiftCards(data.giftCards || []);
+        setMobileDataProviders(data.mobileDataProviders || []);
+        setOrders(data.orders || []);
+        setSubscriptions(data.subscriptions || []);
+        setPages(data.pages || []);
+        setSubscribers(data.subscribers || []);
+        setCampaigns(data.campaigns || []);
+        setProductRequests(data.productRequests || []);
+        setUsers(data.users || []);
+        if (data.settings) setSettings(data.settings);
 
       } catch (err: any) {
-        setError(err.message || 'An unknown error occurred.');
+        setError(err.message || 'An unknown error occurred while fetching data.');
         console.error(err);
       } finally {
         setIsLoading(false);
       }
     };
-    fetchData();
-  }, [setSettings]);
+    
+  // Initial app status check
+  useEffect(() => {
+    const checkAppStatus = async () => {
+        try {
+            const response = await fetch('/api/status');
+            if (!response.ok) throw new Error('Backend not reachable');
+            const status = await response.json();
+
+            if (status.dbConnection === 'connected' && status.dbInitialized) {
+                setAppState('ready');
+            } else {
+                setAppState('needs_setup');
+            }
+        } catch (err) {
+            setAppState('backend_error');
+        }
+    };
+    checkAppStatus();
+  }, []);
+
+  // Fetch main data only when app state is 'ready'
+  useEffect(() => {
+    if (appState === 'ready') {
+      fetchData();
+    }
+  }, [appState]);
 
   useEffect(() => {
     const handlePopState = () => setLocation(window.location.pathname);
@@ -275,7 +285,6 @@ function App() {
     }
   };
   
-  // These functions would also need to be converted to API calls in a full implementation
   const handleNavigateToEditProduct = (product: Product) => navigate(`/jarya/admin/products/edit/${product.id}`);
   const handleSaveProduct = (productDataFromForm: Product) => { onSaveData('products', productDataFromForm, productDataFromForm.id); navigate('/jarya/admin/products'); };
   const handleUpdateOrder = (updatedOrder: Order) => onSaveData('orders', updatedOrder, updatedOrder.id);
@@ -311,10 +320,8 @@ function App() {
   const handleDeleteSubscribers = (subscriberIds: string[]) => onDeleteData('subscribers', subscriberIds);
   const handleSendCampaign = (campaignData: { subject: string; content: string }) => { const newCampaign: Campaign = { id: `camp-${Date.now()}`, ...campaignData, sentAt: new Date().toISOString(), recipientsCount: subscribers.length }; onSaveData('campaigns', newCampaign); setToast({ message: t('admin.campaign_sent_success'), type: 'success' }); navigate('/jarya/admin/marketing'); };
   
-  // Mock implementations for save/delete until backend endpoints are created for them.
   const onSaveData = (dataType: string, data: any, id?: string) => console.log(`Saving ${dataType}:`, data);
   const onDeleteData = (dataType: string, ids: string[]) => console.log(`Deleting ${dataType} with IDs:`, ids);
-
 
   const filteredAdminProducts = products.filter(p => t(p.nameKey).toLowerCase().includes(adminSearchQuery.toLowerCase()) || p.category.toLowerCase().includes(adminSearchQuery.toLowerCase()));
   const filteredAdminOrders = orders.filter(o => o.id.toLowerCase().includes(adminSearchQuery.toLowerCase()) || o.customerName.toLowerCase().includes(adminSearchQuery.toLowerCase()) || o.customerEmail.toLowerCase().includes(adminSearchQuery.toLowerCase()));
@@ -323,12 +330,25 @@ function App() {
   const filteredAdminGiftCards = giftCards.filter(g => g.name.toLowerCase().includes(adminSearchQuery.toLowerCase()));
   const filteredAdminSubscribers = subscribers.filter(s => s.email.toLowerCase().includes(adminSearchQuery.toLowerCase()));
 
+  // App state rendering
+  if (appState === 'loading') {
+    return <div className="flex items-center justify-center h-screen"><div className="animate-spin rounded-full h-16 w-16 border-b-2 border-brand-red"></div></div>;
+  }
+  
+  if (appState === 'needs_setup') {
+    return <SetupGuide />;
+  }
+
+  if (appState === 'backend_error') {
+    return <div className="flex flex-col items-center justify-center h-screen bg-red-50 text-red-700 p-4 text-center"><Icon name="close" className="w-16 h-16 mb-4"/><h2 className="text-2xl font-bold">Failed to Connect to Backend</h2><p className="mt-2 max-w-xl">The application could not communicate with the backend server. Please ensure the backend server is running (`npm run start:backend` or `npm run dev`) and try again.</p></div>;
+  }
+
   const MainContent = () => {
     if (isLoading) {
         return <div className="flex items-center justify-center h-screen"><div className="animate-spin rounded-full h-16 w-16 border-b-2 border-brand-red"></div></div>;
     }
     if (error) {
-        return <div className="flex flex-col items-center justify-center h-screen bg-red-50 text-red-700 p-4 text-center"><Icon name="close" className="w-16 h-16 mb-4"/><h2 className="text-2xl font-bold">Failed to Load Store</h2><p className="mt-2 max-w-xl">{error}</p><p className="mt-4 text-sm">Please ensure the backend server is running and connected to the database.</p></div>;
+        return <div className="flex flex-col items-center justify-center h-screen bg-red-50 text-red-700 p-4 text-center"><Icon name="close" className="w-16 h-16 mb-4"/><h2 className="text-2xl font-bold">Failed to Load Store Data</h2><p className="mt-2 max-w-xl">{error}</p></div>;
     }
 
     if (location === '/jarya/admin/login') return <AdminLoginPage onLogin={handleAdminLogin} onBackToStore={handleBackToStore} />;
