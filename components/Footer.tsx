@@ -9,9 +9,10 @@ interface FooterProps {
     onNavigateToPage: (slug: string) => void;
     onSubscribe: (email: string) => boolean;
     onNavigateToContact: () => void;
+    onGoHome: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ settings, pages, onNavigateToPage, onSubscribe, onNavigateToContact }) => {
+export const Footer: React.FC<FooterProps> = ({ settings, pages, onNavigateToPage, onSubscribe, onNavigateToContact, onGoHome }) => {
     const { t, language } = useI18n();
     const [email, setEmail] = useState('');
     const [subscribed, setSubscribed] = useState(false);
@@ -89,7 +90,10 @@ export const Footer: React.FC<FooterProps> = ({ settings, pages, onNavigateToPag
                             key={link.key} 
                             href={link.slug} 
                             onClick={(e) => {
-                                if (link.key === 'footer.contact.us') {
+                                if (link.key === 'nav.home') {
+                                    e.preventDefault();
+                                    onGoHome();
+                                } else if (link.key === 'footer.contact.us') {
                                     e.preventDefault();
                                     onNavigateToContact();
                                 } else if ((link as any).isCustom) {

@@ -29,7 +29,7 @@ export const Header: React.FC<{
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     
     const staticNavItems = [
-      { key: 'nav.home', label: t('nav.home'), isCustom: false, slug: '#' },
+      { key: 'nav.home', label: t('nav.home'), isCustom: false, slug: '/' },
       { key: 'nav.explore', label: t('nav.explore'), isCustom: false, slug: '#explore' },
       { key: 'nav.contact_us', label: t('nav.contact_us'), isCustom: false, slug: '#contact' },
       { key: 'nav.become_seller', label: t('nav.become_seller'), isCustom: false, slug: '#' },

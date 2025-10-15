@@ -359,10 +359,10 @@ const WhatsappSupportButton: React.FC<{ phoneNumber: string }> = ({ phoneNumber 
       href={whatsappUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className={`fixed bottom-6 ${positionClass} z-30 w-16 h-16 bg-[#25D366] rounded-full flex items-center justify-center text-white shadow-xl hover:bg-[#1EBE57] transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 animate-subtle-pulse`}
+      className={`fixed bottom-6 ${positionClass} z-30 w-14 h-14 bg-[#25D366] rounded-full flex items-center justify-center text-white shadow-xl hover:bg-[#1EBE57] transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 animate-subtle-pulse`}
       aria-label="Contact us on WhatsApp"
     >
-      <Icon name="whatsapp" className="text-5xl" />
+      <Icon name="whatsapp" className="text-4xl" />
     </a>
   );
 };
@@ -1078,7 +1078,7 @@ function App() {
             
             {renderStoreView()}
 
-            <Footer settings={settings} pages={pages} onNavigateToPage={handleNavigateToPage} onSubscribe={handleSubscribe} onNavigateToContact={handleNavigateToContact} />
+            <Footer settings={settings} pages={pages} onNavigateToPage={handleNavigateToPage} onSubscribe={handleSubscribe} onNavigateToContact={handleNavigateToContact} onGoHome={handleBackToStore} />
             
             <Cart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} cartItems={cartItems} onRemoveFromCart={handleRemoveFromCart} onCheckout={handleCheckout} onIncrement={handleIncrementCartItem} onDecrement={handleDecrementCartItem} onClearCart={handleClearCart} />
             {settings.supportWhatsappNumber && <WhatsappSupportButton phoneNumber={settings.supportWhatsappNumber} />}

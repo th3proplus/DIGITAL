@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { GiftCard } from '../types';
+// FIX: Import 'useSettings' hook to access settings context.
 import { useI18n, useSettings } from '../hooks/useI18n';
 import { Icon } from './Icon';
 
@@ -16,17 +17,17 @@ const GiftCardItem: React.FC<{ card: GiftCard; onSelect: () => void; }> = ({ car
     return (
         <div 
             onClick={isAvailable ? onSelect : undefined}
-            className={`relative aspect-[9/14] w-60 rounded-2xl overflow-hidden shadow-lg flex-shrink-0 transition-all duration-300 ${isAvailable ? 'group cursor-pointer hover:shadow-2xl transform hover:-translate-y-2' : 'cursor-not-allowed'} ${isComingSoon ? 'animate-glow' : ''}`}
+            className={`relative aspect-[9/14] w-60 rounded-2xl overflow-hidden shadow-lg flex-shrink-0 transition-all duration-300 ${isAvailable ? 'group hover:shadow-2xl transform hover:-translate-y-2' : 'cursor-not-allowed'} ${isComingSoon ? 'animate-glow' : ''}`}
             aria-label={`Shop ${card.name} gift cards`}
             style={isComingSoon ? { '--glow-color': '#FBBF24' } as React.CSSProperties : {}}
         >
             <div className={card.status === 'out_of_stock' ? 'grayscale' : ''}>
-                <img src={card.galleryImageUrl} alt={card.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" />
+                <img draggable="false" src={card.galleryImageUrl} alt={card.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
                 <div className="relative h-full flex flex-col justify-between p-5 text-white">
                     <div className="flex justify-end">
                         {card.showLogoOnGallery && (
-                            <img src={card.logoUrl} alt={`${card.name} Logo`} className="w-16 h-10 object-contain drop-shadow-lg" />
+                            <img draggable="false" src={card.logoUrl} alt={`${card.name} Logo`} className="w-16 h-10 object-contain drop-shadow-lg" />
                         )}
                     </div>
                     <div>
@@ -73,8 +74,43 @@ const GiftCardItem: React.FC<{ card: GiftCard; onSelect: () => void; }> = ({ car
 
 
 export const GiftCardGallery: React.FC<GiftCardGalleryProps> = ({ giftCards, onSelectGiftCard }) => {
-    const { language } = useI18n();
+    const { language, t } = useI18n();
     const { settings } = useSettings();
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const isDraggingRef = useRef(false);
+    const startXRef = useRef(0);
+    const scrollLeftRef = useRef(0);
+    const hasDraggedRef = useRef(false);
+
+    const handleMouseDown = (e: React.MouseEvent) => {
+        if (!scrollContainerRef.current) return;
+        isDraggingRef.current = true;
+        startXRef.current = e.pageX - scrollContainerRef.current.offsetLeft;
+        scrollLeftRef.current = scrollContainerRef.current.scrollLeft;
+        hasDraggedRef.current = false;
+    };
+
+    const handleMouseLeave = () => {
+        isDraggingRef.current = false;
+    };
+
+    const handleMouseUp = () => {
+        isDraggingRef.current = false;
+        setTimeout(() => {
+            hasDraggedRef.current = false;
+        }, 0);
+    };
+
+    const handleMouseMove = (e: React.MouseEvent) => {
+        if (!isDraggingRef.current || !scrollContainerRef.current) return;
+        e.preventDefault();
+        const x = e.pageX - scrollContainerRef.current.offsetLeft;
+        const walk = x - startXRef.current;
+        if (Math.abs(walk) > 5) {
+            hasDraggedRef.current = true;
+        }
+        scrollContainerRef.current.scrollLeft = scrollLeftRef.current - walk;
+    };
 
     return (
         <section className="bg-slate-50 py-16">
@@ -83,7 +119,19 @@ export const GiftCardGallery: React.FC<GiftCardGalleryProps> = ({ giftCards, onS
                     <h2 className="text-3xl font-bold text-brand-text-primary">{settings.homePage.giftCardPromo.title[language]}</h2>
                     <p className="text-lg text-brand-text-secondary mt-2 max-w-2xl mx-auto">{settings.homePage.giftCardPromo.subtitle[language]}</p>
                 </div>
-                <div className="flex gap-6 overflow-x-auto no-scrollbar pb-6 -mx-6 px-6">
+                <div
+                    ref={scrollContainerRef}
+                    className="flex gap-6 overflow-x-auto no-scrollbar pb-6 -mx-6 px-6 cursor-grab active:cursor-grabbing select-none"
+                    onMouseDown={handleMouseDown}
+                    onMouseLeave={handleMouseLeave}
+                    onMouseUp={handleMouseUp}
+                    onMouseMove={handleMouseMove}
+                    onClickCapture={(e) => {
+                        if (hasDraggedRef.current) {
+                            e.stopPropagation();
+                        }
+                    }}
+                >
                     {/* Spacer to offset the first card from the edge */}
                     <div className="w-0 flex-shrink-0"></div>
                     {giftCards.map(card => (

@@ -400,9 +400,9 @@ export const I18nProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       try {
         // Use absolute paths for robust routing, assuming files are in the public folder.
         const [en, ar, fr] = await Promise.all([
-          fetch('/en.json').then(res => res.json()),
-          fetch('/ar.json').then(res => res.json()),
-          fetch('/fr.json').then(res => res.json())
+          fetch('/i18n/locales/en.json').then(res => res.json()),
+          fetch('/i18n/locales/ar.json').then(res => res.json()),
+          fetch('/i18n/locales/fr.json').then(res => res.json())
         ]);
         setTranslations({ en, ar, fr });
       } catch (error) {

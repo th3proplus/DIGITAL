@@ -259,7 +259,7 @@ const initialSettings: Settings = {
     },
     footer: {
       staticLinks: [
-        { key: 'nav.home', slug: '#' },
+        { key: 'nav.home', slug: '/' },
         { key: 'nav.subscription', slug: '#' },
         { key: 'footer.blog', slug: '#' },
         { key: 'nav.support', slug: '#' },
