@@ -159,7 +159,6 @@ const initialSettings: Settings = {
         'whyUs'
       ]
     },
-    // FIX: Add missing 'explorePage' to initialSettings to conform to Settings type.
     explorePage: {
       title: {
         en: 'Explore Our Catalog',
@@ -394,13 +393,36 @@ export const I18nProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [isLoading, setIsLoading] = useState(true);
   
   const [settings, setSettings] = useState<Settings>(() => {
+    const simpleDeepMerge = (initial: any, saved: any): any => {
+      const merged = { ...initial };
+      for (const key in saved) {
+        if (Object.prototype.hasOwnProperty.call(saved, key)) {
+          const initialValue = initial[key];
+          const savedValue = saved[key];
+
+          if (
+            typeof savedValue === 'object' && savedValue !== null && !Array.isArray(savedValue) &&
+            Object.prototype.hasOwnProperty.call(initial, key) &&
+            typeof initialValue === 'object' && initialValue !== null && !Array.isArray(initialValue)
+          ) {
+            merged[key] = simpleDeepMerge(initialValue, savedValue);
+          } else {
+            merged[key] = savedValue;
+          }
+        }
+      }
+      return merged;
+    };
+
     try {
       const storedSettings = window.localStorage.getItem(SETTINGS_STORAGE_KEY);
-      // If settings are stored, parse them. Otherwise, use initial settings.
-      return storedSettings ? JSON.parse(storedSettings) : initialSettings;
+      if (storedSettings) {
+        const parsedSettings = JSON.parse(storedSettings);
+        return simpleDeepMerge(initialSettings, parsedSettings);
+      }
+      return initialSettings;
     } catch (error) {
       console.error("Error reading settings from localStorage", error);
-      // Fallback to initial settings if parsing fails
       return initialSettings;
     }
   });

@@ -235,7 +235,7 @@ export interface FooterSocialLink {
   href: string;
 }
 
-interface SectionSettings {
+export interface SectionSettings {
   title: MultilingualText;
   enabled: boolean;
 }
