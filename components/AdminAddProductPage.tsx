@@ -9,7 +9,6 @@ interface AdminAddProductPageProps {
   categories: Category[];
 }
 
-// FIX: Add missing 'slug' property. It is auto-generated on save.
 const defaultProductData: Omit<Product, 'id' | 'socialProof' | 'rating' | 'reviewsCount'> = {
     slug: '',
     nameKey: '',
@@ -23,6 +22,9 @@ const defaultProductData: Omit<Product, 'id' | 'socialProof' | 'rating' | 'revie
     variants: [],
     defaultVariantId: '',
 };
+
+const slugify = (text: string) => text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
+
 
 export const AdminAddProductPage: React.FC<AdminAddProductPageProps> = ({ onSave, onCancel, categories }) => {
     const { settings } = useSettings();
@@ -86,7 +88,15 @@ export const AdminAddProductPage: React.FC<AdminAddProductPageProps> = ({ onSave
     
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        onSave(productData as Product);
+        const fullProduct: Product = {
+            ...productData,
+            id: `prod-${Date.now()}`, // temp id, backend should generate this
+            slug: slugify(productData.nameKey), // auto-generate slug
+            socialProof: { avatars: [], textKey: '' },
+            rating: 0,
+            reviewsCount: 0,
+        };
+        onSave(fullProduct);
     };
 
     const isFormValid =

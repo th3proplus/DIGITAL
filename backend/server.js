@@ -1,7 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import pool, { testConnection } from './db.js';
-import mysql from 'mysql2/promise';
+import pool from './db.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -202,18 +201,13 @@ const initialData = {
 
 async function initializeDatabase() {
   try {
-    // 1. Connect without a database to create it
-    const connection = await mysql.createConnection({
-      host: process.env.DB_HOST,
-      port: parseInt(process.env.DB_PORT || '3306', 10),
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-    });
-    await connection.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.DB_NAME}\``);
-    console.log(`Database '${process.env.DB_NAME}' checked/created.`);
-    await connection.end();
-    
-    // 2. Create table if it doesn't exist (the main pool from db.js will now work)
+    // The pool is already created and attempting to connect from db.js
+    // Test the connection to provide a clear startup message
+    const connection = await pool.getConnection();
+    console.log('Successfully connected to the MySQL database.');
+    connection.release();
+
+    // Create table if it doesn't exist
     await pool.query(`
       CREATE TABLE IF NOT EXISTS store_data (
         id VARCHAR(10) PRIMARY KEY,
@@ -222,17 +216,16 @@ async function initializeDatabase() {
     `);
     console.log("Table 'store_data' checked/created.");
 
-    // 3. Seed initial data only if the table is empty
+    // Seed initial data only if the table is empty
     const [rows] = await pool.query("SELECT id FROM store_data WHERE id = 'main'");
     if (rows.length === 0) {
-      const initialDataString = JSON.stringify(initialData);
-      await pool.query("INSERT INTO store_data (id, data) VALUES ('main', ?)", [initialDataString]);
+      await pool.query("INSERT INTO store_data (id, data) VALUES ('main', ?)", [JSON.stringify(initialData)]);
       console.log("Initial data seeded into 'store_data' table.");
     } else {
       console.log("Data already exists, skipping seed.");
     }
   } catch (error) {
-    console.error('FATAL: Failed to initialize database.');
+    console.error('FATAL: Failed to initialize database content.');
     throw error; // Re-throw to be caught by the server startup logic
   }
 }
@@ -312,7 +305,6 @@ app.listen(port, async () => {
     console.log("---");
     console.log("Attempting to initialize database...");
     await initializeDatabase();
-    await testConnection();
     console.log("Database setup complete and connection verified.");
     console.log("Backend is ready and listening for requests.");
     console.log("---");
@@ -321,8 +313,8 @@ app.listen(port, async () => {
     console.error("An error occurred during database initialization:", err.message);
     console.log("\nCommon causes:");
     console.log("1. MySQL server is not running.");
-    console.log("2. Database credentials in 'backend/.env' are incorrect (host, user, password).");
-    console.log("3. The database user does not have permission to create databases or tables.");
+    console.log("2. Database credentials in 'backend/.env' are incorrect (host, user, password, database name).");
+    console.log("3. The database user does not have permission to create tables.");
     console.log("\nPlease check your setup and try again.\n");
     process.exit(1); // Exit with an error code
   }
