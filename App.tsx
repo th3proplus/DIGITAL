@@ -49,7 +49,6 @@ import { Logo } from './components/Logo';
 import { useSettings } from './hooks/useI18n';
 import { AliExpressPromoBanner } from './components/AliExpressPromoBanner';
 import { Header } from './components/Header';
-import { SetupPage } from './components/SetupPage';
 
 type AdminView = 'dashboard' | 'products' | 'orders' | 'settings' | 'addProduct' | 'editProduct' | 'pages' | 'addPage' | 'editPage' | 'mobileDataProviders' | 'addMobileDataProvider' | 'editMobileDataProvider' | 'giftCards' | 'addGiftCard' | 'editGiftCard' | 'marketing' | 'composeCampaign' | 'contactPage';
 
@@ -381,14 +380,6 @@ const WhatsappSupportButton: React.FC<{ phoneNumber: string }> = ({ phoneNumber 
 function App() {
   const { t, language } = useI18n();
   const { settings, setSettings, formatCurrency } = useSettings();
-  
-  const [isSetupComplete, setIsSetupComplete] = useState(() => {
-    try {
-      return window.localStorage.getItem('is_setup_complete') === 'true';
-    } catch {
-      return false;
-    }
-  });
 
   const [location, setLocation] = useState(window.location.pathname);
   
@@ -435,12 +426,6 @@ function App() {
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   const [activeCategory, setActiveCategory] = useState(settings.categories[0]?.name || 'ALL');
-  
-  const handleSetupComplete = () => {
-    localStorage.setItem('is_setup_complete', 'true');
-    setIsSetupComplete(true);
-    navigate('/', { replace: true });
-  };
   
   useEffect(() => {
     const handlePopState = () => {
@@ -925,26 +910,6 @@ function App() {
   const filteredAdminSubscribers = subscribers.filter(s => s.email.toLowerCase().includes(adminSearchQuery.toLowerCase()));
 
   const MainContent = () => {
-    // Handle setup routing
-    if (!isSetupComplete) {
-      if (location !== '/setup') {
-        useEffect(() => {
-          window.history.replaceState({}, '', '/setup');
-          setLocation('/setup');
-        }, []);
-        return null; // Render nothing while redirecting
-      }
-      return <SetupPage onSetupComplete={handleSetupComplete} />;
-    }
-
-    if (isSetupComplete && location === '/setup') {
-      useEffect(() => {
-        window.history.replaceState({}, '', '/');
-        setLocation('/');
-      }, []);
-      return null; // Render nothing while redirecting
-    }
-    
     // Special route for login page, always accessible
     if (location === '/jarya/admin/login') {
       return <AdminLoginPage onLogin={handleAdminLogin} onBackToStore={handleBackToStore} />;
