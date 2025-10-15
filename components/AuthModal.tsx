@@ -8,10 +8,11 @@ interface AuthModalProps {
   onClose: () => void;
   onLogin: (email: string, password: string) => boolean;
   onSignup: (name: string, email: string, password: string) => boolean;
+  onSocialLogin: (provider: 'google' | 'facebook') => void;
   settings: Settings['accessControl'];
 }
 
-export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, onSignup, settings }) => {
+export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, onSignup, onSocialLogin, settings }) => {
   const { t } = useI18n();
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
   
@@ -146,13 +147,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
 
                 <div className="space-y-3">
                     {settings?.googleLogin?.enabled && (
-                        <button className="w-full flex items-center justify-center gap-3 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                        <button onClick={() => onSocialLogin('google')} className="w-full flex items-center justify-center gap-3 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
                             <Icon name="google" className="w-5 h-5" />
                             <span className="font-semibold text-brand-text-secondary">{t('auth.with_google')}</span>
                         </button>
                     )}
                      {settings?.facebookLogin?.enabled && (
-                        <button className="w-full flex items-center justify-center gap-3 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                        <button onClick={() => onSocialLogin('facebook')} className="w-full flex items-center justify-center gap-3 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
                             <Icon name="facebook" className="w-5 h-5 text-[#1877F2]" />
                             <span className="font-semibold text-brand-text-secondary">{t('auth.with_facebook')}</span>
                         </button>

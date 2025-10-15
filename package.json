@@ -1,23 +1,25 @@
 {
   "name": "digital-store",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "version": "1.0.0",
+  "description": "A modern web application for selling digital products.",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "start:frontend": "vite",
+    "start:backend": "node backend/server.js",
+    "dev": "concurrently \"npm:start:frontend\" \"npm:start:backend\"",
+    "build": "vite build"
   },
   "dependencies": {
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
     "lodash.set": "^4.3.2",
-    "lucide-react": "^0.417.0"
+    "lucide-react": "^0.417.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
   },
   "devDependencies": {
-    "@types/node": "^22.14.0",
-    "@vitejs/plugin-react": "^5.0.0",
-    "typescript": "~5.8.2",
-    "vite": "^6.2.0"
-  }
+    "@types/lodash.set": "^4.3.9",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "concurrently": "^8.2.2",
+    "vite": "^5.0.0"
+  },
+  "proxy": "http://127.0.0.1:3001"
 }

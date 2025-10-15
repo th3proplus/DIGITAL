@@ -28,7 +28,6 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, onPlaceOr
     const { formatCurrency, settings } = useSettings();
     const [email, setEmail] = useState('');
     const [cardholderName, setCardholderName] = useState('');
-    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('card');
     const [isRedirecting, setIsRedirecting] = useState(false);
     
     // State for AliExpress form
@@ -40,7 +39,6 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, onPlaceOr
     const isAliExpressOrder = useMemo(() => cartItems.some(item => item.metadata?.customOrderType === 'aliexpress'), [cartItems]);
 
     const paymentMethods = [
-        { id: 'card', name: 'Credit / Debit Card', icon: 'credit-card', enabled: true },
         { id: 'paypal', name: 'PayPal', icon: 'paypal', enabled: settings.payments.paypal.enabled },
         { id: 'stripe', name: 'Stripe', icon: 'stripe', enabled: settings.payments.stripe.enabled },
         { id: 'binance', name: 'Binance Pay', icon: 'binance', enabled: settings.payments.binance.enabled },
@@ -48,7 +46,18 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, onPlaceOr
         { id: 'click2pay', name: 'Click2Pay', icon: 'dollar-sign', enabled: settings.payments.click2pay.enabled }
     ].filter(p => p.enabled);
 
+    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(paymentMethods[0]?.id || '');
+
     const redirectProvider = paymentMethods.find(p => p.id === selectedPaymentMethod);
+
+    useEffect(() => {
+        // If the selected method is no longer available (e.g. disabled in settings),
+        // default to the first available one.
+        if (!paymentMethods.find(p => p.id === selectedPaymentMethod)) {
+            setSelectedPaymentMethod(paymentMethods[0]?.id || '');
+        }
+    }, [paymentMethods, selectedPaymentMethod]);
+
 
     useEffect(() => {
         if (currentUser) {
@@ -79,7 +88,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, onPlaceOr
                 shipping: { phoneNumber, address: shippingAddress, city, postalCode }
             }, 'aliexpress_request');
         } else {
-            if (selectedPaymentMethod !== 'card' && selectedPaymentMethod !== 'bankTransfer') {
+            if (selectedPaymentMethod !== 'bankTransfer') {
                 setIsRedirecting(true);
             } else {
                 onPlaceOrder({ name: cardholderName, email }, selectedPaymentMethod);
@@ -88,9 +97,6 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, onPlaceOr
     };
 
     const getSubmitButtonText = () => {
-        if (selectedPaymentMethod === 'card') {
-            return t('checkout.place_order');
-        }
         if (selectedPaymentMethod === 'bankTransfer') {
             return t('checkout.confirm_order');
         }
@@ -221,28 +227,10 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, onPlaceOr
                             </div>
 
                             <form onSubmit={handleSubmit} className="space-y-5">
-                                {selectedPaymentMethod === 'card' ? (
-                                    <>
-                                        <InputField label={t('checkout.email')} id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="you@example.com" />
-                                        <InputField label={t('checkout.cardholder_name')} id="cardholderName" type="text" value={cardholderName} onChange={(e) => setCardholderName(e.target.value)} required placeholder="John Doe" />
-                                        
-                                        <div>
-                                            <label htmlFor="cardNumber" className="block text-sm font-medium text-gray-700 mb-1">{t('checkout.card_number')}</label>
-                                            <div className="relative">
-                                                <input id="cardNumber" type="text" required placeholder="0000 0000 0000 0000" className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-gray-800 focus:ring-2 focus:ring-brand-red/50 focus:border-brand-red transition-colors placeholder:text-gray-400"/>
-                                                <div className="absolute inset-y-0 end-0 flex items-center pe-3 gap-1">
-                                                    <Icon name="visa" className="w-8 h-8" />
-                                                    <Icon name="mastercard" className="w-8 h-8" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <InputField label={t('checkout.expiry_date')} id="expiryDate" type="text" required placeholder="MM / YY" />
-                                            <InputField label={t('checkout.cvc')} id="cvc" type="text" required placeholder="123" />
-                                        </div>
-                                    </>
-                                ) : selectedPaymentMethod === 'bankTransfer' ? (
+                                <InputField label={t('checkout.email')} id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="you@example.com" />
+                                <InputField label={t('checkout.cardholder_name')} id="cardholderName" type="text" value={cardholderName} onChange={(e) => setCardholderName(e.target.value)} required placeholder="John Doe" />
+                                
+                                {selectedPaymentMethod === 'bankTransfer' ? (
                                     <div className="p-4 bg-blue-50 rounded-lg border border-blue-200 text-sm text-blue-800 space-y-3">
                                         <h4 className="font-bold">{t('checkout.bank_transfer_info_title')}</h4>
                                         <p>{t('checkout.bank_transfer_line1')}</p>

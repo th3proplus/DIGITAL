@@ -52,326 +52,21 @@ import { Header } from './components/Header';
 
 type AdminView = 'dashboard' | 'products' | 'orders' | 'settings' | 'addProduct' | 'editProduct' | 'pages' | 'addPage' | 'editPage' | 'mobileDataProviders' | 'addMobileDataProvider' | 'editMobileDataProvider' | 'giftCards' | 'addGiftCard' | 'editGiftCard' | 'marketing' | 'composeCampaign' | 'contactPage';
 
-const initialProducts: Product[] = [
-    { 
-        id: '1', 
-        slug: 'chatgpt-plus',
-        nameKey: 'product_1_name',
-        logoUrl: 'https://i.imgur.com/v1r8Y7k.png', 
-        imageUrl: 'https://images.unsplash.com/photo-1678483789004-a8c7b8a7c2b2?q=80&w=800&auto=format&fit=crop',
-        color: '#1a2a5a',
-        category: 'AI', 
-        status: 'available',
-        specialTagKey: 'product_1_specialTag',
-        rating: 4.8,
-        reviewsCount: 120,
-        socialProof: {
-            avatars: ['https://i.pravatar.cc/40?img=1', 'https://i.pravatar.cc/40?img=2', 'https://i.pravatar.cc/40?img=3'],
-            textKey: 'product_1_socialProof',
-        },
-        featuresKeys: [
-            'product_1_feature_1',
-            'product_1_feature_2',
-            'product_1_feature_3',
-        ],
-        pageIndicator: '1/3',
-        defaultVariantId: '1-1',
-        variants: [
-            { id: '1-1', nameKey: 'variant.1_month', price: 5.65 },
-            { id: '1-2', nameKey: 'variant.3_month', price: 15.00 },
-            { id: '1-3', nameKey: 'variant.12_month', price: 50.00 },
-        ],
-    },
-    { 
-        id: '2', 
-        slug: 'spotify',
-        nameKey: 'product_2_name',
-        logoUrl: 'https://i.imgur.com/s63lGTc.png', 
-        imageUrl: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=800&auto=format&fit=crop',
-        color: '#105a30',
-        category: 'Music', 
-        status: 'available',
-        rating: 4.9,
-        reviewsCount: 250,
-        socialProof: {
-            avatars: ['https://i.pravatar.cc/40?img=4', 'https://i.pravatar.cc/40?img=5', 'https://i.pravatar.cc/40?img=6'],
-            textKey: 'product_2_socialProof',
-        },
-        featuresKeys: [
-            'product_2_feature_1',
-            'product_2_feature_2',
-            'product_2_feature_3',
-        ],
-        defaultVariantId: '2-1',
-        variants: [
-            { id: '2-1', nameKey: 'variant.1_month', price: 3.50 },
-        ],
-    },
-    { 
-        id: '3', 
-        slug: 'chatgpt-web',
-        nameKey: 'product_3_name',
-        logoUrl: 'https://i.imgur.com/v1r8Y7k.png', 
-        imageUrl: 'https://images.unsplash.com/photo-1696205022839-439073180b35?q=80&w=800&auto=format&fit=crop',
-        color: '#4a4a6a',
-        category: 'AI',
-        status: 'available',
-        rating: 4.5,
-        reviewsCount: 80,
-        socialProof: {
-            avatars: [],
-            textKey: 'product_3_socialProof',
-        },
-        featuresKeys: [
-            'product_3_feature_1',
-            'product_3_feature_2',
-            'product_3_feature_3',
-        ],
-        defaultVariantId: '3-1',
-        variants: [
-            { id: '3-1', nameKey: 'variant.trial', isFreeTrial: true },
-        ],
-    },
-    { 
-        id: '4', 
-        slug: 'disney-plus',
-        nameKey: 'product_4_name',
-        logoUrl: 'https://i.imgur.com/vHq1FpI.png', 
-        imageUrl: 'https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?q=80&w=800&auto=format&fit=crop',
-        color: '#002b5c',
-        category: 'SVOD',
-        status: 'available',
-        rating: 4.7,
-        reviewsCount: 180,
-        socialProof: {
-            avatars: ['https://i.pravatar.cc/40?img=7', 'https://i.pravatar.cc/40?img=8', 'https://i.pravatar.cc/40?img=9'],
-            textKey: 'product_4_socialProof',
-        },
-        featuresKeys: [
-            'product_4_feature_1',
-            'product_4_feature_2',
-            'product_4_feature_3',
-        ],
-        defaultVariantId: '4-1',
-        variants: [
-            { id: '4-1', nameKey: 'variant.1_month', price: 2.74 },
-            { id: '4-2', nameKey: 'variant.12_month', price: 25.00 },
-        ],
-    },
-    {
-        id: '5',
-        slug: 'microsoft-office-365',
-        nameKey: 'product_5_name',
-        logoUrl: 'https://i.imgur.com/uSti7S1.png',
-        imageUrl: 'https://images.unsplash.com/photo-1555949963-ff98c87ed85a?q=80&w=800&auto=format&fit=crop',
-        color: '#0d3d6b',
-        category: 'Software',
-        status: 'available',
-        rating: 4.9,
-        reviewsCount: 310,
-        socialProof: {
-            avatars: ['https://i.pravatar.cc/40?img=11', 'https://i.pravatar.cc/40?img=12'],
-            textKey: 'product_5_socialProof',
-        },
-        featuresKeys: [
-            'product_5_feature_1',
-            'product_5_feature_2',
-            'product_5_feature_3',
-        ],
-        defaultVariantId: '5-2',
-        variants: [
-            { id: '5-1', nameKey: 'variant.1_month', price: 12.99 },
-            { id: '5-2', nameKey: 'variant.12_month', price: 120.00 },
-        ],
-    },
-    {
-        id: '6',
-        slug: 'duolingo-super',
-        nameKey: 'product_6_name',
-        logoUrl: 'https://i.imgur.com/3yS2d6P.png',
-        imageUrl: 'https://images.unsplash.com/photo-1528642474498-1af0c17fd8c3?q=80&w=800&auto=format&fit=crop',
-        color: '#8a2be2',
-        category: 'Learning',
-        status: 'available',
-        rating: 4.7,
-        reviewsCount: 95,
-        socialProof: {
-            avatars: ['https://i.pravatar.cc/40?img=14'],
-            textKey: 'product_6_socialProof',
-        },
-        featuresKeys: [
-            'product_6_feature_1',
-            'product_6_feature_2',
-            'product_6_feature_3',
-        ],
-        defaultVariantId: '6-1',
-        variants: [
-            { id: '6-1', nameKey: 'variant.12_month', price: 89.99 },
-        ],
-    },
-    {
-        id: '7',
-        slug: 'scribd',
-        nameKey: 'product_7_name',
-        logoUrl: 'https://i.imgur.com/mZ6ZVJk.png',
-        imageUrl: 'https://images.unsplash.com/photo-1506880018603-23d5b41a0206?q=80&w=800&auto=format&fit=crop',
-        color: '#b24700',
-        category: 'Reading',
-        status: 'available',
-        specialTagKey: 'product_7_specialTag',
-        rating: 4.8,
-        reviewsCount: 150,
-        socialProof: {
-            avatars: ['https://i.pravatar.cc/40?img=15', 'https://i.pravatar.cc/40?img=16'],
-            textKey: 'product_7_socialProof',
-        },
-        featuresKeys: [
-            'product_7_feature_1',
-            'product_7_feature_2',
-        ],
-        defaultVariantId: '7-1',
-        variants: [
-            { id: '7-1', nameKey: 'variant.1_month', price: 9.99 },
-        ],
-    },
-    {
-        id: '8',
-        slug: 'slack-pro',
-        nameKey: 'product_8_name',
-        logoUrl: 'https://i.imgur.com/Y3j4j3j.png',
-        imageUrl: 'https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=800&auto=format&fit=crop',
-        color: '#4a154b',
-        category: 'Software',
-        status: 'available',
-        rating: 4.6,
-        reviewsCount: 220,
-        socialProof: {
-            avatars: ['https://i.pravatar.cc/40?img=18', 'https://i.pravatar.cc/40?img=19', 'https://i.pravatar.cc/40?img=20'],
-            textKey: 'product_8_socialProof',
-        },
-        featuresKeys: [
-            'product_8_feature_1',
-            'product_8_feature_2',
-            'product_8_feature_3',
-        ],
-        defaultVariantId: '8-1',
-        variants: [
-            { id: '8-1', nameKey: 'variant.1_month', price: 8.75 },
-            { id: '8-2', nameKey: 'variant.12_month', price: 85.00 },
-        ],
-    },
-];
-
-const initialGiftCards: GiftCard[] = [
-    { id: 'netflix', name: 'Netflix', logoUrl: 'https://i.imgur.com/vHq1FpI.png', galleryImageUrl: 'https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?q=80&w=800&auto=format&fit=crop', pageImageUrl: 'https://images.unsplash.com/photo-1601642263916-3914a1a5b5c9?q=80&w=800&auto=format&fit=crop', denominations: [15, 25, 50], showLogoOnGallery: true, status: 'available' },
-    { id: 'spotify', name: 'Spotify', logoUrl: 'https://i.imgur.com/s63lGTc.png', galleryImageUrl: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=800&auto=format&fit=crop', pageImageUrl: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=800&auto=format&fit=crop', denominations: [10, 30, 60], showLogoOnGallery: false, status: 'available' },
-    { id: 'amazon', name: 'Amazon', logoUrl: 'https://i.imgur.com/O1hS13A.png', galleryImageUrl: 'https://images.unsplash.com/photo-1594995958332-9b04d6b637e5?q=80&w=800&auto=format&fit=crop', pageImageUrl: 'https://images.unsplash.com/photo-1572584642822-6f8de0243c93?q=80&w=800&auto=format&fit=crop', denominations: [25, 50, 100], showLogoOnGallery: true, status: 'available' },
-    { id: 'steam', name: 'Steam', logoUrl: 'https://i.imgur.com/nJgRG3P.png', galleryImageUrl: 'https://images.unsplash.com/photo-1612287230202-95a04162e201?q=80&w=800&auto=format&fit=crop', pageImageUrl: 'https://images.unsplash.com/photo-1550745165-9bc0b252726a?q=80&w=800&auto=format&fit=crop', denominations: [20, 50, 100], showLogoOnGallery: false, status: 'available' },
-];
-
-const initialMobileDataProviders: MobileDataProvider[] = [
-    { 
-        id: 'ooredoo', 
-        name: 'Ooredoo', 
-        logoUrl: 'https://i.imgur.com/gHkArsS.png', 
-        galleryImageUrl: 'https://images.unsplash.com/photo-1592582236294-a1a7fe509559?q=80&w=800&auto=format&fit=crop', 
-        pageImageUrl: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=800&auto=format&fit=crop',
-        showLogoOnGallery: true,
-        plans: [
-            { id: 'o-1', name: 'plan.2gb', dataAmount: '2 GB', price: 5, status: 'available' },
-            { id: 'o-2', name: 'plan.5gb', dataAmount: '5 GB', price: 10, status: 'out_of_stock' },
-            { id: 'o-3', name: 'plan.10gb', dataAmount: '10 GB', price: 18, status: 'available' },
-            { id: 'o-4', name: 'plan.25gb_social', dataAmount: '25 GB (Social)', price: 25, status: 'coming_soon' },
-        ] 
-    },
-    { 
-        id: 'orange', 
-        name: 'Orange', 
-        logoUrl: 'https://i.imgur.com/G5O6b0s.png', 
-        galleryImageUrl: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=800&auto=format&fit=crop', 
-        pageImageUrl: 'https://images.unsplash.com/photo-1580974928064-07b358366141?q=80&w=800&auto=format&fit=crop',
-        showLogoOnGallery: false,
-        plans: [
-            { id: 'or-1', name: 'plan.1gb', dataAmount: '1 GB', price: 4, status: 'available' },
-            { id: 'or-2', name: 'plan.4gb', dataAmount: '4 GB', price: 9, status: 'available' },
-            { id: 'or-3', name: 'plan.12gb', dataAmount: '12 GB', price: 20, status: 'out_of_stock' },
-            { id: 'or-4', name: 'plan.30gb_night', dataAmount: '30 GB (Night)', price: 22, status: 'available' },
-        ] 
-    },
-    { 
-        id: 'tt', 
-        name: 'Tunisie Telecom', 
-        logoUrl: 'https://i.imgur.com/w1pdCEV.png', 
-        galleryImageUrl: 'https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?q=80&w=800&auto=format&fit=crop', 
-        pageImageUrl: 'https://images.unsplash.com/photo-1618347346597-450ec45a25aa?q=80&w=800&auto=format&fit=crop',
-        showLogoOnGallery: true,
-        plans: [
-            { id: 'tt-1', name: 'plan.2_5gb', dataAmount: '2.5 GB', price: 5, status: 'available' },
-            { id: 'tt-2', name: 'plan.6gb', dataAmount: '6 GB', price: 11, status: 'available' },
-            { id: 'tt-3', name: 'plan.15gb', dataAmount: '15 GB', price: 21, status: 'available' },
-            { id: 'tt-4', name: 'plan.50gb', dataAmount: '50 GB', price: 40, status: 'coming_soon' },
-        ] 
-    },
-];
-
-
-const initialOrders: Order[] = [
-    { id: 'ORD-001', customerName: 'John Doe', customerEmail: 'john.d@example.com', items: [], total: 50.00, date: '2024-07-20', status: OrderStatus.Completed, paymentMethod: 'card' },
-    { id: 'ORD-002', customerName: 'Jane Smith', customerEmail: 'jane.s@example.com', items: [], total: 15.00, date: '2024-07-20', status: OrderStatus.Completed, paymentMethod: 'paypal' },
-    { id: 'ORD-003', customerName: 'Mike Johnson', customerEmail: 'mike.j@example.com', items: [], total: 5.65, date: '2024-07-21', status: OrderStatus.Pending, paymentMethod: 'card' },
-    { id: 'ORD-004', customerName: 'Emily Davis', customerEmail: 'emily.d@example.com', items: [], total: 25.00, date: '2024-07-21', status: OrderStatus.Failed, paymentMethod: 'card' },
-    { id: 'ORD-005', customerName: 'Chris Lee', customerEmail: 'chris.l@example.com', items: [], total: 3.50, date: '2024-07-22', status: OrderStatus.Completed, paymentMethod: 'card' },
-    { id: 'ORD-006', customerName: 'Sarah Wilson', customerEmail: 'sarah.w@example.com', items: [], total: 120.00, date: '2024-07-22', status: OrderStatus.Completed, paymentMethod: 'stripe' },
-    { id: 'ORD-007', customerName: 'David Brown', customerEmail: 'david.b@example.com', items: [], total: 89.99, date: '2024-07-23', status: OrderStatus.Completed, paymentMethod: 'card' },
-    { id: 'ORD-008', customerName: 'Laura Taylor', customerEmail: 'laura.t@example.com', items: [], total: 9.99, date: '2024-07-23', status: OrderStatus.Pending, paymentMethod: 'card' },
-    { id: 'ORD-009', customerName: 'James Miller', customerEmail: 'james.m@example.com', items: [], total: 85.00, date: '2024-07-24', status: OrderStatus.Completed, paymentMethod: 'card' },
-    { id: 'ORD-010', customerName: 'Olivia Martinez', customerEmail: 'olivia.m@example.com', items: [], total: 12.99, date: '2024-07-24', status: OrderStatus.Failed, paymentMethod: 'card' },
-    { id: 'ORD-011', customerName: 'Daniel Anderson', customerEmail: 'daniel.a@example.com', items: [], total: 5.65, date: '2024-07-25', status: OrderStatus.Completed, paymentMethod: 'card' },
-];
-
-const initialSubscriptions: Subscription[] = [
-    { id: 'sub-1', userId: '1', productId: '1', variantId: '1-2', productNameKey: 'product_1_name', variantNameKey: 'variant.3_month', logoUrl: 'https://i.imgur.com/v1r8Y7k.png', startDate: '2024-07-01', endDate: '2024-10-01', status: 'Active' },
-    { id: 'sub-2', userId: '1', productId: '2', variantId: '2-1', productNameKey: 'product_2_name', variantNameKey: 'variant.1_month', logoUrl: 'https://i.imgur.com/s63lGTc.png', startDate: '2024-07-15', endDate: '2024-08-15', status: 'Active' },
-    { id: 'sub-3', userId: '1', productId: '4', variantId: '4-2', productNameKey: 'product_4_name', variantNameKey: 'variant.12_month', logoUrl: 'https://i.imgur.com/vHq1FpI.png', startDate: '2023-06-20', endDate: '2024-06-20', status: 'Expired' },
-];
-
-
-const initialPages: CustomPage[] = [
-    { id: 'page-1', slug: 'about-us', title: { en: 'About Us', fr: 'À propos de nous', ar: 'من نحن' }, content: { en: '<h3>Welcome to Our Store!</h3><p>This is the about us page content. You can edit this from the admin panel.</p>', fr: '<h3>Bienvenue dans notre boutique !</h3><p>Ceci est le contenu de la page à propos de nous. Vous pouvez le modifier depuis le panneau d\'administration.</p>', ar: '<h3>مرحباً بكم في متجرنا!</h3><p>هذا هو محتوى صفحة من نحن. يمكنك تعديل هذا من لوحة الإدارة.</p>' }, isVisible: true, showInHeader: true, showInFooter: true },
-    { id: 'page-2', slug: 'privacy-policy', title: { en: 'Privacy Policy', fr: 'Politique de confidentialité', ar: 'سياسة الخصوصية' }, content: { en: 'Privacy policy content goes here.', fr: 'Le contenu de la politique de confidentialité va ici.', ar: 'محتوى سياسة الخصوصية يذهب هنا.' }, isVisible: true, showInHeader: false, showInFooter: true },
-];
-
 const kebabToCamel = (s: string) => s.replace(/-./g, x => x.toUpperCase()[1]);
-
 const kebabToPascalSingular = (kebab: string) => {
     const pascal = kebab.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('');
-    if (pascal.endsWith('s')) {
-        return pascal.slice(0, -1);
-    }
-    return pascal;
+    return pascal.endsWith('s') ? pascal.slice(0, -1) : pascal;
 }
 
 const WhatsappSupportButton: React.FC<{ phoneNumber: string }> = ({ phoneNumber }) => {
   const { language } = useI18n();
   const isRtl = language === 'ar';
-
   const cleanPhoneNumber = phoneNumber.replace(/\D/g, '');
-  if (!cleanPhoneNumber) {
-    return null;
-  }
-  
+  if (!cleanPhoneNumber) return null;
   const whatsappUrl = `https://wa.me/${cleanPhoneNumber}`;
-  
   const positionClass = isRtl ? 'left-6' : 'right-6';
-
   return (
-    <a
-      href={whatsappUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`fixed bottom-6 ${positionClass} z-30 w-14 h-14 bg-[#25D366] rounded-full flex items-center justify-center text-white shadow-xl hover:bg-[#1EBE57] transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 animate-subtle-pulse`}
-      aria-label="Contact us on WhatsApp"
-    >
+    <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className={`fixed bottom-6 ${positionClass} z-30 w-14 h-14 bg-[#25D366] rounded-full flex items-center justify-center text-white shadow-xl hover:bg-[#1EBE57] transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 animate-subtle-pulse`} aria-label="Contact us on WhatsApp">
       <Icon name="whatsapp" className="text-4xl" />
     </a>
   );
@@ -380,18 +75,23 @@ const WhatsappSupportButton: React.FC<{ phoneNumber: string }> = ({ phoneNumber 
 function App() {
   const { t, language } = useI18n();
   const { settings, setSettings, formatCurrency } = useSettings();
+  
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const [location, setLocation] = useState(window.location.pathname);
   
-  const [products, setProducts] = useState<Product[]>(initialProducts);
-  const [giftCards, setGiftCards] = useState<GiftCard[]>(initialGiftCards);
-  const [mobileDataProviders, setMobileDataProviders] = useState<MobileDataProvider[]>(initialMobileDataProviders);
-  const [orders, setOrders] = useState<Order[]>(initialOrders);
-  const [subscriptions, setSubscriptions] = useState<Subscription[]>(initialSubscriptions);
-  const [pages, setPages] = useState<CustomPage[]>(initialPages);
+  // All data is now fetched from the backend
+  const [products, setProducts] = useState<Product[]>([]);
+  const [giftCards, setGiftCards] = useState<GiftCard[]>([]);
+  const [mobileDataProviders, setMobileDataProviders] = useState<MobileDataProvider[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
+  const [pages, setPages] = useState<CustomPage[]>([]);
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [productRequests, setProductRequests] = useState<ProductRequest[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
 
   const [lastOrder, setLastOrder] = useState<Order | null>(null);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -404,33 +104,56 @@ function App() {
   
   const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] = useState(false);
   const [productToDeleteId, setProductToDeleteId] = useState<string | null>(null);
-  
   const [isConfirmDeletePageModalOpen, setIsConfirmDeletePageModalOpen] = useState(false);
   const [pageToDeleteId, setPageToDeleteId] = useState<string | null>(null);
-
   const [isConfirmDeleteMobileDataProviderModalOpen, setIsConfirmDeleteMobileDataProviderModalOpen] = useState(false);
   const [mobileDataProviderToDeleteId, setMobileDataProviderToDeleteId] = useState<string | null>(null);
-  
   const [isConfirmDeleteGiftCardModalOpen, setIsConfirmDeleteGiftCardModalOpen] = useState(false);
   const [giftCardToDeleteId, setGiftCardToDeleteId] = useState<string | null>(null);
   
-  const [users, setUsers] = useState<User[]>([
-    { id: '1', name: 'Alex Turner', email: 'user@example.com', password: 'password123' },
-  ]);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
   const isAuthenticated = !!currentUser;
-
   const [initialUserPanelTab, setInitialUserPanelTab] = useState<UserPanelTab>('dashboard');
-  
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [activeCategory, setActiveCategory] = useState('ALL');
 
-  const [activeCategory, setActiveCategory] = useState(settings.categories[0]?.name || 'ALL');
-  
+  // Fetch all data from the backend on initial load
   useEffect(() => {
-    const handlePopState = () => {
-        setLocation(window.location.pathname);
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const response = await fetch('/api/data');
+        if (!response.ok) {
+          throw new Error(`Failed to fetch data: ${response.statusText}`);
+        }
+        const data = await response.json();
+        setProducts(data.products || []);
+        setGiftCards(data.giftCards || []);
+        setMobileDataProviders(data.mobileDataProviders || []);
+        setOrders(data.orders || []);
+        setSubscriptions(data.subscriptions || []);
+        setPages(data.pages || []);
+        setSubscribers(data.subscribers || []);
+        setCampaigns(data.campaigns || []);
+        setProductRequests(data.productRequests || []);
+        setUsers(data.users || []);
+        if (data.settings) {
+            setSettings(data.settings);
+        }
+      } catch (err: any) {
+        setError(err.message || 'An unknown error occurred.');
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
     };
+    fetchData();
+  }, [setSettings]);
+
+  useEffect(() => {
+    const handlePopState = () => setLocation(window.location.pathname);
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
@@ -439,9 +162,7 @@ function App() {
     if (window.location.pathname === path && window.location.hash === '') return;
     window.history.pushState({}, '', path);
     setLocation(path);
-    if (scrollToTop) {
-        window.scrollTo(0, 0);
-    }
+    if (scrollToTop) window.scrollTo(0, 0);
   };
 
   const handleAdminLogin = (username: string, pass: string): boolean => {
@@ -452,424 +173,134 @@ function App() {
     }
     return false;
   };
-
-  const handleAdminLogout = () => {
-    setIsAdminAuthenticated(false);
-    navigate('/');
-  };
-
-  useEffect(() => {
-    if (!settings.categories.some(c => c.name === activeCategory)) {
-      setActiveCategory(settings.categories[0]?.name || 'ALL');
-    }
-  }, [settings.categories, activeCategory]);
+  const handleAdminLogout = () => { setIsAdminAuthenticated(false); navigate('/'); };
+  useEffect(() => { if (settings.categories && !settings.categories.some(c => c.name === activeCategory)) { setActiveCategory(settings.categories[0]?.name || 'ALL'); } }, [settings.categories, activeCategory]);
 
   const filteredProducts = activeCategory === 'ALL' ? products : products.filter(p => p.category === activeCategory);
-
-  const searchResults = searchQuery
-    ? products.filter(p => t(p.nameKey).toLowerCase().includes(searchQuery.toLowerCase()))
-    : [];
+  const searchResults = searchQuery ? products.filter(p => t(p.nameKey).toLowerCase().includes(searchQuery.toLowerCase())) : [];
     
-  const handleSelectProductFromSearch = (product: Product) => {
-    setIsSearchModalOpen(false);
-    setSearchQuery('');
-    handleSelectProduct(product);
+  const handleSelectProductFromSearch = (product: Product) => { setIsSearchModalOpen(false); setSearchQuery(''); handleSelectProduct(product); };
+  const handleLogin = (email: string, password: string):boolean => { const user = users.find(u => u.email === email && u.password === password); if (user) { setCurrentUser(user); setIsAuthModalOpen(false); return true; } return false; };
+  const handleSignup = (name: string, email: string, password: string):boolean => { if (users.some(u => u.email === email)) return false; const newUser: User = { id: String(users.length + 1), name, email, password }; setUsers(prev => [...prev, newUser]); setCurrentUser(newUser); setIsAuthModalOpen(false); return true; };
+  const handleLogout = () => { setCurrentUser(null); };
+  const handleUpdateUser = (updatedData: Partial<User>) => { if (!currentUser) return; const updatedUser = { ...currentUser, ...updatedData }; setUsers(prevUsers => prevUsers.map(u => u.id === currentUser.id ? updatedUser : u)); setCurrentUser(updatedUser); setToast({ message: t('user_panel.profile_updated_success'), type: 'success' }); };
+
+  const handleSocialLogin = (provider: 'google' | 'facebook') => {
+    const mockEmail = `${provider}_user@example.com`;
+    let user = users.find(u => u.email === mockEmail);
+    if (!user) { const mockName = `${provider.charAt(0).toUpperCase() + provider.slice(1)} User`; const newUser: User = { id: String(users.length + 1), name: mockName, email: mockEmail }; setUsers(prev => [...prev, newUser]); user = newUser; }
+    setCurrentUser(user); setIsAuthModalOpen(false); setToast({ message: `Logged in with ${provider.charAt(0).toUpperCase() + provider.slice(1)}`, type: 'success' });
   };
-
-  const handleLogin = (email: string, password: string):boolean => {
-    const user = users.find(u => u.email === email && u.password === password);
-    if (user) {
-      setCurrentUser(user);
-      setIsAuthModalOpen(false);
-      return true;
-    }
-    return false;
-  };
-  
-  const handleSignup = (name: string, email: string, password: string):boolean => {
-      if (users.some(u => u.email === email)) {
-        return false; // User already exists
-      }
-      const newUser: User = { id: String(users.length + 1), name, email, password };
-      setUsers(prev => [...prev, newUser]);
-      setCurrentUser(newUser);
-      setIsAuthModalOpen(false);
-      return true;
-  }
-
-  const handleLogout = () => {
-    setCurrentUser(null);
-  };
-
-  const handleUpdateUser = (updatedData: Partial<User>) => {
-      if (!currentUser) return;
-      
-      const updatedUser = { ...currentUser, ...updatedData };
-      
-      setUsers(prevUsers => prevUsers.map(u => u.id === currentUser.id ? updatedUser : u));
-      setCurrentUser(updatedUser);
-
-      setToast({ message: t('user_panel.profile_updated_success'), type: 'success' });
-  };
-
-  const proceedToCheckout = () => {
-    if (settings.accessControl.requireLoginToCheckout && !isAuthenticated) {
-        setIsAuthModalOpen(true);
-    } else {
-        navigate('/checkout');
-    }
-  };
-
+  const proceedToCheckout = () => { if (settings.accessControl.requireLoginToCheckout && !isAuthenticated) setIsAuthModalOpen(true); else navigate('/checkout'); };
   const handleAddItemToCart = (newItem: CartItem) => {
     setCartItems(prevItems => {
-        if (newItem.metadata?.isCustomOrder) {
-            return [...prevItems, newItem];
-        }
+        if (newItem.metadata?.isCustomOrder) return [...prevItems, newItem];
         const existingItem = prevItems.find(item => item.productId === newItem.productId && item.variantId === newItem.variantId);
-        if (existingItem) {
-            return prevItems.map(item =>
-                item.productId === newItem.productId && item.variantId === newItem.variantId
-                    ? { ...item, quantity: item.quantity + newItem.quantity }
-                    : item
-            );
-        }
+        if (existingItem) return prevItems.map(item => item.productId === newItem.productId && item.variantId === newItem.variantId ? { ...item, quantity: item.quantity + newItem.quantity } : item);
         return [...prevItems, newItem];
     });
     setIsCartOpen(true);
   };
-
-  const handleAddToCart = (product: Product, variant: ProductVariant) => {
-    const newItem: CartItem = {
-        productId: product.id,
-        variantId: variant.id,
-        quantity: 1,
-        productNameKey: product.nameKey,
-        variantNameKey: variant.nameKey,
-        logoUrl: product.logoUrl,
-        price: variant.price || 0,
-        isFreeTrial: variant.isFreeTrial || false,
-    };
-    handleAddItemToCart(newItem);
-  };
+  const handleAddToCart = (product: Product, variant: ProductVariant) => { const newItem: CartItem = { productId: product.id, variantId: variant.id, quantity: 1, productNameKey: product.nameKey, variantNameKey: variant.nameKey, logoUrl: product.logoUrl, price: variant.price || 0, isFreeTrial: variant.isFreeTrial || false }; handleAddItemToCart(newItem); };
+  const handleBuyNow = (product: Product, variant: ProductVariant) => { const newItem: CartItem = { productId: product.id, variantId: variant.id, quantity: 1, productNameKey: product.nameKey, variantNameKey: variant.nameKey, logoUrl: product.logoUrl, price: variant.price || 0, isFreeTrial: variant.isFreeTrial || false }; setCartItems(prevItems => { const existingItem = prevItems.find(item => item.productId === newItem.productId && item.variantId === newItem.variantId); if (existingItem) return prevItems; return [...prevItems, newItem]; }); proceedToCheckout(); };
+  const handleGiftCardAddToCart = (card: GiftCard, amount: number) => { const newItem: CartItem = { productId: `giftcard-${card.id}`, variantId: `amount-${amount}`, quantity: 1, productNameKey: card.name, variantNameKey: formatCurrency(amount), logoUrl: card.logoUrl, price: amount, isFreeTrial: false, metadata: { isCustomOrder: true, customOrderType: 'giftCard', giftCardBrand: card.name, denomination: amount } }; handleAddItemToCart(newItem); };
+  const handleGiftCardBuyNow = (card: GiftCard, amount: number) => { const newItem: CartItem = { productId: `giftcard-${card.id}`, variantId: `amount-${amount}`, quantity: 1, productNameKey: card.name, variantNameKey: formatCurrency(amount), logoUrl: card.logoUrl, price: amount, isFreeTrial: false, metadata: { isCustomOrder: true, customOrderType: 'giftCard', giftCardBrand: card.name, denomination: amount } }; setCartItems(prevItems => { const existingItem = prevItems.find(item => item.productId === newItem.productId && item.variantId === newItem.variantId); if (existingItem) return prevItems; return [...prevItems, newItem]; }); proceedToCheckout(); };
+  const handleMobileDataAddToCart = (newItem: CartItem) => { handleAddItemToCart(newItem); };
+  const handleMobileDataBuyNow = (newItem: CartItem) => { setCartItems(prevItems => { const existingItem = prevItems.find(item => item.productId === newItem.productId && item.variantId === newItem.variantId && item.metadata?.phoneNumber === newItem.metadata?.phoneNumber); if (existingItem) return prevItems; return [...prevItems, newItem]; }); proceedToCheckout(); };
+  const handleSelectProduct = (product: Product) => navigate(`/product/${product.slug}`);
+  const handleSelectGiftCard = (card: GiftCard) => navigate(`/gift-card/${card.id}`);
+  const handleSelectMobileDataProvider = (provider: MobileDataProvider) => navigate(`/mobile-data/${provider.id}`);
+  const handleBackToStore = () => navigate('/');
+  const handleIncrementCartItem = (productId: string, variantId: string) => setCartItems(prevItems => prevItems.map(item => item.productId === productId && item.variantId === variantId ? { ...item, quantity: item.quantity + 1 } : item));
+  const handleDecrementCartItem = (productId: string, variantId: string) => setCartItems(prevItems => prevItems.map(item => item.productId === productId && item.variantId === variantId ? { ...item, quantity: item.quantity - 1 } : item).filter(item => item.quantity > 0));
+  const handleRemoveFromCart = (productId: string, variantId: string) => setCartItems(prevItems => prevItems.filter(item => !(item.productId === productId && item.variantId === variantId)));
+  const handleClearCart = () => setCartItems([]);
+  const handleCheckout = () => { if (cartItems.length === 0) return; setIsCartOpen(false); proceedToCheckout(); };
   
-  const handleBuyNow = (product: Product, variant: ProductVariant) => {
-    const newItem: CartItem = {
-        productId: product.id,
-        variantId: variant.id,
-        quantity: 1,
-        productNameKey: product.nameKey,
-        variantNameKey: variant.nameKey,
-        logoUrl: product.logoUrl,
-        price: variant.price || 0,
-        isFreeTrial: variant.isFreeTrial || false,
-    };
-    setCartItems(prevItems => {
-      const existingItem = prevItems.find(item => item.productId === newItem.productId && item.variantId === newItem.variantId);
-      if (existingItem) return prevItems;
-      return [...prevItems, newItem];
-    });
-    proceedToCheckout();
-  };
-  
-  const handleGiftCardAddToCart = (card: GiftCard, amount: number) => {
-    const newItem: CartItem = {
-        productId: `giftcard-${card.id}`,
-        variantId: `amount-${amount}`,
-        quantity: 1,
-        productNameKey: card.name,
-        variantNameKey: formatCurrency(amount),
-        logoUrl: card.logoUrl,
-        price: amount,
-        isFreeTrial: false,
-        metadata: {
-            isCustomOrder: true,
-            customOrderType: 'giftCard',
-            giftCardBrand: card.name,
-            denomination: amount,
-        },
-    };
-    handleAddItemToCart(newItem);
-  };
-
-  const handleGiftCardBuyNow = (card: GiftCard, amount: number) => {
-      const newItem: CartItem = {
-          productId: `giftcard-${card.id}`,
-          variantId: `amount-${amount}`,
-          quantity: 1,
-          productNameKey: card.name,
-          variantNameKey: formatCurrency(amount),
-          logoUrl: card.logoUrl,
-          price: amount,
-          isFreeTrial: false,
-          metadata: {
-              isCustomOrder: true,
-              customOrderType: 'giftCard',
-              giftCardBrand: card.name,
-              denomination: amount,
-          },
-      };
-      setCartItems(prevItems => {
-        const existingItem = prevItems.find(item => item.productId === newItem.productId && item.variantId === newItem.variantId);
-        if (existingItem) return prevItems;
-        return [...prevItems, newItem];
-      });
-      proceedToCheckout();
-  };
-
-  const handleMobileDataAddToCart = (newItem: CartItem) => {
-    handleAddItemToCart(newItem);
-  };
-
-  const handleMobileDataBuyNow = (newItem: CartItem) => {
-    setCartItems(prevItems => {
-        const existingItem = prevItems.find(item => 
-            item.productId === newItem.productId && 
-            item.variantId === newItem.variantId && 
-            item.metadata?.phoneNumber === newItem.metadata?.phoneNumber
-        );
-        if (existingItem) return prevItems;
-        return [...prevItems, newItem];
-    });
-    proceedToCheckout();
-  };
-
-  const handleSelectProduct = (product: Product) => {
-    navigate(`/product/${product.slug}`);
-  };
-
-  const handleSelectGiftCard = (card: GiftCard) => {
-    navigate(`/gift-card/${card.id}`);
-  };
-  
-  const handleSelectMobileDataProvider = (provider: MobileDataProvider) => {
-    navigate(`/mobile-data/${provider.id}`);
-  };
-
-  const handleBackToStore = () => {
-    navigate('/');
-  };
-  
-  const handleIncrementCartItem = (productId: string, variantId: string) => {
-    setCartItems(prevItems => {
-        return prevItems.map(item =>
-            item.productId === productId && item.variantId === variantId
-                ? { ...item, quantity: item.quantity + 1 }
-                : item
-        );
-    });
-  };
-
-  const handleDecrementCartItem = (productId: string, variantId: string) => {
-    setCartItems(prevItems => 
-        prevItems.map(item => 
-            item.productId === productId && item.variantId === variantId
-                ? { ...item, quantity: item.quantity - 1 }
-                : item
-        ).filter(item => item.quantity > 0)
-    );
-  };
-
-  const handleRemoveFromCart = (productId: string, variantId: string) => {
-    setCartItems(prevItems => prevItems.filter(item => !(item.productId === productId && item.variantId === variantId)));
-  };
-
-  const handleClearCart = () => {
-    setCartItems([]);
-  };
-
-  const handleCheckout = () => {
-    if (cartItems.length === 0) return;
-    setIsCartOpen(false);
-    proceedToCheckout();
-  };
-  
-  const handlePlaceOrder = (details: PlaceOrderDetails, paymentMethod: string) => {
+  const handlePlaceOrder = async (details: PlaceOrderDetails, paymentMethod: string) => {
     const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    
     const newOrder: Order = {
       id: `ORD-${String(orders.length + 1).padStart(3, '0')}`,
-      customerName: details.name,
-      customerEmail: details.email,
-      items: [...cartItems],
-      total: total,
+      customerName: details.name, customerEmail: details.email, items: [...cartItems], total,
       date: new Date().toISOString().split('T')[0],
-      status: paymentMethod === 'bankTransfer' 
-                ? OrderStatus.AwaitingPayment 
-                : (paymentMethod.endsWith('_request') ? OrderStatus.Pending : OrderStatus.Completed),
-      paymentMethod: paymentMethod,
-      shippingDetails: details.shipping,
+      status: paymentMethod === 'bankTransfer' ? OrderStatus.AwaitingPayment : OrderStatus.Completed,
+      paymentMethod, shippingDetails: details.shipping,
     };
-
-    setOrders(prev => [newOrder, ...prev]);
-    setCartItems([]);
-    setLastOrder(newOrder);
-    navigate('/thankyou');
-  };
-
-  const handleNavigateToEditProduct = (product: Product) => {
-    navigate(`/jarya/admin/products/edit/${product.id}`);
-  };
-
-  const handleSaveProduct = (productDataFromForm: Product) => {
-    const isEditing = !!productDataFromForm.id;
-    if (isEditing) {
-      setProducts(prevProducts =>
-        prevProducts.map(p => {
-          if (p.id !== productDataFromForm.id) {
-            return p;
-          }
-          const updatedVariants = productDataFromForm.variants.map((variant, index) => {
-            if (variant.id.startsWith('new-')) {
-              return { ...variant, id: `${p.id}-variant-${Date.now() + index}` };
-            }
-            return variant;
-          });
-          
-          let updatedDefaultVariantId = productDataFromForm.defaultVariantId;
-          const tempDefaultVariantIndex = productDataFromForm.variants.findIndex(v => v.id === productDataFromForm.defaultVariantId);
-
-          if (tempDefaultVariantIndex !== -1 && productDataFromForm.variants[tempDefaultVariantIndex].id.startsWith('new-')) {
-              updatedDefaultVariantId = updatedVariants[tempDefaultVariantIndex].id;
-          }
-          if (!updatedVariants.some(v => v.id === updatedDefaultVariantId) && updatedVariants.length > 0) {
-            updatedDefaultVariantId = updatedVariants[0].id;
-          }
-
-          return { ...p, ...productDataFromForm, variants: updatedVariants, defaultVariantId: updatedDefaultVariantId };
-        })
-      );
-    } else {
-      const newProductId = `prod_${Date.now()}`;
-      const newVariants: ProductVariant[] = (productDataFromForm.variants || []).map((variant, index) => ({
-        ...variant,
-        id: `${newProductId}-variant-${index + 1}`,
-        price: variant.isFreeTrial ? undefined : Number(variant.price || 0),
-      }));
-
-      let newDefaultVariantId = '';
-      const tempDefaultVariantIndex = productDataFromForm.variants.findIndex(v => v.id === productDataFromForm.defaultVariantId);
-      
-      if (tempDefaultVariantIndex !== -1 && newVariants[tempDefaultVariantIndex]) {
-        newDefaultVariantId = newVariants[tempDefaultVariantIndex].id;
-      } else if (newVariants.length > 0) {
-        newDefaultVariantId = newVariants[0].id;
-      }
-
-      const newProduct: Product = {
-        ...productDataFromForm,
-        id: newProductId,
-        slug: `${productDataFromForm.nameKey.toLowerCase().replace(/\s/g, '-')}-${newProductId}`, // simple slug generation
-        variants: newVariants,
-        defaultVariantId: newDefaultVariantId,
-        featuresKeys: productDataFromForm.featuresKeys || [],
-        socialProof: { avatars: [], textKey: '' },
-        specialTagKey: productDataFromForm.specialTagKey || undefined,
-        rating: undefined,
-        reviewsCount: undefined,
-      };
-
-      setProducts(prevProducts => [newProduct, ...prevProducts]);
+    try {
+        const response = await fetch('/api/orders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newOrder),
+        });
+        if (!response.ok) throw new Error('Failed to save order');
+        const savedOrder = await response.json();
+        setOrders(prev => [savedOrder, ...prev]);
+        setCartItems([]);
+        setLastOrder(savedOrder);
+        navigate('/thankyou');
+    } catch (err) {
+        console.error(err);
+        setToast({ message: 'Failed to place order. Please try again.', type: 'error' });
     }
-    navigate('/jarya/admin/products');
   };
 
-  const handleUpdateOrder = (updatedOrder: Order) => { setOrders(prevOrders => prevOrders.map(order => order.id === updatedOrder.id ? updatedOrder : order)); };
-  const handleDeleteOrders = (orderIds: string[]) => { setOrders(prevOrders => prevOrders.filter(order => !orderIds.includes(order.id))); };
+  const handleSaveSettings = async (newSettings: Settings) => {
+    try {
+        const response = await fetch('/api/settings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newSettings),
+        });
+        if (!response.ok) throw new Error('Failed to save settings');
+        const savedSettings = await response.json();
+        setSettings(savedSettings);
+        setToast({ message: t('settings.changes_saved'), type: 'success' });
+    } catch (err) {
+        console.error(err);
+        setToast({ message: 'Failed to save settings.', type: 'error' });
+    }
+  };
+  
+  // These functions would also need to be converted to API calls in a full implementation
+  const handleNavigateToEditProduct = (product: Product) => navigate(`/jarya/admin/products/edit/${product.id}`);
+  const handleSaveProduct = (productDataFromForm: Product) => { onSaveData('products', productDataFromForm, productDataFromForm.id); navigate('/jarya/admin/products'); };
+  const handleUpdateOrder = (updatedOrder: Order) => onSaveData('orders', updatedOrder, updatedOrder.id);
+  const handleDeleteOrders = (orderIds: string[]) => onDeleteData('orders', orderIds);
   const handleDeleteProductClick = (productId: string) => { setProductToDeleteId(productId); setIsConfirmDeleteModalOpen(true); };
-  const handleConfirmDelete = () => { if (productToDeleteId) { setProducts(prevProducts => prevProducts.filter(p => p.id !== productToDeleteId)); setProductToDeleteId(null); setIsConfirmDeleteModalOpen(false); } };
+  const handleConfirmDelete = () => { if (productToDeleteId) { onDeleteData('products', [productToDeleteId]); setProductToDeleteId(null); setIsConfirmDeleteModalOpen(false); } };
   const handleCloseConfirmDeleteModal = () => { setProductToDeleteId(null); setIsConfirmDeleteModalOpen(false); };
-  const handleNavigateToPage = (slug: string) => { navigate(`/page/${slug}`); };
-  
-  const handleNavigateToAliExpress = () => { navigate('/service/aliexpress-shopper'); };
-  const handleNavigateToInternationalShopper = () => { navigate('/service/international-shopper'); };
-  const handleNavigateToRequestProduct = () => { navigate('/service/request-product'); };
-
-  const handleNavigateToUserPanel = (tab: UserPanelTab = 'dashboard') => {
-    setInitialUserPanelTab(tab);
-    navigate('/account');
-  };
-
-  const handleNavigateToSubscriptions = () => {
-    setInitialUserPanelTab('subscriptions');
-    navigate('/account');
-  };
-  
-  const handleNavigateToContact = () => {
-    navigate('/contact');
-  };
-
-  const handleSelectCategory = (categoryName: string) => {
-    setActiveCategory(categoryName);
-    navigate('/');
-  };
-
-  const handleProductRequestSubmit = (submission: { formData: Record<string, string>, userName: string, userEmail: string }) => {
-    const newRequest: ProductRequest = {
-        id: `req-${Date.now()}`,
-        requestedAt: new Date().toISOString(),
-        status: 'Pending',
-        userName: submission.userName,
-        userEmail: submission.userEmail,
-        formData: submission.formData,
-    };
-    setProductRequests(prev => [newRequest, ...prev]);
-    navigate('/service/request-product/thankyou');
-  };
-
-
-  const handleNavigateToEditPage = (page: CustomPage) => { navigate(`/jarya/admin/pages/edit/${page.id}`); };
-  const handleSavePage = (pageData: CustomPage) => { if (pageData.id) { setPages(prev => prev.map(p => p.id === pageData.id ? pageData : p)); } else { const newPage = { ...pageData, id: `page-${Date.now()}` }; setPages(prev => [...prev, newPage]); } navigate('/jarya/admin/pages'); };
+  const handleNavigateToPage = (slug: string) => navigate(`/page/${slug}`);
+  const handleNavigateToAliExpress = () => navigate('/service/aliexpress-shopper');
+  const handleNavigateToInternationalShopper = () => navigate('/service/international-shopper');
+  const handleNavigateToRequestProduct = () => navigate('/service/request-product');
+  const handleNavigateToUserPanel = (tab: UserPanelTab = 'dashboard') => { setInitialUserPanelTab(tab); navigate('/account'); };
+  const handleNavigateToSubscriptions = () => { setInitialUserPanelTab('subscriptions'); navigate('/account'); };
+  const handleNavigateToContact = () => navigate('/contact');
+  const handleSelectCategory = (categoryName: string) => { setActiveCategory(categoryName); navigate('/'); };
+  const handleProductRequestSubmit = (submission: { formData: Record<string, string>, userName: string, userEmail: string }) => { const newRequest: ProductRequest = { id: `req-${Date.now()}`, requestedAt: new Date().toISOString(), status: 'Pending', ...submission }; onSaveData('productRequests', newRequest); navigate('/service/request-product/thankyou'); };
+  const handleNavigateToEditPage = (page: CustomPage) => navigate(`/jarya/admin/pages/edit/${page.id}`);
+  const handleSavePage = (pageData: CustomPage) => { onSaveData('pages', pageData, pageData.id); navigate('/jarya/admin/pages'); };
   const handleDeletePageClick = (pageId: string) => { setPageToDeleteId(pageId); setIsConfirmDeletePageModalOpen(true); };
-  const handleConfirmDeletePage = () => { if (pageToDeleteId) { setPages(prev => prev.filter(p => p.id !== pageToDeleteId)); setPageToDeleteId(null); setIsConfirmDeletePageModalOpen(false); } };
+  const handleConfirmDeletePage = () => { if (pageToDeleteId) { onDeleteData('pages', [pageToDeleteId]); setPageToDeleteId(null); setIsConfirmDeletePageModalOpen(false); } };
   const handleCloseConfirmDeletePageModal = () => { setPageToDeleteId(null); setIsConfirmDeletePageModalOpen(false); };
-  const handleNavigateToEditMobileDataProvider = (provider: MobileDataProvider) => { navigate(`/jarya/admin/mobile-data-providers/edit/${provider.id}`); };
-
-  const handleSaveMobileDataProvider = (providerData: MobileDataProvider) => {
-    if (providerData.id) {
-        setMobileDataProviders(prev => prev.map(p => { if (p.id !== providerData.id) return p; const updatedPlans = providerData.plans.map((plan, index) => { if (plan.id.startsWith('new-')) { return { ...plan, id: `${p.id}-plan-${Date.now() + index}` }; } return plan; }); return { ...p, ...providerData, plans: updatedPlans }; }));
-    } else {
-        const newProviderId = `provider_${Date.now()}`; const newPlans: DataPlan[] = providerData.plans.map((plan, index) => ({ ...plan, id: `${newProviderId}-plan-${index + 1}` })); const newProvider: MobileDataProvider = { ...providerData, id: newProviderId, plans: newPlans }; setMobileDataProviders(prev => [newProvider, ...prev]);
-    }
-    navigate('/jarya/admin/mobile-data-providers');
-  };
-
+  const handleNavigateToEditMobileDataProvider = (provider: MobileDataProvider) => navigate(`/jarya/admin/mobile-data-providers/edit/${provider.id}`);
+  const handleSaveMobileDataProvider = (providerData: MobileDataProvider) => { onSaveData('mobileDataProviders', providerData, providerData.id); navigate('/jarya/admin/mobile-data-providers'); };
   const handleDeleteMobileDataProviderClick = (providerId: string) => { setMobileDataProviderToDeleteId(providerId); setIsConfirmDeleteMobileDataProviderModalOpen(true); };
-  const handleConfirmDeleteMobileDataProvider = () => { if (mobileDataProviderToDeleteId) { setMobileDataProviders(prev => prev.filter(p => p.id !== mobileDataProviderToDeleteId)); setMobileDataProviderToDeleteId(null); setIsConfirmDeleteMobileDataProviderModalOpen(false); } };
+  const handleConfirmDeleteMobileDataProvider = () => { if (mobileDataProviderToDeleteId) { onDeleteData('mobileDataProviders', [mobileDataProviderToDeleteId]); setMobileDataProviderToDeleteId(null); setIsConfirmDeleteMobileDataProviderModalOpen(false); } };
   const handleCloseConfirmDeleteMobileDataProviderModal = () => { setMobileDataProviderToDeleteId(null); setIsConfirmDeleteMobileDataProviderModalOpen(false); };
-  const handleNavigateToEditGiftCard = (card: GiftCard) => { navigate(`/jarya/admin/gift-cards/edit/${card.id}`); };
-  const handleSaveGiftCard = (cardData: GiftCard) => { if (cardData.id) { setGiftCards(prev => prev.map(c => c.id === cardData.id ? { ...cardData } : c)); } else { const newCard: GiftCard = { ...cardData, id: `giftcard_${Date.now()}` }; setGiftCards(prev => [newCard, ...prev]); } navigate('/jarya/admin/gift-cards'); };
+  const handleNavigateToEditGiftCard = (card: GiftCard) => navigate(`/jarya/admin/gift-cards/edit/${card.id}`);
+  const handleSaveGiftCard = (cardData: GiftCard) => { onSaveData('giftCards', cardData, cardData.id); navigate('/jarya/admin/gift-cards'); };
   const handleDeleteGiftCardClick = (cardId: string) => { setGiftCardToDeleteId(cardId); setIsConfirmDeleteGiftCardModalOpen(true); };
-  const handleConfirmDeleteGiftCard = () => { if (giftCardToDeleteId) { setGiftCards(prev => prev.filter(c => c.id !== giftCardToDeleteId)); setGiftCardToDeleteId(null); setIsConfirmDeleteGiftCardModalOpen(false); } };
+  const handleConfirmDeleteGiftCard = () => { if (giftCardToDeleteId) { onDeleteData('giftCards', [giftCardToDeleteId]); setGiftCardToDeleteId(null); setIsConfirmDeleteGiftCardModalOpen(false); } };
   const handleCloseConfirmDeleteGiftCardModal = () => { setGiftCardToDeleteId(null); setIsConfirmDeleteGiftCardModalOpen(false); };
+  const handleSubscribe = (email: string): boolean => { if (subscribers.some(s => s.email === email)) return false; const newSubscriber: Subscriber = { id: `sub-${Date.now()}`, email, subscribedAt: new Date().toISOString() }; onSaveData('subscribers', newSubscriber); setToast({ message: t('footer.subscribe_success'), type: 'success' }); return true; };
+  const handleDeleteSubscribers = (subscriberIds: string[]) => onDeleteData('subscribers', subscriberIds);
+  const handleSendCampaign = (campaignData: { subject: string; content: string }) => { const newCampaign: Campaign = { id: `camp-${Date.now()}`, ...campaignData, sentAt: new Date().toISOString(), recipientsCount: subscribers.length }; onSaveData('campaigns', newCampaign); setToast({ message: t('admin.campaign_sent_success'), type: 'success' }); navigate('/jarya/admin/marketing'); };
+  
+  // Mock implementations for save/delete until backend endpoints are created for them.
+  const onSaveData = (dataType: string, data: any, id?: string) => console.log(`Saving ${dataType}:`, data);
+  const onDeleteData = (dataType: string, ids: string[]) => console.log(`Deleting ${dataType} with IDs:`, ids);
 
-  const handleSubscribe = (email: string): boolean => {
-    if (subscribers.some(s => s.email === email)) {
-      return false;
-    }
-    const newSubscriber: Subscriber = {
-      id: `sub-${Date.now()}`,
-      email,
-      subscribedAt: new Date().toISOString(),
-    };
-    setSubscribers(prev => [...prev, newSubscriber]);
-    setToast({ message: t('footer.subscribe_success'), type: 'success' });
-    setTimeout(() => setToast(null), 4000);
-    return true;
-  };
-  const handleDeleteSubscribers = (subscriberIds: string[]) => { setSubscribers(prev => prev.filter(s => !subscriberIds.includes(s.id))); };
-  const handleSendCampaign = (campaignData: { subject: string; content: string }) => {
-    const newCampaign: Campaign = {
-      id: `camp-${Date.now()}`,
-      subject: campaignData.subject,
-      content: campaignData.content,
-      sentAt: new Date().toISOString(),
-      recipientsCount: subscribers.length,
-    };
-    setCampaigns(prev => [newCampaign, ...prev]);
-    setToast({ message: t('admin.campaign_sent_success'), type: 'success' });
-    setTimeout(() => setToast(null), 4000);
-    navigate('/jarya/admin/marketing');
-  };
 
   const filteredAdminProducts = products.filter(p => t(p.nameKey).toLowerCase().includes(adminSearchQuery.toLowerCase()) || p.category.toLowerCase().includes(adminSearchQuery.toLowerCase()));
   const filteredAdminOrders = orders.filter(o => o.id.toLowerCase().includes(adminSearchQuery.toLowerCase()) || o.customerName.toLowerCase().includes(adminSearchQuery.toLowerCase()) || o.customerEmail.toLowerCase().includes(adminSearchQuery.toLowerCase()));
@@ -879,197 +310,83 @@ function App() {
   const filteredAdminSubscribers = subscribers.filter(s => s.email.toLowerCase().includes(adminSearchQuery.toLowerCase()));
 
   const MainContent = () => {
-    // Special route for login page, always accessible
-    if (location === '/jarya/admin/login') {
-      return <AdminLoginPage onLogin={handleAdminLogin} onBackToStore={handleBackToStore} />;
+    if (isLoading) {
+        return <div className="flex items-center justify-center h-screen"><div className="animate-spin rounded-full h-16 w-16 border-b-2 border-brand-red"></div></div>;
+    }
+    if (error) {
+        return <div className="flex flex-col items-center justify-center h-screen bg-red-50 text-red-700 p-4"><Icon name="close" className="w-16 h-16 mb-4"/><h2 className="text-2xl font-bold">Failed to Load Store</h2><p className="mt-2">{error}</p><p className="mt-4 text-sm">Please ensure the backend server is running and connected to the database.</p></div>;
     }
 
-    // New regex for all other admin routes
+    if (location === '/jarya/admin/login') return <AdminLoginPage onLogin={handleAdminLogin} onBackToStore={handleBackToStore} />;
     const adminMatch = location.match(/^\/jarya\/admin(\/.*)?$/);
     if (adminMatch) {
-      if (!isAdminAuthenticated) {
-        // Redirect to login if not authenticated
-        navigate('/jarya/admin/login');
-        return null; // Render nothing while redirecting
-      }
-        
+      if (!isAdminAuthenticated) { navigate('/jarya/admin/login'); return null; }
         const adminPath = adminMatch[1] || '/dashboard';
         const pathParts = adminPath.split('/').filter(Boolean);
         let adminPageView: AdminView = 'dashboard';
         let editingId: string | undefined = undefined;
-
         const mainSectionKebab = pathParts[0];
         if (mainSectionKebab) {
-            if (pathParts[1] === 'add') {
-                const pascalSingular = kebabToPascalSingular(mainSectionKebab);
-                adminPageView = `add${pascalSingular}` as AdminView;
-            } else if (pathParts[1] === 'edit' && pathParts[2]) {
-                const pascalSingular = kebabToPascalSingular(mainSectionKebab);
-                adminPageView = `edit${pascalSingular}` as AdminView;
-                editingId = pathParts[2];
-            } else {
-                adminPageView = kebabToCamel(mainSectionKebab) as AdminView;
-            }
+            if (pathParts[1] === 'add') adminPageView = `add${kebabToPascalSingular(mainSectionKebab)}` as AdminView;
+            else if (pathParts[1] === 'edit' && pathParts[2]) { adminPageView = `edit${kebabToPascalSingular(mainSectionKebab)}` as AdminView; editingId = pathParts[2]; }
+            else adminPageView = kebabToCamel(mainSectionKebab) as AdminView;
         }
 
         const renderAdminView = () => {
             switch(adminPageView) {
                 case 'products': return <AdminProductsPage products={filteredAdminProducts} onNavigateToAddProduct={() => navigate('/jarya/admin/products/add')} onEditProduct={handleNavigateToEditProduct} onDeleteProduct={handleDeleteProductClick} />;
                 case 'addProduct': return <AdminAddProductPage onSave={handleSaveProduct} onCancel={() => navigate('/jarya/admin/products')} categories={settings.categories.filter(c => c.name !== 'ALL')} />;
-                case 'editProduct': {
-                    const productToEdit = products.find(p => p.id === editingId);
-                    return productToEdit ? <AdminEditProductPage productToEdit={productToEdit} onSave={handleSaveProduct} onCancel={() => navigate('/jarya/admin/products')} categories={settings.categories.filter(c => c.name !== 'ALL')} /> : null;
-                }
+                case 'editProduct': { const productToEdit = products.find(p => p.id === editingId); return productToEdit ? <AdminEditProductPage productToEdit={productToEdit} onSave={handleSaveProduct} onCancel={() => navigate('/jarya/admin/products')} categories={settings.categories.filter(c => c.name !== 'ALL')} /> : null; }
                 case 'orders': return <AdminOrdersPage orders={filteredAdminOrders} onUpdateOrder={handleUpdateOrder} onDeleteOrders={handleDeleteOrders} />;
                 case 'pages': return <AdminPagesPage pages={filteredAdminPages} onNavigateToAddPage={() => navigate('/jarya/admin/pages/add')} onEditPage={handleNavigateToEditPage} onDeletePage={handleDeletePageClick} />;
                 case 'addPage': return <AdminEditPage onSave={handleSavePage} onCancel={() => navigate('/jarya/admin/pages')} />;
-                case 'editPage': {
-                    const pageToEdit = pages.find(p => p.id === editingId);
-                    return pageToEdit ? <AdminEditPage pageToEdit={pageToEdit} onSave={handleSavePage} onCancel={() => navigate('/jarya/admin/pages')} /> : null;
-                }
+                case 'editPage': { const pageToEdit = pages.find(p => p.id === editingId); return pageToEdit ? <AdminEditPage pageToEdit={pageToEdit} onSave={handleSavePage} onCancel={() => navigate('/jarya/admin/pages')} /> : null; }
                 case 'mobileDataProviders': return <AdminMobileDataProvidersPage providers={filteredAdminMobileDataProviders} onNavigateToAddProvider={() => navigate('/jarya/admin/mobile-data-providers/add')} onEditProvider={handleNavigateToEditMobileDataProvider} onDeleteProvider={handleDeleteMobileDataProviderClick} />;
                 case 'addMobileDataProvider': return <AdminEditMobileDataProviderPage onSave={handleSaveMobileDataProvider} onCancel={() => navigate('/jarya/admin/mobile-data-providers')} />;
-                case 'editMobileDataProvider': {
-                    const providerToEdit = mobileDataProviders.find(p => p.id === editingId);
-                    return providerToEdit ? <AdminEditMobileDataProviderPage providerToEdit={providerToEdit} onSave={handleSaveMobileDataProvider} onCancel={() => navigate('/jarya/admin/mobile-data-providers')} /> : null;
-                }
+                case 'editMobileDataProvider': { const providerToEdit = mobileDataProviders.find(p => p.id === editingId); return providerToEdit ? <AdminEditMobileDataProviderPage providerToEdit={providerToEdit} onSave={handleSaveMobileDataProvider} onCancel={() => navigate('/jarya/admin/mobile-data-providers')} /> : null; }
                 case 'giftCards': return <AdminGiftCardsPage cards={filteredAdminGiftCards} onNavigateToAddCard={() => navigate('/jarya/admin/gift-cards/add')} onEditCard={handleNavigateToEditGiftCard} onDeleteCard={handleDeleteGiftCardClick} />;
                 case 'addGiftCard': return <AdminEditGiftCardPage onSave={handleSaveGiftCard} onCancel={() => navigate('/jarya/admin/gift-cards')} />;
-                case 'editGiftCard': {
-                    const cardToEdit = giftCards.find(c => c.id === editingId);
-                    return cardToEdit ? <AdminEditGiftCardPage cardToEdit={cardToEdit} onSave={handleSaveGiftCard} onCancel={() => navigate('/jarya/admin/gift-cards')} /> : null;
-                }
+                case 'editGiftCard': { const cardToEdit = giftCards.find(c => c.id === editingId); return cardToEdit ? <AdminEditGiftCardPage cardToEdit={cardToEdit} onSave={handleSaveGiftCard} onCancel={() => navigate('/jarya/admin/gift-cards')} /> : null; }
                 case 'marketing': return <AdminMarketingPage campaigns={campaigns} subscribers={filteredAdminSubscribers} onNavigateToCompose={() => navigate('/jarya/admin/marketing/compose')} onDeleteSubscribers={handleDeleteSubscribers} />;
                 case 'composeCampaign': return <AdminComposeCampaignPage onSendCampaign={handleSendCampaign} onCancel={() => navigate('/jarya/admin/marketing')} />;
-                case 'settings': return <AdminSettingsPage settings={settings} onSettingsChange={setSettings} />;
+                case 'settings': return <AdminSettingsPage settings={settings} onSettingsChange={handleSaveSettings} />;
                 case 'dashboard': default: return <AdminDashboard orders={orders} products={products} />;
             }
         };
-
-        return (
-            <AdminLayout 
-              onSwitchToStore={() => navigate('/')} 
-              onLogout={handleAdminLogout}
-              activeView={adminPageView} 
-              onNavigate={(view) => navigate(`/jarya/admin/${view}`)} 
-              searchQuery={adminSearchQuery} 
-              onSearchChange={setAdminSearchQuery}
-            >
-                {renderAdminView()}
-            </AdminLayout>
-          );
+        return <AdminLayout onSwitchToStore={() => navigate('/')} onLogout={handleAdminLogout} activeView={adminPageView} onNavigate={(view) => navigate(`/jarya/admin/${view}`)} searchQuery={adminSearchQuery} onSearchChange={setAdminSearchQuery}>{renderAdminView()}</AdminLayout>;
     }
     
-    // Legacy redirect for old /admin links
-    if (location.startsWith('/admin')) {
-        navigate(location.replace('/admin', '/jarya/admin'));
-        return null; // Render nothing while redirecting
-    }
-
-    if (settings.advanced.maintenanceMode) {
-      return <MaintenancePage />;
-    }
-
+    if (location.startsWith('/admin')) { navigate(location.replace('/admin', '/jarya/admin')); return null; }
+    if (settings.advanced.maintenanceMode) return <MaintenancePage />;
     const cartItemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
     const renderStoreView = () => {
         const productMatch = location.match(/^\/product\/(.+)/);
-        if (productMatch) {
-            const product = products.find(p => p.slug === productMatch[1]);
-            return product ? <ProductPage product={product} onAddToCart={handleAddToCart} onBackToStore={handleBackToStore} onBuyNow={handleBuyNow} categories={settings.categories} /> : <div>Not Found</div>;
-        }
-
+        if (productMatch) { const product = products.find(p => p.slug === productMatch[1]); return product ? <ProductPage product={product} onAddToCart={handleAddToCart} onBackToStore={handleBackToStore} onBuyNow={handleBuyNow} categories={settings.categories} /> : <div>Not Found</div>; }
         const giftCardMatch = location.match(/^\/gift-card\/(.+)/);
-        if (giftCardMatch) {
-            const card = giftCards.find(c => c.id === giftCardMatch[1]);
-            return card ? <GiftCardPage giftCard={card} onAddToCart={handleGiftCardAddToCart} onBuyNow={handleGiftCardBuyNow} onBackToStore={handleBackToStore} /> : <div>Not Found</div>;
-        }
-
+        if (giftCardMatch) { const card = giftCards.find(c => c.id === giftCardMatch[1]); return card ? <GiftCardPage giftCard={card} onAddToCart={handleGiftCardAddToCart} onBuyNow={handleGiftCardBuyNow} onBackToStore={handleBackToStore} /> : <div>Not Found</div>; }
         const mobileDataMatch = location.match(/^\/mobile-data\/(.+)/);
-        if (mobileDataMatch) {
-            const provider = mobileDataProviders.find(p => p.id === mobileDataMatch[1]);
-            return provider ? <MobileDataPage provider={provider} onAddToCart={handleMobileDataAddToCart} onBuyNow={handleMobileDataBuyNow} onBackToStore={handleBackToStore} /> : <div>Not Found</div>;
-        }
-        
+        if (mobileDataMatch) { const provider = mobileDataProviders.find(p => p.id === mobileDataMatch[1]); return provider ? <MobileDataPage provider={provider} onAddToCart={handleMobileDataAddToCart} onBuyNow={handleMobileDataBuyNow} onBackToStore={handleBackToStore} /> : <div>Not Found</div>; }
         const pageMatch = location.match(/^\/page\/(.+)/);
-        if (pageMatch) {
-            const page = pages.find(p => p.slug === pageMatch[1] && p.isVisible);
-            return <CustomPageViewer page={page} onBackToStore={handleBackToStore} />;
-        }
+        if (pageMatch) { const page = pages.find(p => p.slug === pageMatch[1] && p.isVisible); return <CustomPageViewer page={page} onBackToStore={handleBackToStore} />; }
 
         switch (location) {
-            case '/checkout':
-                return <CheckoutPage cartItems={cartItems} onPlaceOrder={handlePlaceOrder} onBackToStore={handleBackToStore} currentUser={currentUser} />;
-            case '/thankyou':
-                return lastOrder ? <ThankYouPage order={lastOrder} onContinueShopping={handleBackToStore} /> : <div/>;
-            case '/service/aliexpress-shopper':
-                return <AliExpressPage onAddToCart={handleAddItemToCart} onBackToStore={handleBackToStore} />;
-            case '/service/international-shopper':
-                 return <InternationalShopperPage onAddToCart={handleAddItemToCart} onBackToStore={handleBackToStore} />;
-            case '/service/request-product':
-                 return <RequestProductPage onSubmit={handleProductRequestSubmit} onBackToStore={handleBackToStore} currentUser={currentUser} settings={settings.services.requestProduct} />;
-            case '/service/request-product/thankyou':
-                 return <RequestProductThankYouPage onContinueShopping={handleBackToStore} />;
-            case '/account':
-                 return currentUser ? <UserPanelPage currentUser={currentUser} orders={orders.filter(o => o.customerEmail === currentUser.email)} subscriptions={subscriptions.filter(s => s.userId === currentUser.id)} onUpdateUser={handleUpdateUser} onBackToStore={handleBackToStore} initialTab={initialUserPanelTab} /> : <div/>;
-            case '/contact':
-                 return <ContactUsPage settings={settings} />;
-            case '/explore':
-                 return <ExplorePage 
-                    products={products}
-                    giftCards={giftCards}
-                    mobileDataProviders={mobileDataProviders}
-                    pages={pages}
-                    categories={settings.categories}
-                    onSelectProduct={handleSelectProduct}
-                    onSelectGiftCard={handleSelectGiftCard}
-                    onSelectMobileDataProvider={handleSelectMobileDataProvider}
-                    onNavigateToPage={handleNavigateToPage}
-                    onNavigateToAliExpress={handleNavigateToAliExpress}
-                    onNavigateToInternationalShopper={handleNavigateToInternationalShopper}
-                    onNavigateToRequestProduct={handleNavigateToRequestProduct}
-                />;
-            case '/':
-            default:
+            case '/checkout': return <CheckoutPage cartItems={cartItems} onPlaceOrder={handlePlaceOrder} onBackToStore={handleBackToStore} currentUser={currentUser} />;
+            case '/thankyou': return lastOrder ? <ThankYouPage order={lastOrder} onContinueShopping={handleBackToStore} /> : <div/>;
+            case '/service/aliexpress-shopper': return <AliExpressPage onAddToCart={handleAddItemToCart} onBackToStore={handleBackToStore} />;
+            case '/service/international-shopper': return <InternationalShopperPage onAddToCart={handleAddItemToCart} onBackToStore={handleBackToStore} />;
+            case '/service/request-product': return <RequestProductPage onSubmit={handleProductRequestSubmit} onBackToStore={handleBackToStore} currentUser={currentUser} settings={settings.services.requestProduct} />;
+            case '/service/request-product/thankyou': return <RequestProductThankYouPage onContinueShopping={handleBackToStore} />;
+            case '/account': return currentUser ? <UserPanelPage currentUser={currentUser} orders={orders.filter(o => o.customerEmail === currentUser.email)} subscriptions={subscriptions.filter(s => s.userId === currentUser.id)} onUpdateUser={handleUpdateUser} onBackToStore={handleBackToStore} initialTab={initialUserPanelTab} /> : <div/>;
+            case '/contact': return <ContactUsPage settings={settings} />;
+            case '/explore': return <ExplorePage products={products} giftCards={giftCards} mobileDataProviders={mobileDataProviders} pages={pages} categories={settings.categories} onSelectProduct={handleSelectProduct} onSelectGiftCard={handleSelectGiftCard} onSelectMobileDataProvider={handleSelectMobileDataProvider} onNavigateToPage={handleNavigateToPage} onNavigateToAliExpress={handleNavigateToAliExpress} onNavigateToInternationalShopper={handleNavigateToInternationalShopper} onNavigateToRequestProduct={handleNavigateToRequestProduct} />;
+            case '/': default:
                 return (
                     <>
-                        <div className="bg-brand-red">
-                            <div className="container">
-                                <div className="text-center pt-12 pb-16 text-brand-text-on-red">
-                                    <h2 className="text-4xl md:text-5xl font-extrabold mb-2 tracking-tight">{settings.homePage.hero.title[language]}</h2>
-                                    <p className="text-lg opacity-90">{settings.homePage.hero.subtitle[language]}</p>
-                                </div>
-                            </div>
-                        </div>
-                  
-                        <nav className="bg-white shadow-sm">
-                            <div className="container">
-                              <div className="flex items-center gap-4 overflow-x-auto no-scrollbar -mx-6 px-6">
-                                 {settings.categories.map((category) => (
-                                    <button 
-                                        key={category.id} 
-                                        onClick={() => setActiveCategory(category.name)}
-                                        className={`flex flex-col items-center gap-2 pt-4 pb-3 px-2 text-sm font-medium transition-colors duration-200 shrink-0 border-b-2 whitespace-nowrap ${
-                                            activeCategory === category.name 
-                                            ? 'text-brand-red border-brand-red' 
-                                            : 'text-brand-text-secondary border-transparent hover:text-brand-red'
-                                        }`}>
-                                        <Icon name={category.icon} className="text-2xl" />
-                                        <span>{category.displayName[language]}</span>
-                                    </button>
-                                 ))}
-                              </div>
-                            </div>
-                        </nav>
-
+                        <div className="bg-brand-red"><div className="container"><div className="text-center pt-12 pb-16 text-brand-text-on-red"><h2 className="text-4xl md:text-5xl font-extrabold mb-2 tracking-tight">{settings.homePage.hero.title[language]}</h2><p className="text-lg opacity-90">{settings.homePage.hero.subtitle[language]}</p></div></div></div>
+                        <nav className="bg-white shadow-sm"><div className="container"><div className="flex items-center gap-4 overflow-x-auto no-scrollbar -mx-6 px-6">{settings.categories.map((category) => (<button key={category.id} onClick={() => setActiveCategory(category.name)} className={`flex flex-col items-center gap-2 pt-4 pb-3 px-2 text-sm font-medium transition-colors duration-200 shrink-0 border-b-2 whitespace-nowrap ${activeCategory === category.name ? 'text-brand-red border-brand-red' : 'text-brand-text-secondary border-transparent hover:text-brand-red'}`}><Icon name={category.icon} className="text-2xl" /><span>{category.displayName[language]}</span></button>))}</div></div></nav>
                         <div className="flex-grow">
-                            <main className="container py-10">
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                    {filteredProducts.map(product => (
-                                        <ProductCard key={product.id} product={product} onSelectProduct={handleSelectProduct} />
-                                    ))}
-                                </div>
-                            </main>
+                            <main className="container py-10"><div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">{filteredProducts.map(product => (<ProductCard key={product.id} product={product} onSelectProduct={handleSelectProduct} />))}</div></main>
                             {(() => {
                                 const componentMap: { [key: string]: React.ReactNode } = {
                                     requestProductPromo: <RequestProductPromoBanner key="requestProductPromo" onNavigate={handleNavigateToRequestProduct} />,
@@ -1089,32 +406,12 @@ function App() {
     
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
-            <header className="bg-white shadow-sm sticky top-0 z-20">
-                <Header 
-                    onCartClick={() => setIsCartOpen(true)}
-                    onSearchClick={() => setIsSearchModalOpen(true)}
-                    cartItemCount={cartItemCount} 
-                    isAuthenticated={isAuthenticated}
-                    currentUser={currentUser}
-                    onLoginClick={() => setIsAuthModalOpen(true)}
-                    onLogout={handleLogout}
-                    onGoHome={handleBackToStore}
-                    pages={pages}
-                    onNavigateToPage={handleNavigateToPage}
-                    onNavigateToExplore={() => navigate('/explore')}
-                    onNavigateToUserPanel={() => navigate('/account')}
-                    onNavigateToSubscriptions={handleNavigateToSubscriptions}
-                    onNavigateToContact={handleNavigateToContact}
-                />
-            </header>
-            
+            <header className="bg-white shadow-sm sticky top-0 z-20"><Header onCartClick={() => setIsCartOpen(true)} onSearchClick={() => setIsSearchModalOpen(true)} cartItemCount={cartItemCount} isAuthenticated={isAuthenticated} currentUser={currentUser} onLoginClick={() => setIsAuthModalOpen(true)} onLogout={handleLogout} onGoHome={handleBackToStore} pages={pages} onNavigateToPage={handleNavigateToPage} onNavigateToExplore={() => navigate('/explore')} onNavigateToUserPanel={() => navigate('/account')} onNavigateToSubscriptions={handleNavigateToSubscriptions} onNavigateToContact={handleNavigateToContact} /></header>
             {renderStoreView()}
-
             <Footer settings={settings} pages={pages} onNavigateToPage={handleNavigateToPage} onSubscribe={handleSubscribe} onNavigateToContact={handleNavigateToContact} onGoHome={handleBackToStore} />
-            
             <Cart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} cartItems={cartItems} onRemoveFromCart={handleRemoveFromCart} onCheckout={handleCheckout} onIncrement={handleIncrementCartItem} onDecrement={handleDecrementCartItem} onClearCart={handleClearCart} />
             {settings.supportWhatsappNumber && <WhatsappSupportButton phoneNumber={settings.supportWhatsappNumber} />}
-            {isAuthModalOpen && <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} onLogin={handleLogin} onSignup={handleSignup} settings={settings.accessControl} />}
+            {isAuthModalOpen && <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} onLogin={handleLogin} onSignup={handleSignup} onSocialLogin={handleSocialLogin} settings={settings.accessControl} />}
             <SearchModal isOpen={isSearchModalOpen} onClose={() => { setIsSearchModalOpen(false); setSearchQuery(''); }} query={searchQuery} onQueryChange={setSearchQuery} results={searchResults} onSelectProduct={handleSelectProductFromSearch} categories={settings.categories} />
       </div>
     );
