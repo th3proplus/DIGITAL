@@ -1,6 +1,5 @@
 import React from 'react';
 import { Product } from '../types';
-// FIX: Corrected import path for hooks.
 import { useI18n, useSettings } from '../hooks/useI18n';
 import { Icon } from './Icon';
 

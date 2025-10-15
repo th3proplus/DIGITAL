@@ -1,6 +1,5 @@
 import React from 'react';
 import { Order, Product, OrderStatus } from '../types';
-// FIX: Corrected import path for useSettings hook.
 import { useSettings } from '../hooks/useI18n';
 import { Icon } from './Icon';
 
@@ -21,7 +20,6 @@ const StatCard: React.FC<{ icon: string; title: string; value: string; trend: st
                     <span className="text-gray-500 ml-1">vs last week</span>
                 </div>
             </div>
-            {/* FIX: Moved inline style for color to the parent div as Icon component does not accept a style prop. */}
             <div className={`w-12 h-12 rounded-full flex items-center justify-center`} style={{backgroundColor: color + '1A', color: color}}>
               <Icon name={icon} className="text-2xl" />
             </div>

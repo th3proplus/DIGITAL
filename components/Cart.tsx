@@ -1,7 +1,6 @@
 import React from 'react';
 import { CartItem } from '../types';
 import { Icon } from './Icon';
-// FIX: Corrected import paths for hooks.
 import { useI18n, useSettings } from '../hooks/useI18n';
 
 interface CartProps {
