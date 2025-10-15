@@ -79,6 +79,7 @@ const nameMap: { [key: string]: keyof typeof icons } = {
   italic: 'Italic',
   underline: 'Underline',
   list: 'List',
+  database: 'Database',
 };
 
 // Map Tailwind CSS text size classes to pixel sizes for the `size` prop

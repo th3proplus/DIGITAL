@@ -49,6 +49,7 @@ import { Logo } from './components/Logo';
 import { useSettings } from './hooks/useI18n';
 import { AliExpressPromoBanner } from './components/AliExpressPromoBanner';
 import { Header } from './components/Header';
+import { SetupPage } from './components/SetupPage';
 
 type AdminView = 'dashboard' | 'products' | 'orders' | 'settings' | 'addProduct' | 'editProduct' | 'pages' | 'addPage' | 'editPage' | 'mobileDataProviders' | 'addMobileDataProvider' | 'editMobileDataProvider' | 'giftCards' | 'addGiftCard' | 'editGiftCard' | 'marketing' | 'composeCampaign' | 'contactPage';
 
@@ -380,6 +381,14 @@ const WhatsappSupportButton: React.FC<{ phoneNumber: string }> = ({ phoneNumber 
 function App() {
   const { t, language } = useI18n();
   const { settings, setSettings, formatCurrency } = useSettings();
+  
+  const [isSetupComplete, setIsSetupComplete] = useState(() => {
+    try {
+      return window.localStorage.getItem('is_setup_complete') === 'true';
+    } catch {
+      return false;
+    }
+  });
 
   const [location, setLocation] = useState(window.location.pathname);
   
@@ -427,6 +436,12 @@ function App() {
 
   const [activeCategory, setActiveCategory] = useState(settings.categories[0]?.name || 'ALL');
   
+  const handleSetupComplete = () => {
+    localStorage.setItem('is_setup_complete', 'true');
+    setIsSetupComplete(true);
+    navigate('/', { replace: true });
+  };
+  
   useEffect(() => {
     const handlePopState = () => {
         setLocation(window.location.pathname);
@@ -435,10 +450,18 @@ function App() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-  const navigate = (path: string, scrollToTop = true) => {
+  const navigate = (path: string, options: { scrollToTop?: boolean; replace?: boolean } = {}) => {
+    const { scrollToTop = true, replace = false } = options;
     if (window.location.pathname === path && window.location.hash === '') return;
-    window.history.pushState({}, '', path);
+    
+    if (replace) {
+      window.history.replaceState({}, '', path);
+    } else {
+      window.history.pushState({}, '', path);
+    }
+    
     setLocation(path);
+    
     if (scrollToTop) {
         window.scrollTo(0, 0);
     }
@@ -902,6 +925,26 @@ function App() {
   const filteredAdminSubscribers = subscribers.filter(s => s.email.toLowerCase().includes(adminSearchQuery.toLowerCase()));
 
   const MainContent = () => {
+    // Handle setup routing
+    if (!isSetupComplete) {
+      if (location !== '/setup') {
+        useEffect(() => {
+          window.history.replaceState({}, '', '/setup');
+          setLocation('/setup');
+        }, []);
+        return null; // Render nothing while redirecting
+      }
+      return <SetupPage onSetupComplete={handleSetupComplete} />;
+    }
+
+    if (isSetupComplete && location === '/setup') {
+      useEffect(() => {
+        window.history.replaceState({}, '', '/');
+        setLocation('/');
+      }, []);
+      return null; // Render nothing while redirecting
+    }
+    
     // Special route for login page, always accessible
     if (location === '/jarya/admin/login') {
       return <AdminLoginPage onLogin={handleAdminLogin} onBackToStore={handleBackToStore} />;
@@ -912,7 +955,7 @@ function App() {
     if (adminMatch) {
       if (!isAdminAuthenticated) {
         // Redirect to login if not authenticated
-        navigate('/jarya/admin/login');
+        navigate('/jarya/admin/login', { replace: true });
         return null; // Render nothing while redirecting
       }
         
@@ -985,7 +1028,7 @@ function App() {
     
     // Legacy redirect for old /admin links
     if (location.startsWith('/admin')) {
-        navigate(location.replace('/admin', '/jarya/admin'));
+        navigate(location.replace('/admin', '/jarya/admin'), { replace: true });
         return null; // Render nothing while redirecting
     }
 
