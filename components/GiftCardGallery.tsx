@@ -1,12 +1,13 @@
 import React, { useRef } from 'react';
 import { GiftCard } from '../types';
-// FIX: Import 'useSettings' hook to access settings context.
 import { useI18n, useSettings } from '../hooks/useI18n';
 import { Icon } from './Icon';
 
 interface GiftCardGalleryProps {
   giftCards: GiftCard[];
   onSelectGiftCard: (card: GiftCard) => void;
+  title?: string;
+  subtitle?: string;
 }
 
 const GiftCardItem: React.FC<{ card: GiftCard; onSelect: () => void; }> = ({ card, onSelect }) => {
@@ -73,7 +74,7 @@ const GiftCardItem: React.FC<{ card: GiftCard; onSelect: () => void; }> = ({ car
 };
 
 
-export const GiftCardGallery: React.FC<GiftCardGalleryProps> = ({ giftCards, onSelectGiftCard }) => {
+export const GiftCardGallery: React.FC<GiftCardGalleryProps> = ({ giftCards, onSelectGiftCard, title, subtitle }) => {
     const { language, t } = useI18n();
     const { settings } = useSettings();
     const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -112,12 +113,15 @@ export const GiftCardGallery: React.FC<GiftCardGalleryProps> = ({ giftCards, onS
         scrollContainerRef.current.scrollLeft = scrollLeftRef.current - walk;
     };
 
+    const sectionTitle = title !== undefined ? title : settings.homePage.giftCardPromo.title[language];
+    const sectionSubtitle = subtitle !== undefined ? subtitle : settings.homePage.giftCardPromo.subtitle[language];
+
     return (
         <section className="bg-slate-50 py-16">
             <div className="container">
                 <div className="text-center mb-10">
-                    <h2 className="text-3xl font-bold text-brand-text-primary">{settings.homePage.giftCardPromo.title[language]}</h2>
-                    <p className="text-lg text-brand-text-secondary mt-2 max-w-2xl mx-auto">{settings.homePage.giftCardPromo.subtitle[language]}</p>
+                    <h2 className="text-3xl font-bold text-brand-text-primary">{sectionTitle}</h2>
+                    {sectionSubtitle && <p className="text-lg text-brand-text-secondary mt-2 max-w-2xl mx-auto">{sectionSubtitle}</p>}
                 </div>
                 <div
                     ref={scrollContainerRef}

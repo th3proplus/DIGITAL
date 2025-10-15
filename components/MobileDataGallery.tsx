@@ -6,6 +6,8 @@ import { Icon } from './Icon';
 interface MobileDataGalleryProps {
   providers: MobileDataProvider[];
   onSelectProvider: (provider: MobileDataProvider) => void;
+  title?: string;
+  subtitle?: string;
 }
 
 const ProviderCard: React.FC<{ provider: MobileDataProvider; onSelect: () => void; }> = ({ provider, onSelect }) => {
@@ -32,7 +34,7 @@ const ProviderCard: React.FC<{ provider: MobileDataProvider; onSelect: () => voi
     );
 };
 
-export const MobileDataGallery: React.FC<MobileDataGalleryProps> = ({ providers, onSelectProvider }) => {
+export const MobileDataGallery: React.FC<MobileDataGalleryProps> = ({ providers, onSelectProvider, title, subtitle }) => {
     const { language } = useI18n();
     const { settings } = useSettings();
     const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -70,13 +72,16 @@ export const MobileDataGallery: React.FC<MobileDataGalleryProps> = ({ providers,
         }
         scrollContainerRef.current.scrollLeft = scrollLeftRef.current - walk;
     };
+    
+    const sectionTitle = title !== undefined ? title : settings.homePage.mobileDataPromo.title[language];
+    const sectionSubtitle = subtitle !== undefined ? subtitle : settings.homePage.mobileDataPromo.subtitle[language];
 
     return (
         <section className="bg-white py-16">
             <div className="container">
                 <div className="text-center mb-10">
-                    <h2 className="text-3xl font-bold text-brand-text-primary">{settings.homePage.mobileDataPromo.title[language]}</h2>
-                    <p className="text-lg text-brand-text-secondary mt-2 max-w-2xl mx-auto">{settings.homePage.mobileDataPromo.subtitle[language]}</p>
+                    <h2 className="text-3xl font-bold text-brand-text-primary">{sectionTitle}</h2>
+                    {sectionSubtitle && <p className="text-lg text-brand-text-secondary mt-2 max-w-2xl mx-auto">{sectionSubtitle}</p>}
                 </div>
                 <div
                     ref={scrollContainerRef}

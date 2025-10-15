@@ -789,6 +789,11 @@ function App() {
     navigate('/contact');
   };
 
+  const handleSelectCategory = (categoryName: string) => {
+    setActiveCategory(categoryName);
+    navigate('/');
+  };
+
   const handleProductRequestSubmit = (submission: { formData: Record<string, string>, userName: string, userEmail: string }) => {
     const newRequest: ProductRequest = {
         id: `req-${Date.now()}`,
@@ -935,7 +940,7 @@ function App() {
     }
     
     if (settings.advanced.maintenanceMode) {
-      return <MaintenancePage onNavigateToAdmin={() => navigate('/admin/login')} />;
+      return <MaintenancePage />;
     }
 
     const cartItemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
@@ -996,6 +1001,7 @@ function App() {
                     onNavigateToAliExpress={handleNavigateToAliExpress}
                     onNavigateToInternationalShopper={handleNavigateToInternationalShopper}
                     onNavigateToRequestProduct={handleNavigateToRequestProduct}
+                    onSelectCategory={handleSelectCategory}
                 />;
             case '/':
             default:

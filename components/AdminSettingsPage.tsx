@@ -643,7 +643,8 @@ export const AdminSettingsPage: React.FC<AdminSettingsPageProps> = ({ settings, 
                                         services: 'Special Services Section',
                                         giftCards: 'Gift Cards Section',
                                         mobileData: 'Mobile Data Section',
-                                        pages: 'Information Pages Section'
+                                        pages: 'Information Pages Section',
+                                        categories: 'Categories Section'
                                     };
                                     return (
                                         <div key={sectionKey} className="border-t pt-6 first:border-t-0 first:pt-0">

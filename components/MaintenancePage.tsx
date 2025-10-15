@@ -3,11 +3,7 @@ import { useI18n, useSettings } from '../hooks/useI18n';
 import { Icon } from './Icon';
 import { Logo } from './Logo';
 
-interface MaintenancePageProps {
-    onNavigateToAdmin: () => void;
-}
-
-export const MaintenancePage: React.FC<MaintenancePageProps> = ({ onNavigateToAdmin }) => {
+export const MaintenancePage: React.FC = () => {
     const { language } = useI18n();
     const { settings } = useSettings();
 
@@ -47,14 +43,7 @@ export const MaintenancePage: React.FC<MaintenancePageProps> = ({ onNavigateToAd
                     </div>
                 </div>
             </main>
-            <footer className="text-center">
-                 <button 
-                    onClick={onNavigateToAdmin}
-                    className="text-slate-500 font-semibold text-sm hover:text-white transition-colors"
-                >
-                    Admin Panel
-                </button>
-            </footer>
+            {/* The footer with the admin panel button has been removed */}
              <style>{`
                 @keyframes spin-slow {
                     from { transform: rotate(0deg); }

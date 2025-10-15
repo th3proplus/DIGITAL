@@ -159,6 +159,7 @@ const initialSettings: Settings = {
         'whyUs'
       ]
     },
+    // FIX: Added missing 'explorePage' property to satisfy the Settings type.
     explorePage: {
       title: {
         en: 'Explore Our Catalog',
@@ -175,7 +176,8 @@ const initialSettings: Settings = {
         services: { title: { en: 'Special Services', fr: 'Services Spéciaux', ar: 'خدمات خاصة' }, enabled: true },
         giftCards: { title: { en: 'Gift Cards', fr: 'Cartes Cadeaux', ar: 'بطاقات الهدايا' }, enabled: true },
         mobileData: { title: { en: 'Mobile Data Providers', fr: 'Fournisseurs de Données Mobiles', ar: 'مزودي بيانات الجوال' }, enabled: true },
-        pages: { title: { en: 'Information Pages', fr: 'Pages d\'Information', ar: 'صفحات المعلومات' }, enabled: true }
+        pages: { title: { en: 'Information Pages', fr: 'Pages d\'Information', ar: 'صفحات المعلومات' }, enabled: true },
+        categories: { title: { en: 'Product Categories', fr: 'Catégories de Produits', ar: 'فئات المنتجات' }, enabled: true }
       }
     },
     maintenancePage: {

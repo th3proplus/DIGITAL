@@ -302,6 +302,7 @@ export interface Settings {
       giftCards: SectionSettings;
       mobileData: SectionSettings;
       pages: SectionSettings;
+      categories: SectionSettings;
     };
   };
   contactPage: {

@@ -3,6 +3,8 @@ import { Product, GiftCard, MobileDataProvider, CustomPage, Category } from '../
 import { useI18n, useSettings } from '../hooks/useI18n';
 import { Icon } from './Icon';
 import { ProductCard } from './ProductCard';
+import { GiftCardGallery } from './GiftCardGallery';
+import { MobileDataGallery } from './MobileDataGallery';
 
 interface ExplorePageProps {
   products: Product[];
@@ -17,6 +19,7 @@ interface ExplorePageProps {
   onNavigateToAliExpress: () => void;
   onNavigateToInternationalShopper: () => void;
   onNavigateToRequestProduct: () => void;
+  onSelectCategory: (categoryName: string) => void;
 }
 
 // A generic card for services, pages, etc.
@@ -55,6 +58,7 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({
   onNavigateToAliExpress,
   onNavigateToInternationalShopper,
   onNavigateToRequestProduct,
+  onSelectCategory,
 }) => {
     const { t, language } = useI18n();
     const { settings } = useSettings();
@@ -68,9 +72,31 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({
                     <h1 className="text-5xl font-extrabold text-brand-text-primary tracking-tight">{explorePage.title[language]}</h1>
                     <p className="text-lg text-brand-text-secondary mt-2">{explorePage.subtitle[language]}</p>
                 </div>
+            </div>
+            
+            {/* Categories Section */}
+            {explorePage.sections.categories.enabled && categories.length > 0 && (
+                <div className="container pb-10">
+                    <Section title={explorePage.sections.categories.title[language]}>
+                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                            {categories.filter(c => c.name !== 'ALL').map(category => (
+                            <div 
+                                key={category.id} 
+                                onClick={() => onSelectCategory(category.name)}
+                                className="bg-white p-4 rounded-xl shadow-md border border-gray-200 hover:shadow-xl hover:border-brand-red transition-all duration-300 cursor-pointer flex flex-col items-center justify-center gap-2 aspect-square group"
+                            >
+                                <Icon name={category.icon} className="w-10 h-10 text-brand-red transition-transform group-hover:scale-110" />
+                                <h3 className="text-sm font-bold text-brand-text-primary text-center">{category.displayName[language]}</h3>
+                            </div>
+                            ))}
+                        </div>
+                    </Section>
+                </div>
+            )}
 
-                {/* All Products Section */}
-                {explorePage.sections.products.enabled && products.length > 0 && (
+            {/* All Products Section */}
+            {explorePage.sections.products.enabled && products.length > 0 && (
+                <div className="container">
                     <Section title={explorePage.sections.products.title[language]}>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                             {products.map(product => (
@@ -78,10 +104,12 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({
                             ))}
                         </div>
                     </Section>
-                )}
-                
-                {/* Services Section */}
-                {explorePage.sections.services.enabled && (
+                </div>
+            )}
+            
+            {/* Services Section */}
+            {explorePage.sections.services.enabled && (
+                 <div className="container">
                     <Section title={explorePage.sections.services.title[language]} className="bg-white rounded-2xl my-10 p-8 shadow-sm">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <InfoCard 
@@ -107,38 +135,32 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({
                             />
                         </div>
                     </Section>
-                )}
+                </div>
+            )}
 
-                {/* Gift Cards Section */}
-                {explorePage.sections.giftCards.enabled && giftCards.length > 0 && (
-                    <Section title={explorePage.sections.giftCards.title[language]}>
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-                           {giftCards.map(card => (
-                                <div key={card.id} onClick={() => onSelectGiftCard(card)} className="bg-white p-4 rounded-xl shadow-md border border-gray-200 hover:shadow-xl hover:border-brand-red transition-all duration-300 cursor-pointer text-center">
-                                    <img src={card.logoUrl} alt={card.name} className="w-full h-20 object-contain mb-3" />
-                                    <h3 className="font-bold text-brand-text-primary">{card.name}</h3>
-                                </div>
-                           ))}
-                        </div>
-                    </Section>
-                )}
+            {/* Gift Cards Section */}
+            {explorePage.sections.giftCards.enabled && giftCards.length > 0 && (
+                <GiftCardGallery 
+                    giftCards={giftCards}
+                    onSelectGiftCard={onSelectGiftCard}
+                    title={explorePage.sections.giftCards.title[language]}
+                    subtitle=""
+                />
+            )}
 
-                {/* Mobile Data Section */}
-                {explorePage.sections.mobileData.enabled && mobileDataProviders.length > 0 && (
-                    <Section title={explorePage.sections.mobileData.title[language]}>
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-                           {mobileDataProviders.map(provider => (
-                                 <div key={provider.id} onClick={() => onSelectMobileDataProvider(provider)} className="bg-white p-4 rounded-xl shadow-md border border-gray-200 hover:shadow-xl hover:border-brand-red transition-all duration-300 cursor-pointer text-center">
-                                    <img src={provider.logoUrl} alt={provider.name} className="w-full h-20 object-contain mb-3" />
-                                    <h3 className="font-bold text-brand-text-primary">{provider.name}</h3>
-                                </div>
-                           ))}
-                        </div>
-                    </Section>
-                )}
+            {/* Mobile Data Section */}
+            {explorePage.sections.mobileData.enabled && mobileDataProviders.length > 0 && (
+                <MobileDataGallery 
+                    providers={mobileDataProviders}
+                    onSelectProvider={onSelectMobileDataProvider}
+                    title={explorePage.sections.mobileData.title[language]}
+                    subtitle=""
+                />
+            )}
 
-                {/* Pages Section */}
-                 {explorePage.sections.pages.enabled && visiblePages.length > 0 && (
+            {/* Pages Section */}
+             {explorePage.sections.pages.enabled && visiblePages.length > 0 && (
+                <div className="container">
                     <Section title={explorePage.sections.pages.title[language]}>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {visiblePages.map(page => (
@@ -151,8 +173,8 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({
                             ))}
                         </div>
                     </Section>
-                )}
-            </div>
+                </div>
+            )}
         </main>
     );
 };
