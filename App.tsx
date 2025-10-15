@@ -125,23 +125,37 @@ function App() {
         setIsLoading(true);
         setError(null);
         const response = await fetch('/api/data');
+
         if (!response.ok) {
-          throw new Error(`Failed to fetch data: ${response.statusText}`);
+          throw new Error(`Network response was not ok: ${response.statusText} (${response.status})`);
         }
-        const data = await response.json();
-        setProducts(data.products || []);
-        setGiftCards(data.giftCards || []);
-        setMobileDataProviders(data.mobileDataProviders || []);
-        setOrders(data.orders || []);
-        setSubscriptions(data.subscriptions || []);
-        setPages(data.pages || []);
-        setSubscribers(data.subscribers || []);
-        setCampaigns(data.campaigns || []);
-        setProductRequests(data.productRequests || []);
-        setUsers(data.users || []);
-        if (data.settings) {
-            setSettings(data.settings);
+
+        // It's safer to read as text and then parse, to handle non-JSON responses gracefully
+        const responseText = await response.text();
+        try {
+          const data = JSON.parse(responseText);
+          setProducts(data.products || []);
+          setGiftCards(data.giftCards || []);
+          setMobileDataProviders(data.mobileDataProviders || []);
+          setOrders(data.orders || []);
+          setSubscriptions(data.subscriptions || []);
+          setPages(data.pages || []);
+          setSubscribers(data.subscribers || []);
+          setCampaigns(data.campaigns || []);
+          setProductRequests(data.productRequests || []);
+          setUsers(data.users || []);
+          if (data.settings) {
+              setSettings(data.settings);
+          }
+        } catch (jsonError) {
+            if (responseText.trim().toLowerCase().startsWith('<!doctype html>')) {
+                 throw new Error("Received an HTML page instead of data. This usually means the backend server is not running or is not accessible. Please check your backend server's console for errors.");
+            }
+            // The response was not JSON and not HTML, something else is wrong.
+            console.error("Raw response text:", responseText);
+            throw new Error('Failed to parse server response as JSON.');
         }
+
       } catch (err: any) {
         setError(err.message || 'An unknown error occurred.');
         console.error(err);
@@ -314,7 +328,7 @@ function App() {
         return <div className="flex items-center justify-center h-screen"><div className="animate-spin rounded-full h-16 w-16 border-b-2 border-brand-red"></div></div>;
     }
     if (error) {
-        return <div className="flex flex-col items-center justify-center h-screen bg-red-50 text-red-700 p-4"><Icon name="close" className="w-16 h-16 mb-4"/><h2 className="text-2xl font-bold">Failed to Load Store</h2><p className="mt-2">{error}</p><p className="mt-4 text-sm">Please ensure the backend server is running and connected to the database.</p></div>;
+        return <div className="flex flex-col items-center justify-center h-screen bg-red-50 text-red-700 p-4 text-center"><Icon name="close" className="w-16 h-16 mb-4"/><h2 className="text-2xl font-bold">Failed to Load Store</h2><p className="mt-2 max-w-xl">{error}</p><p className="mt-4 text-sm">Please ensure the backend server is running and connected to the database.</p></div>;
     }
 
     if (location === '/jarya/admin/login') return <AdminLoginPage onLogin={handleAdminLogin} onBackToStore={handleBackToStore} />;
